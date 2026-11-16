@@ -74,3 +74,9 @@ API 可增加 `render_profile: {"resolution":"4k","fps":30}`、`design_pack: "ed
 `examples/project-intro/` 提供固定编排的本项目介绍片测试：真实源码导入、工作台录制、公开 README 旁白、实际词时间戳、Remotion 编译/预览/4K 渲染与可编辑工程。复现方法见该目录 README，分析与边界见 `docs/reference-review-and-self-test-cn.md`。样片使用固定编排，不作为原生模型自动制作验收。
 
 本次补充扇形总览布局、按图解类型限制元素数与文字长度、修正长标签显示及模板预览暂停在空白首帧的问题。Edge 可选依赖为 `pip install -e 'apps/api[edge]'`；需显式选择 Edge，支持 `EXPLAINER_EDGE_VOICE` 和可选 `EXPLAINER_TTS_PROXY`。其实际词边界通过文本/时间校验后可驱动画面；显式选择 `stable-ts` 时仍需本地模型，不把 Edge 时间戳称为 Whisper。没有自动改用其他配音服务。
+
+## 自有素材库、独立封面与 Ming 配音
+
+`assets/library/catalog.json` 提供 15 项带版本、来源和校验指纹的代码/字体素材，`GET /api/v1/material-library` 和工作台“环境与能力”可查看；原生策划可选用并记录 `library:<id>@<version>`。详见 `docs/design/material-library-and-speech-cn.md`。
+
+`scripts/verify_project_bookends.py` 为已有自测片补独立 3 秒封面和 4 秒结束页，校验正文指纹后复用，实际生成 71.23 秒 4K 影片，并保留原正文与合成工程。它不重新配音，仍是 Edge 云希。Ming 的新参考音色与种子参数仅完成协议验证；真实服务、音质和对齐仍需验收。

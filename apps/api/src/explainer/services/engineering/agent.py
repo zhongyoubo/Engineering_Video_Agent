@@ -4,6 +4,7 @@ from ...adapters.native_agent import native_plan
 from ...adapters.native_contract import validate_design
 from ...config import ROOT
 from ...specs import PATTERN_ELEMENT_LIMITS, PATTERN_LABEL_LIMITS
+from ..materials import material_library, validate_material_references
 from .contracts import ProductionPlan, EngineeringAction, schema
 
 
@@ -30,10 +31,13 @@ class NativeEngineeringAgent:
         return model.model_validate(value), report
 
     def plan(self):
+        library = material_library()
         plan, report = self.call(
             ProductionPlan,
             {
                 "phase": "production-planning",
+                "material_library": library,
+                "material_usage": "Choose materials by explanatory purpose; record selected entries as library:<id>@<version> in shot.assets. Custom TSX remains allowed. Unverified assets need actual rendering/review. Reference footage is not reusable material.",
                 "visual_constraints": {
                     "max_elements": PATTERN_ELEMENT_LIMITS,
                     "max_label_characters": PATTERN_LABEL_LIMITS,
@@ -43,6 +47,8 @@ class NativeEngineeringAgent:
                 "instruction": "Create an audience-focused production plan, full fluent narration, art direction and per-scene visual/motion treatment. For key explanatory scenes provide motion with purpose, chapter, stable element IDs and events anchored to actual narration phrases. Choose patterns by explanatory relationship, not keyword matching. Use code_scan, compare, graph, capacity, queue, depth or overview where appropriate; custom TSX remains available. Explain mechanisms visually; do not repeat text cards. Use real UI capture when supplied. All source assertions require supplied evidence IDs.",
             },
         )
+        validate_material_references(plan, library)
+        report = {**report, "material_library_revision": library["revision"]}
         board = validate_design(plan.storyboard.model_dump(), self.content, self.brief)
         return plan, board, report
 

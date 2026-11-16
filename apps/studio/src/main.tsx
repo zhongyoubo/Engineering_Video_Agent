@@ -1499,6 +1499,29 @@ function App() {
               ))}
             </div>
             <section className="panel adapter-panel">
+              <h2>自有素材库</h2>
+              <p>按讲解目的选用图形与动效。已实现不代表整片或听感验收通过。</p>
+              {caps?.material_library?.items?.map((item: any) => (
+                <details key={item.id} className="material-entry">
+                  <summary>
+                    {item.name} · v{item.version} ·{' '}
+                    {
+                      (
+                        { implemented: '已实现', unverified: '未验证', blocked: '受阻' } as Record<
+                          string,
+                          string
+                        >
+                      )[item.readiness]
+                    }
+                  </summary>
+                  <p>{item.purpose}</p>
+                  <small>
+                    {item.kind} / {item.id}
+                  </small>
+                  <p>{item.provenance}</p>
+                  <p>{item.rights}</p>
+                </details>
+              ))}
               <h2>原生 Agent</h2>
               {caps?.native_agents?.map((item: any) => (
                 <p key={item.provider}>

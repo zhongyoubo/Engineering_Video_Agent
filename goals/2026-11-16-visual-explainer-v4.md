@@ -57,3 +57,14 @@ The GitHub Actions workflow is newly added; local success does not assert a remo
 - CI diagnosed actual Ubuntu-latest/Playwright installation incompatibility and full-Chromium old-headless removal. Pinned Ubuntu24.04 and installed Remotion-compatible Headless Shell; preserved diagnostics. Code a36532f CI run43916631812 passed every step, including visual fixture and MCP.
 - Editable project ZIP includes all media/font/source. UI capture is 1080p enlarged in a 4K composition; vector/text elements render at 4K. No claim that all raster source pixels are 4K.
 - Remaining: actual Codex/Claude provider inference, Docker/gVisor isolation, full audio/video listening, advanced metaphors/object transitions, and complete persistent risk/readiness management. Existing target-environment boundaries remain.
+
+
+## Material library and independent bookends follow-up
+
+- Confirmed previous body uses Edge Yunxi, not Qwen or Ming; no reference-video frames, graphics or narration were extracted. Visual style was interpreted into repository-authored React/SVG; project UI is an actual recording; Noto retains its external font notice.
+- Added reusable CoverScene/EndScene to protected motion-kit; authored and actually rendered independent 3s/4s 4K pages. Compiled assembly previews include first and final frames. Existing body retained by recorded video SHA, not falsely claimed as newly generated.
+- `scripts/verify_project_bookends.py`: 210 newly rendered frames + 1927 verified reused body frames; final 2137 frames / 3840x2160 / 30fps / 71.233333s, full decode passed. Four body samples, including the intentional end fade, match source pixels with RGB RMS=0. Image content checks remain unchanged for content frames; the known transition is checked against the original source pixels. Measurements and hashes in docs/verification-bookends.json.
+- New read-only 15-item catalogue has version/source/provenance/rights/readiness/hash; authenticated API and Studio browsing. Native planning receives the catalogue and validates versioned shot asset references; no keyword router or arbitrary source loader added.
+- Ming adapter forwards configured reference audio/text and seed; hashes reference identity into only the Ming cache. Existing Edge/Qwen cache configuration is unchanged. Actual HTTP/PCM test is explicitly a fixture, not inference. Official Ming and SGLang sources checked; undocumented SDK control fields are not sent to the compatibility endpoint.
+- Full check: 105 backend tests, Ruff, TypeScript and frontend build passed; 6 browser tests passed including material browsing. Formatting passed. No test was deleted/skipped or existing content threshold relaxed.
+- No Ming endpoint, Qwen service, alignment weights or GPU CLI is configured; new video retains existing Edge speech. Naturalness, pronunciation and voice comparison remain unverified. Documented a same-script audition and separate oral-script/term/phrasing work before replacing the narration.

@@ -20,11 +20,13 @@ def voice_configuration(engine, settings, spec=None):
         raise ValueError(
             "Qwen clone service uses its configured reference/model; change service revision instead"
         )
+    if selected == "ming" and bool(settings.ming_ref_audio) != bool(settings.ming_ref_text):
+        raise ValueError("Ming voice cloning requires both configured reference audio and transcript")
     if selected == "ming" and spec.voice_id:
         raise ValueError("Ming adapter does not expose voice selection")
     if selected not in {"ming"} and spec.model:
         raise ValueError("This voice adapter does not expose model selection")
-    return {
+    configuration = {
         "engine": selected,
         "endpoint": settings.ming_url
         if selected == "ming"
@@ -40,6 +42,14 @@ def voice_configuration(engine, settings, spec=None):
         "mastering": "highpass65-loudnorm16-peak1.5-lra7-v3",
         "native_timing": "edge-word-boundary-v1" if selected == "edge" else "provider-v1",
     }
+    if selected == "ming":
+        configuration.update(
+            reference_digest=hashlib.sha256(
+                json.dumps([settings.ming_ref_audio, settings.ming_ref_text], ensure_ascii=False).encode()
+            ).hexdigest(),
+            seed=settings.ming_seed,
+        )
+    return configuration
 
 
 def voice_cache_key(text, language, engine, settings, spec=None):
@@ -131,16 +141,20 @@ def synthesize(scene, language, engine, settings, directory, runner, spec=None):
         if not settings.ming_url:
             raise ValueError("Ming TTS 未配置：设置 EXPLAINER_MING_URL 指向 SGLang-Omni 服务")
         headers = {"Authorization": "Bearer " + settings.ming_key} if settings.ming_key else {}
+        payload = {
+            "model": configuration["model"],
+            "input": scene.narration,
+            "response_format": "wav",
+            "seed": settings.ming_seed,
+        }
+        if settings.ming_ref_audio:
+            payload.update(ref_audio=settings.ming_ref_audio, ref_text=settings.ming_ref_text)
         with httpx.Client(timeout=300, follow_redirects=False, trust_env=False) as client:
             with client.stream(
                 "POST",
                 settings.ming_url.rstrip("/") + "/v1/audio/speech",
                 headers=headers,
-                json={
-                    "model": configuration["model"],
-                    "input": scene.narration,
-                    "response_format": "wav",
-                },
+                json=payload,
             ) as response:
                 response.raise_for_status()
                 size = 0

@@ -1572,3 +1572,24 @@ nav button span {
   background: #edf3f7;
   border-radius: 8px;
 }
+
+.material-entry {
+  padding: 14px 0;
+  border-top: 1px solid #edf0f2;
+  color: #6b7f91;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.material-entry summary {
+  cursor: pointer;
+  color: #334c64;
+}
+.material-entry p {
+  margin: 10px 0;
+  font-size: 11px;
+}
+.material-entry small {
+  font-size: 10px;
+  color: #8b9aaa;
+}

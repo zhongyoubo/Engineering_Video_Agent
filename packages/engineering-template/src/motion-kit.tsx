@@ -355,3 +355,195 @@ export function MotionScene({
     </AbsoluteFill>
   );
 }
+
+export type BookendProps = {
+  designPack?: Pack;
+  projectName?: string;
+  headline?: string;
+  subtitle?: string;
+  repository?: string;
+};
+
+/** Repository-authored title page. Text is visible on frame zero. */
+export function CoverScene({
+  designPack = 'editorial_warm',
+  projectName = 'ENGINEERING VIDEO AGENT',
+  headline = '工程视频智能体',
+  subtitle = '从项目源码，到可编辑的讲解视频',
+}: BookendProps) {
+  const f = useCurrentFrame();
+  const p = designPacks[designPack];
+  return (
+    <AbsoluteFill style={{ background: p.background, color: p.ink, padding: 100 }}>
+      <div style={{ fontSize: 20, letterSpacing: 4, color: p.muted }}>
+        EVA / PROJECT INTRODUCTION
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          left: 100,
+          top: 250,
+          width: 1040,
+          fontSize: 76,
+          fontWeight: 700,
+          lineHeight: 1.25,
+        }}
+      >
+        {projectName}
+      </div>
+      <div style={{ position: 'absolute', left: 100, top: 490, fontSize: 55, fontWeight: 700 }}>
+        {headline}
+      </div>
+      <div style={{ position: 'absolute', left: 100, top: 590, fontSize: 29, color: p.muted }}>
+        {subtitle}
+      </div>
+      <div style={{ position: 'absolute', left: 100, top: 760, display: 'flex', gap: 18 }}>
+        {['真实源码', '可视化讲解', '可编辑工程'].map((label, i) => (
+          <div
+            key={label}
+            style={{
+              padding: '13px 23px',
+              borderRadius: 8,
+              border: `1px solid ${i === 1 ? p.accent : '#c9d1cb'}`,
+              color: i === 1 ? p.accent : p.ink,
+              fontSize: 22,
+            }}
+          >
+            {label}
+          </div>
+        ))}
+      </div>
+      <svg
+        style={{ position: 'absolute', left: 1170, top: 220 }}
+        width="650"
+        height="650"
+        viewBox="0 0 650 650"
+      >
+        <path
+          d="M180 95 C535 120 90 410 440 545"
+          fill="none"
+          stroke={p.accent}
+          strokeWidth="3"
+          pathLength="1"
+          strokeDasharray="1"
+          strokeDashoffset={1 - clamp(f, 0, 55)}
+        />
+        {['SOURCE', 'DESIGN', 'VIDEO'].map((label, i) => {
+          const t = clamp(f, i * 9, i * 9 + 24);
+          return (
+            <g
+              key={label}
+              transform={`translate(${45 + i * 70},${10 + i * 185 + (1 - t) * 22}) rotate(${(i - 1) * 7},180,85)`}
+              opacity={0.25 + 0.75 * t}
+            >
+              <rect
+                width="360"
+                height="160"
+                rx="18"
+                fill={i === 2 ? p.ink : p.panel}
+                stroke="#bdc9c1"
+                strokeWidth="2"
+              />
+              <text x="25" y="39" fontSize="18" fill={i === 2 ? '#d3ded5' : p.accent}>
+                {String(i + 1).padStart(2, '0')} / {label}
+              </text>
+              {i === 0 ? (
+                <g stroke={p.muted} strokeWidth="5" strokeLinecap="round">
+                  {[0, 1, 2].map((j) => (
+                    <path key={j} d={`M30 ${75 + j * 22} h${230 - j * 38}`} />
+                  ))}
+                </g>
+              ) : i === 1 ? (
+                <g stroke={p.accent} strokeWidth="2">
+                  <path d="M65 100 H290" />
+                  {[65, 180, 290].map((x) => (
+                    <rect
+                      key={x}
+                      x={x - 22}
+                      y="78"
+                      width="44"
+                      height="44"
+                      rx="10"
+                      fill={p.background}
+                    />
+                  ))}
+                </g>
+              ) : (
+                <g>
+                  <circle cx="180" cy="100" r="32" fill={p.accent} />
+                  <path d="M173 82 l25 18 -25 18 Z" fill="#fff9ef" />
+                </g>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 70,
+          left: 100,
+          fontSize: 18,
+          color: p.muted,
+          letterSpacing: 2,
+        }}
+      >
+        SOURCE → STORY → MOTION → VIDEO
+      </div>
+    </AbsoluteFill>
+  );
+}
+
+/** Separate closing page; holds the message and repository address. */
+export function EndScene({
+  projectName = 'ENGINEERING VIDEO AGENT',
+  headline = '让复杂内容，清楚呈现。',
+  repository = 'github.com/zhongyoubo/Engineering_Video_Agent',
+}: BookendProps) {
+  const f = useCurrentFrame();
+  return (
+    <AbsoluteFill style={{ background: '#1c3836', color: '#f8f3e9', alignItems: 'center' }}>
+      <div
+        style={{ position: 'absolute', top: 125, fontSize: 21, letterSpacing: 5, color: '#b6cac1' }}
+      >
+        {projectName}
+      </div>
+      <div style={{ position: 'absolute', top: 245, fontSize: 76, fontWeight: 700 }}>
+        {headline}
+      </div>
+      <div style={{ position: 'absolute', top: 440, display: 'flex', gap: 30 }}>
+        {['讲得清楚', '改得动', '过程可复现'].map((label, i) => (
+          <div
+            key={label}
+            style={{
+              width: 490,
+              padding: '40px 25px',
+              border: '1px solid #80988f',
+              borderRadius: 14,
+              textAlign: 'center',
+              fontSize: 34,
+              opacity: 0.25 + 0.75 * clamp(f, i * 5, i * 5 + 18),
+              transform: `translateY(${15 * (1 - clamp(f, i * 5, i * 5 + 18))}px)`,
+            }}
+          >
+            {label}
+          </div>
+        ))}
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          top: 735,
+          fontFamily: 'monospace',
+          fontSize: 27,
+          color: '#e8c1b0',
+        }}
+      >
+        {repository}
+      </div>
+      <div style={{ position: 'absolute', bottom: 85, fontSize: 20, color: '#b6cac1' }}>
+        工程自测样片 · 配音：Edge 云希 · 可编辑 Remotion 工程
+      </div>
+    </AbsoluteFill>
+  );
+}

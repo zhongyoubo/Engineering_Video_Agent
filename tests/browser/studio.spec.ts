@@ -73,6 +73,9 @@ test('prompt → storyboard → edit → independent revision', async ({ page, c
   await page.getByRole('button', { name: '环境与能力', exact: true }).click();
   await expect(page.getByText('已注册适配器')).toBeVisible();
   await expect(page.getByText('source.static', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '自有素材库', exact: true })).toBeVisible();
+  await expect(page.getByText(/独立品牌封面 · v1.0/)).toBeVisible();
+  await expect(page.getByText(/关系网络 · v1.0 · 未验证/)).toBeVisible();
 });
 
 test('upload source → evidence-backed storyboard', async ({ page, context }) => {

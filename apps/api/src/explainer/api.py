@@ -20,6 +20,7 @@ from .db import Database, encode, uid
 from .domain import CreateProject, CreateVideo, ForkRevision, CreateEngineeringVideo
 from .security import identify, owned, tenant
 from .services.ingestion import InvalidArchive, read_archive
+from .services.materials import material_library
 from .storage import Storage
 
 
@@ -191,6 +192,7 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
     settings, _, _ = deps
     return {
         "adapters": [m.model_dump() for m in MANIFESTS],
+        "material_library": material_library(),
         "model": bool(settings.model_url and settings.model_name and settings.allow_external_model),
         "model_name": settings.model_name if settings.allow_external_model else "local-template",
         "voice": {
@@ -217,6 +219,11 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
         "scheduler": settings.scheduler,
         "max_upload_bytes": settings.max_upload_bytes,
     }
+
+
+@app.get("/api/v1/material-library")
+def get_material_library(tenant_id=Depends(tenant)):
+    return material_library()
 
 
 @app.get("/api/v1/projects")

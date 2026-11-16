@@ -65,7 +65,10 @@ class Settings(BaseSettings):
     edge_voice: str = "zh-CN-YunxiNeural"
     ming_url: str = ""
     ming_key: str = ""
-    ming_model: str = "Ming-3.0-tts"
+    ming_model: str = "inclusionAI/Ming-3.0-tts-0.5b"
+    ming_ref_audio: str = ""
+    ming_ref_text: str = ""
+    ming_seed: int = 123
     chrome_executable: str = ""
     render_concurrency: int = Field(2, ge=1, le=8)
     render_timeout: int = 1200

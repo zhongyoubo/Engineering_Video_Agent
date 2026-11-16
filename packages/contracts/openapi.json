@@ -148,6 +148,22 @@
         }
       }
     },
+    "/api/v1/material-library": {
+      "get": {
+        "summary": "Get Material Library",
+        "operationId": "get_material_library_api_v1_material_library_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/projects": {
       "get": {
         "summary": "Projects",

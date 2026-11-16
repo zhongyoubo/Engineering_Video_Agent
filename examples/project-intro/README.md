@@ -22,3 +22,7 @@ Outputs under `.verify-project-intro`: MP4, standalone Remotion project ZIP with
 The output is 3840×2160 / 30fps. UI recording is a real 1920×1080 capture, enlarged in the 4K composition and played at 1.25×; its pixels are not claimed as native 4K. Other diagrams/text are vector/Remotion elements. Audio uses actual provider word boundaries, not equal-duration or Whisper-derived timing. The Qwen sentence quotes architecture documentation; the sample uses Edge, as the scene explicitly labels.
 
 Each build, preview and final must have the same complete project fingerprint; package rejects stale artifacts. The API's production controller and no-host-fallback sandbox policy remain unchanged. Human playback/listening and real native-provider deployment are separate acceptance tasks.
+
+## Separate cover and closing page
+
+After creating the verified 64.235s body, run `CHROME_EXECUTABLE=/path/to/compatible-chrome .venv/bin/python scripts/verify_project_bookends.py`. This explicitly authored fixture renders a 3s cover and 4s outro, compares reused body sample pixels to the original input, assembles video streams without re-encoding the body, and measures/decodes the 71.233333s result. `.verify-bookends/master-project.zip` is the cover/body-media/outro composition; deliver it with the original `.verify-project-intro/remotion-project.zip` so the body itself remains editable. Regenerate the body, replace its media asset and re-run all gates after changing its source. Narration remains the original Edge voice; no Ming/Qwen inference is performed here.
