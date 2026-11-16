@@ -2029,6 +2029,15 @@
             ],
             "title": "Pattern"
           },
+          "layout": {
+            "type": "string",
+            "enum": [
+              "grid",
+              "fan"
+            ],
+            "title": "Layout",
+            "default": "grid"
+          },
           "elements": {
             "items": {
               "$ref": "#/components/schemas/VisualElement"

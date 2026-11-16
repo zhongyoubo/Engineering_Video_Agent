@@ -308,6 +308,15 @@
           "title": "Pattern",
           "type": "string"
         },
+        "layout": {
+          "default": "grid",
+          "enum": [
+            "grid",
+            "fan"
+          ],
+          "title": "Layout",
+          "type": "string"
+        },
         "elements": {
           "items": {
             "$ref": "#/$defs/VisualElement"

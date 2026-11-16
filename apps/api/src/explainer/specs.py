@@ -53,11 +53,28 @@ class SceneSpec(Spec):
     purpose: str = Field(min_length=5, max_length=500)
     chapter: str = Field(default="", max_length=100)
     pattern: Literal["overview", "code_scan", "compare", "graph", "capacity", "queue", "depth"]
+    layout: Literal["grid", "fan"] = "grid"
     elements: list[VisualElement] = Field(min_length=1, max_length=8)
     events: list[MotionEvent] = Field(default_factory=list, max_length=24)
 
     @model_validator(mode="after")
     def valid_references(self):
+        if self.layout == "fan" and self.pattern != "overview":
+            raise ValueError("Fan layout is available for overview scenes only")
+        limits = {"compare": (1, 3), "code_scan": (1, 4), "depth": (1, 2), "queue": (1, 3), "graph": (1, 8)}
+        minimum, maximum = limits.get(self.pattern, (1, 8))
+        if not minimum <= len(self.elements) <= maximum:
+            raise ValueError(f"Pattern {self.pattern} requires {minimum}–{maximum} elements")
+        label_limit = {
+            "overview": 32,
+            "code_scan": 50,
+            "graph": 20,
+            "capacity": 32,
+            "queue": 20,
+            "depth": 24,
+        }.get(self.pattern, 100)
+        if any(len(e.label) > label_limit for e in self.elements):
+            raise ValueError(f"Pattern {self.pattern} labels must fit within {label_limit} characters")
         ids = {e.id for e in self.elements}
         if len(ids) != len(self.elements):
             raise ValueError("Visual element IDs must be unique")

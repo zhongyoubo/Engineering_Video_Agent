@@ -38,6 +38,7 @@ def voice_configuration(engine, settings, spec=None):
         "revision": spec.revision,
         "service_revision": settings.tts_revision,
         "mastering": "highpass65-loudnorm16-peak1.5-lra7-v3",
+        "native_timing": "edge-word-boundary-v1" if selected == "edge" else "provider-v1",
     }
 
 
@@ -98,8 +99,27 @@ def synthesize(scene, language, engine, settings, directory, runner, spec=None):
         async def _speak():
             # Cloud Neural voice (Microsoft Edge read-aloud service); mp3 out,
             # mastered to wav by the shared ffmpeg step below.
-            com = edge_tts.Communicate(scene.narration, configuration["voice_id"])
-            await com.save(raw)
+            com = edge_tts.Communicate(
+                scene.narration,
+                configuration["voice_id"],
+                boundary="WordBoundary",
+                proxy=settings.tts_proxy or None,
+            )
+            with raw.open("wb") as output:
+                async for message in com.stream():
+                    runner.guard()
+                    if message["type"] == "audio":
+                        output.write(message["data"])
+                        if output.tell() > 40 * 1024 * 1024:
+                            raise ProcessError("TTS response too large")
+                    elif message["type"] == "WordBoundary":
+                        words.append(
+                            {
+                                "text": message["text"],
+                                "start": message["offset"] / 10_000_000,
+                                "end": (message["offset"] + message["duration"]) / 10_000_000,
+                            }
+                        )
 
         try:
             asyncio.run(_speak())

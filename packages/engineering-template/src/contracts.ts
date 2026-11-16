@@ -33,6 +33,7 @@ export type Scene = {
   motion?: {
     schema_version: '4.0';
     purpose: string;
+    layout?: 'grid' | 'fan';
     chapter: string;
     pattern: 'overview' | 'code_scan' | 'compare' | 'graph' | 'capacity' | 'queue' | 'depth';
     elements: { id: string; label: string }[];

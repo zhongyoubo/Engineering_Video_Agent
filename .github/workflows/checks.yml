@@ -4,7 +4,7 @@ permissions:
   contents: read
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +37,7 @@ jobs:
         if: always()
         with:
           name: verification-evidence
+          include-hidden-files: true
           path: |
             .verify-visual-v4/verification.json
             .verify-visual-v4/final/video.mp4

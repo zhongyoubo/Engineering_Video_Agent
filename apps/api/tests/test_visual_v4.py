@@ -218,3 +218,83 @@ def test_voice_spec_fork_invalidates_audio_and_compiled_events(client, db, heade
         db.one("SELECT storyboard FROM revisions WHERE id=?", (result.json()["revision_id"],))["storyboard"]
     )["scenes"][0]
     assert value["audio_id"] is None and value["cues"] == [] and value["compiled_events"] == []
+
+
+def test_pattern_limits_reject_silently_dropped_or_overflowing_content():
+    base = {"purpose": "Show every supplied element", "pattern": "compare"}
+    elements = [{"id": f"card{i}", "label": "Card"} for i in range(4)]
+    with pytest.raises(ValueError, match="1–3"):
+        SceneSpec(**base, elements=elements)
+    with pytest.raises(ValueError, match="overview"):
+        SceneSpec(**base, layout="fan", elements=elements[:2])
+    fan = SceneSpec(purpose=base["purpose"], pattern="overview", layout="fan", elements=elements)
+    assert fan.layout == "fan" and len(fan.elements) == 4
+    with pytest.raises(ValueError, match="20 characters"):
+        SceneSpec(purpose=base["purpose"], pattern="graph", elements=[{"id": "x", "label": "长" * 21}])
+
+
+def test_edge_stream_preserves_measured_timing_and_applies_speed(settings, tmp_path, monkeypatch):
+    import sys
+    from types import SimpleNamespace
+    from explainer.adapters.voice import synthesize
+    from explainer.adapters.alignment import validate_words
+
+    received = {}
+
+    class Communicate:
+        def __init__(self, text, voice, **kwargs):
+            received.update(text=text, voice=voice, **kwargs)
+
+        async def stream(self):
+            yield {"type": "audio", "data": b"actual-provider-audio-chunk"}
+            yield {"type": "WordBoundary", "text": "请求", "offset": 2_000_000, "duration": 8_000_000}
+            yield {"type": "WordBoundary", "text": "增加", "offset": 12_000_000, "duration": 8_000_000}
+
+    class Runner:
+        checks = 0
+
+        def guard(self):
+            self.checks += 1
+
+        def run(self, args, **kwargs):
+            if args[0] == "ffprobe":
+                return '{"format":{"duration":"3.0"}}'
+            assert args[0] == "ffmpeg" and "atempo=1.1" in args[args.index("-af") + 1]
+            return ""
+
+    monkeypatch.setitem(sys.modules, "edge_tts", SimpleNamespace(Communicate=Communicate))
+    settings.tts_proxy = "http://configured-proxy:8080"
+    runner = Runner()
+    result = synthesize(
+        Scene(id="test", type="flow", title="Test", narration="请求增加"),
+        "zh-CN",
+        "edge",
+        settings,
+        tmp_path,
+        runner,
+        VoiceSpec(speed=1.1),
+    )
+    assert received["boundary"] == "WordBoundary" and received["proxy"] == settings.tts_proxy
+    assert result["alignment_method"] == "native_words" and runner.checks == 3
+    assert result["words"][0]["start"] == pytest.approx(0.2 / 1.1)
+    assert result["words"][1]["end"] == pytest.approx(2 / 1.1)
+    validate_words(result["words"], "请求增加", result["duration"])
+    assert (tmp_path / "test-raw.wav").read_bytes() == b"actual-provider-audio-chunk"
+
+
+def test_edge_preflight_uses_native_timing_but_keeps_explicit_forced_alignment(settings, monkeypatch):
+    from explainer.services.engineering.integration import professional_preflight
+    from explainer.services.engineering.workspace import EngineeringError
+
+    monkeypatch.setattr(
+        "explainer.services.engineering.integration.importlib.util.find_spec", lambda _: object()
+    )
+    brief = Brief(title="Test", prompt="Test", voice="edge", video_mode="engineering", agent_engine="codex")
+    professional_preflight(brief, settings)
+    settings.alignment_engine = "stable-ts"
+    with pytest.raises(EngineeringError, match="对齐"):
+        professional_preflight(brief, settings)
+    settings.alignment_engine = "auto"
+    monkeypatch.setattr("explainer.services.engineering.integration.importlib.util.find_spec", lambda _: None)
+    with pytest.raises(EngineeringError, match="apps/api"):
+        professional_preflight(brief, settings)

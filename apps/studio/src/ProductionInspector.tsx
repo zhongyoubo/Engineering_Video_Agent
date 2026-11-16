@@ -117,6 +117,7 @@ export function ProductionInspector({
               chapter: scene.motion?.chapter || '',
               purpose: scene.motion?.purpose || '解释当前镜头的核心机制',
               pattern: e.target.value as any,
+              layout: e.target.value === 'overview' ? scene.motion?.layout || 'grid' : 'grid',
               elements: scene.motion?.elements || [
                 { id: 'input', label: '输入' },
                 { id: 'output', label: '结果' },
@@ -143,6 +144,22 @@ export function ProductionInspector({
       </label>
       {scene.motion && (
         <>
+          {scene.motion.pattern === 'overview' && (
+            <label>
+              总览布局
+              <select
+                aria-label="总览布局"
+                disabled={disabled}
+                value={scene.motion.layout || 'grid'}
+                onChange={(e) =>
+                  update({ ...scene.motion!, layout: e.target.value as 'grid' | 'fan' })
+                }
+              >
+                <option value="grid">网格</option>
+                <option value="fan">弧形卡片</option>
+              </select>
+            </label>
+          )}
           <label>
             讲解目标
             <textarea

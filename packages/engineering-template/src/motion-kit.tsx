@@ -74,7 +74,14 @@ export function MotionScene({
         {String(i + 1).padStart(2, '0')}
       </text>
       <foreignObject x="25" y="65" width={width - 50} height={height - 75}>
-        <div style={{ fontSize: 26, lineHeight: 1.4, color: pack.ink, overflowWrap: 'anywhere' }}>
+        <div
+          style={{
+            fontSize: height < 150 ? 18 : 26,
+            lineHeight: height < 150 ? 1.35 : 1.4,
+            color: pack.ink,
+            overflowWrap: 'anywhere',
+          }}
+        >
           {elements[i].label}
         </div>
       </foreignObject>
@@ -145,9 +152,19 @@ export function MotionScene({
             );
           })}
           <circle cx="860" cy="295" r="85" fill={pack.ink} />
-          <text x="860" y="305" fill="white" fontSize="28" textAnchor="middle">
-            {elements[0].label.slice(0, 9)}
-          </text>
+          <foreignObject x="790" y="245" width="140" height="110">
+            <div
+              style={{
+                textAlign: 'center',
+                fontSize: 22,
+                lineHeight: 1.25,
+                color: 'white',
+                overflowWrap: 'anywhere',
+              }}
+            >
+              {elements[0].label}
+            </div>
+          </foreignObject>
         </>
       );
     if (spec.pattern === 'capacity')
@@ -204,9 +221,18 @@ export function MotionScene({
           />
           <path d="M1140 180 l52 -75 52 75" fill="none" stroke={pack.ink} strokeWidth="3" />
           {elements.slice(0, 2).map((e, i) => (
-            <text key={e.id} x={i ? 1120 : 90} y="90" fontSize="30" fill={pack.ink}>
-              {e.label}
-            </text>
+            <foreignObject key={e.id} x={i ? 1050 : 90} y="45" width="530" height="100">
+              <div
+                style={{
+                  fontSize: 28,
+                  lineHeight: 1.35,
+                  color: pack.ink,
+                  overflowWrap: 'anywhere',
+                }}
+              >
+                {e.label}
+              </div>
+            </foreignObject>
           ))}
         </>
       );
@@ -214,9 +240,19 @@ export function MotionScene({
       return (
         <>
           <rect x="1350" y="80" width="300" height="420" rx="20" fill={pack.ink} />
-          <text x="1500" y="140" fill="white" textAnchor="middle" fontSize="26">
-            {elements[elements.length - 1].label}
-          </text>
+          <foreignObject x="1375" y="110" width="250" height="120">
+            <div
+              style={{
+                fontSize: 26,
+                lineHeight: 1.3,
+                color: 'white',
+                textAlign: 'center',
+                overflowWrap: 'anywhere',
+              }}
+            >
+              {elements[elements.length - 1].label}
+            </div>
+          </foreignObject>
           <rect x="1280" y="140" width="14" height="300" fill={pack.accent} />
           {Array.from({ length: 28 }, (_, i) => {
             const y = 65 + i * 17,
@@ -253,8 +289,27 @@ export function MotionScene({
           <text x="80" y="570" fill={pack.ink} fontSize="28">
             {elements[0].label}
           </text>
+          {elements.length === 3 && (
+            <text x="1050" y="420" fill={pack.accent} fontSize="26">
+              {elements[1].label}
+            </text>
+          )}
         </>
       );
+    if (spec.layout === 'fan')
+      return elements.map((element, i) => {
+        const count = elements.length;
+        const width = Math.min(290, 1500 / count);
+        const step = count > 1 ? Math.min(280, 1450 / (count - 1)) : 0;
+        const angle = (i - (count - 1) / 2) * 5;
+        const x = 860 + (i - (count - 1) / 2) * step - width / 2;
+        const y = 115 + Math.abs(angle) * 3;
+        return (
+          <g key={element.id} transform={`rotate(${angle * 0.55},${x + width / 2},${y + 150})`}>
+            {card(i, x, y, width, 340)}
+          </g>
+        );
+      });
     return elements.map((_, i) => {
       const count = Math.min(elements.length, 4),
         row = Math.floor(i / count),
@@ -282,7 +337,7 @@ export function MotionScene({
           top: 115,
           left: 100,
           right: 100,
-          fontSize: 48,
+          fontSize: scene.title.length > 64 ? 32 : scene.title.length > 32 ? 40 : 48,
           fontWeight: 700,
           lineHeight: 1.3,
         }}

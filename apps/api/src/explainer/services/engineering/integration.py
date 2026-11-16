@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import shutil
+import importlib.util
 from fontTools.ttLib import TTFont
 
 from ...db import encode
@@ -38,6 +39,12 @@ def professional_preflight(brief, settings):
         raise EngineeringError(
             "正式成片需要已配置的 Qwen-TTS / Edge 云端 / Ming 本地旁白服务，不回退到开发音色。"
         )
+    if brief.voice == "edge":
+        if importlib.util.find_spec("edge_tts") is None:
+            raise EngineeringError("Edge 旁白需要安装 apps/api[edge]；不会回退到其他音色。")
+        # Timeline still validates measured spans and rejects missing native timing.
+        if settings.alignment_engine != "stable-ts":
+            return
     if not settings.alignment_python or not Path(settings.alignment_model).is_file():
         raise EngineeringError("正式成片需要真实语音对齐，请配置语音环境与本地对齐模型。")
 

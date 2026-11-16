@@ -61,6 +61,7 @@ class Settings(BaseSettings):
     tts_url: str = "http://127.0.0.1:7861"
     tts_key: str = ""
     tts_revision: str = "1"
+    tts_proxy: str = ""
     edge_voice: str = "zh-CN-YunxiNeural"
     ming_url: str = ""
     ming_key: str = ""
