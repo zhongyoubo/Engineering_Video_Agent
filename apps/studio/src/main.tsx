@@ -1131,6 +1131,7 @@ function App() {
                     compositionWidth={props.width}
                     compositionHeight={props.height}
                     fps={props.fps}
+                    initialFrame={Math.min(30, Math.max(0, props.total_frames - 1))}
                     durationInFrames={Math.max(1, props.total_frames)}
                     controls
                     style={{ width: '100%', aspectRatio: '16/9' }}

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "intro",
+    "title": "从项目，到讲解视频",
+    "narration": "输入项目源码或提示词，让原生 Agent 完成内容策划、脚本与动效设计，编写真实 Remotion/React/TSX 工程，通过构建、试渲染、图像审查与修复后交付视频和完整源码。"
+  },
+  {
+    "id": "visual",
+    "title": "让概念成为画面",
+    "narration": "Agent 仍可自由编写镜头与组件，不受这些积木限制。"
+  },
+  {
+    "id": "timing",
+    "title": "由真实声音驱动画面",
+    "narration": "Qwen 与真实对齐得到实际音轨和帧预算。"
+  },
+  {
+    "id": "studio",
+    "title": "可以操作，也可以修改",
+    "narration": "有音轨后在“音画时间轴”查看实际波形、镜头预览和旁白同步事件。修改另存新版本，与上一版比较。"
+  },
+  {
+    "id": "gates",
+    "title": "每一次修改，都重新验证",
+    "narration": "同一源码 hash 的构建、预览、审查全部通过后才最终渲染。"
+  },
+  {
+    "id": "delivery",
+    "title": "交付视频，也交付工程",
+    "narration": "下载 MP4、WAV、SRT、脚本、报告和可继续编辑的 Remotion 工程。"
+  },
+  {
+    "id": "boundary",
+    "title": "已验证，与待验证",
+    "narration": "当前环境没有 Docker/gVisor 和供应商凭据，所以未完成真实原生模型到视频的集成验收。"
+  }
+]

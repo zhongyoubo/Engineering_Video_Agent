@@ -16,6 +16,22 @@ test('4K design settings and editable motion survive a revision fork', async ({
   await page.getByRole('button', { name: '开始创作' }).click();
   await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
   await expect(page.getByText(/SEC · 4K/)).toBeVisible();
+  const previewTitle = page
+    .locator('.preview-panel')
+    .getByText('解释一个概念', { exact: true })
+    .and(page.locator('div'));
+  await expect(previewTitle).toBeVisible();
+  await expect
+    .poll(() =>
+      previewTitle.evaluate((element) => {
+        let opacity = 1;
+        for (let node: Element | null = element; node; node = node.parentElement) {
+          opacity *= Number(getComputedStyle(node).opacity);
+        }
+        return opacity;
+      }),
+    )
+    .toBeGreaterThan(0.9);
   await page.getByRole('button', { name: '音画时间轴', exact: true }).click();
   await page.getByLabel('视觉表达', { exact: true }).selectOption('queue');
   await expect(page.getByLabel('镜头讲解目标')).toBeVisible();
@@ -26,6 +42,10 @@ test('4K design settings and editable motion survive a revision fork', async ({
     timeout: 30000,
   });
   await expect(page.getByLabel('视觉表达', { exact: true })).toHaveValue('queue');
+  await page.getByLabel('视觉表达', { exact: true }).selectOption('overview');
+  await page.getByLabel('总览布局').selectOption('fan');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  await expect(page.getByLabel('总览布局')).toHaveValue('fan', { timeout: 30000 });
 });
 
 test('prompt → storyboard → edit → independent revision', async ({ page, context }) => {

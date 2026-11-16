@@ -22,7 +22,15 @@ jobs:
           .venv/bin/python -m pip install --no-deps -e apps/api
           npm ci --no-audit --no-fund
           npx playwright install --with-deps chromium
-          echo "CHROME_EXECUTABLE=$(node -e "process.stdout.write(require('playwright').chromium.executablePath())")" >> "$GITHUB_ENV"
+      - name: Install compatible Remotion headless shell
+        run: |
+          node --input-type=module <<'JS'
+          import {ensureBrowser} from '@remotion/renderer';
+          import {appendFileSync} from 'node:fs';
+          const browser = await ensureBrowser();
+          if (!('path' in browser)) throw Error('Remotion browser unavailable');
+          appendFileSync(process.env.GITHUB_ENV, 'CHROME_EXECUTABLE=' + browser.path + '\n');
+          JS
       - run: .venv/bin/python scripts/check.py
       - run: npm run format:check
       - run: npm run test:ui

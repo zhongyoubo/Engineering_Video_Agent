@@ -68,3 +68,9 @@ API 可增加 `render_profile: {"resolution":"4k","fps":30}`、`design_pack: "ed
 目标环境用 `scripts/verify_engineering_deployment.py` 分别验收 Codex / Claude Code；该脚本会消耗对应供应商额度。
 
 当前环境没有 Docker/gVisor 和供应商凭据，所以未完成真实原生模型到视频的集成验收。人工完整观看、试听、模型输出质量、每类项目的运行依赖仍需验收。框架已提供工程闭环，不能承诺任意项目零配置运行或每次自动达到专业成片质量。
+
+## 本项目介绍片与三个参考视频复查
+
+`examples/project-intro/` 提供固定编排的本项目介绍片测试：真实源码导入、工作台录制、公开 README 旁白、实际词时间戳、Remotion 编译/预览/4K 渲染与可编辑工程。复现方法见该目录 README，分析与边界见 `docs/reference-review-and-self-test-cn.md`。样片使用固定编排，不作为原生模型自动制作验收。
+
+本次补充扇形总览布局、按图解类型限制元素数与文字长度、修正长标签显示及模板预览暂停在空白首帧的问题。Edge 可选依赖为 `pip install -e 'apps/api[edge]'`；需显式选择 Edge，支持 `EXPLAINER_EDGE_VOICE` 和可选 `EXPLAINER_TTS_PROXY`。其实际词边界通过文本/时间校验后可驱动画面；显式选择 `stable-ts` 时仍需本地模型，不把 Edge 时间戳称为 Whisper。没有自动改用其他配音服务。
