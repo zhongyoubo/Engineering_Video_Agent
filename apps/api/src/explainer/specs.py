@@ -4,6 +4,27 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
+# Shared with the native planning payload so it knows the same bounds the API enforces.
+PATTERN_ELEMENT_LIMITS = {
+    "overview": 8,
+    "code_scan": 4,
+    "compare": 3,
+    "graph": 8,
+    "capacity": 8,
+    "queue": 3,
+    "depth": 2,
+}
+PATTERN_LABEL_LIMITS = {
+    "overview": 32,
+    "code_scan": 50,
+    "compare": 100,
+    "graph": 20,
+    "capacity": 32,
+    "queue": 20,
+    "depth": 24,
+}
+
+
 class Spec(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
@@ -61,18 +82,10 @@ class SceneSpec(Spec):
     def valid_references(self):
         if self.layout == "fan" and self.pattern != "overview":
             raise ValueError("Fan layout is available for overview scenes only")
-        limits = {"compare": (1, 3), "code_scan": (1, 4), "depth": (1, 2), "queue": (1, 3), "graph": (1, 8)}
-        minimum, maximum = limits.get(self.pattern, (1, 8))
-        if not minimum <= len(self.elements) <= maximum:
-            raise ValueError(f"Pattern {self.pattern} requires {minimum}–{maximum} elements")
-        label_limit = {
-            "overview": 32,
-            "code_scan": 50,
-            "graph": 20,
-            "capacity": 32,
-            "queue": 20,
-            "depth": 24,
-        }.get(self.pattern, 100)
+        maximum = PATTERN_ELEMENT_LIMITS[self.pattern]
+        if len(self.elements) > maximum:
+            raise ValueError(f"Pattern {self.pattern} requires 1–{maximum} elements")
+        label_limit = PATTERN_LABEL_LIMITS[self.pattern]
         if any(len(e.label) > label_limit for e in self.elements):
             raise ValueError(f"Pattern {self.pattern} labels must fit within {label_limit} characters")
         ids = {e.id for e in self.elements}

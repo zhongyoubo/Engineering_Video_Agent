@@ -233,6 +233,54 @@ def main():
         if (out / action / "source-hash.txt").read_text() != workspace.fingerprint():
             raise RuntimeError("Stale build/preview/final evidence")
     metadata = inspect_video(out / "final/video.mp4", runner, cursor, 3840, 2160)
+    level_log = runner.run(
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-nostats",
+            "-i",
+            out / "final/video.mp4",
+            "-vn",
+            "-af",
+            "loudnorm=I=-16:TP=-1.5:LRA=7:print_format=json",
+            "-f",
+            "null",
+            "-",
+        ],
+        timeout=300,
+    )
+    levels = json.JSONDecoder().raw_decode(level_log[level_log.rfind("{") :])[0]
+    audio_measurement = {
+        "integrated_lufs": float(levels["input_i"]),
+        "true_peak_dbtp": float(levels["input_tp"]),
+        "loudness_range_lu": float(levels["input_lra"]),
+    }
+    if (
+        not -20 < audio_measurement["integrated_lufs"] < -12
+        or audio_measurement["true_peak_dbtp"] >= 0
+    ):
+        raise RuntimeError(
+            f"Narration loudness requires correction: {audio_measurement}"
+        )
+    runner.run(
+        [
+            "ffmpeg",
+            "-v",
+            "error",
+            "-y",
+            "-i",
+            out / "final/video.mp4",
+            "-vn",
+            "-ar",
+            "48000",
+            "-ac",
+            "1",
+            "-c:a",
+            "pcm_s16le",
+            out / "narration.wav",
+        ],
+        timeout=300,
+    )
     workspace.export(
         out / "remotion-project.zip",
         {
@@ -271,6 +319,7 @@ def main():
         "source_hash": workspace.fingerprint(),
         "voice": "Edge zh-CN-YunxiNeural",
         "measured_timing": "native word boundaries; not Whisper",
+        "audio_measurement": audio_measurement,
         "measured_audio_seconds": sum(v["duration"] for v in audio.values()),
         "native_model_inference": False,
         "isolated_generated_source_execution": False,

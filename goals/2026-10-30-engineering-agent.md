@@ -38,3 +38,5 @@ No Docker daemon/gVisor or provider credentials in this environment. Real native
 ## V4 follow-up (2026-11-16)
 
 Implementation and fresh checks are recorded in `goals/2026-11-16-visual-explainer-v4.md` and `docs/verification-v4.json`; historical V3 fixture results above are unchanged.
+
+Self-project narrated 4K follow-up: see `docs/verification-project-intro.json` and the final section of `goals/2026-11-16-visual-explainer-v4.md`. This extends actual media verification, not native-model or isolation acceptance.

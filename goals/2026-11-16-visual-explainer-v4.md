@@ -42,3 +42,18 @@ Updated below with actual commands, results and remaining deployment checks befo
 No Docker daemon, provider API keys or speech weights are available here. Real Codex/Claude inference, newly synthesized natural Mandarin male narration, gVisor/isolated 4K performance, independent review quality, target PostgreSQL/S3 and real inference cancellation remain unverified. A bounded motion window is not full transition coverage; a lightweight anchor editor is not a full nonlinear editor. See docs/verification-v4.json.
 
 The GitHub Actions workflow is newly added; local success does not assert a remote CI run passed.
+
+
+## Three-reference review and self-project test (2026-11-16 follow-up)
+
+- Re-examined all three local video references; documented similarities, pattern coverage, production/UI gaps and deployment boundaries in `docs/reference-review-and-self-test-cn.md`.
+- Added fan overview layout, pattern cardinality/label bounds with matching native planning constraints, wrapped labels, actual Edge word-boundary streaming and optional dependency/proxy. Kept explicit forced alignment requirements and no implicit provider fallback.
+- Fixed paused template preview showing an empty frame zero. Browser regression checks actual ancestor opacity and fan layout persistence.
+- `.venv/bin/python scripts/check.py`: 95 backend tests, ruff, TypeScript and build passed; frontend build/format rechecked after UI fix. Latest backend recheck after planning-constraint refactor: 95 passed. Browser: 6 passed after adding preview regression. No test deleted or skipped.
+- Real self-project UI ingestion: 187 files, 6 storyboard scenes, evidence browsing, motion edit, saved revision and comparison. Explicit template/storyboard mode, not model generation.
+- New Edge Yunxi male audio: 7 segments, 57.858669 seconds, 132 measured word spans. Only exact already-public README excerpts were sent, after checking public repository visibility/provenance. No source upload or private text was sent. Not Qwen/Whisper verification.
+- Fixed authored intro source: real compiler, 21 keyframes, 7 continuous clips/contact sheets, 3840x2160 / 30fps / 1927 frames / 64.235s H.264/AAC; full decode passed. Complete project fingerprint is recorded in `docs/verification-project-intro.json`; stale build/preview/final package gates enforced.
+- Final muxed audio: -17.41 LUFS integrated, -4.46 dBTP true peak, 6.9 LU range. No full-black segment >=0.2s detected. These are measurements, not pronunciation/listening certification.
+- CI diagnosed actual Ubuntu-latest/Playwright installation incompatibility and full-Chromium old-headless removal. Pinned Ubuntu24.04 and installed Remotion-compatible Headless Shell; preserved diagnostics. Code a36532f CI run43916631812 passed every step, including visual fixture and MCP.
+- Editable project ZIP includes all media/font/source. UI capture is 1080p enlarged in a 4K composition; vector/text elements render at 4K. No claim that all raster source pixels are 4K.
+- Remaining: actual Codex/Claude provider inference, Docker/gVisor isolation, full audio/video listening, advanced metaphors/object transitions, and complete persistent risk/readiness management. Existing target-environment boundaries remain.

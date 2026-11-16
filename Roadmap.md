@@ -11,6 +11,7 @@ The product is an engineering video Agent, with Codex/Claude Code as replaceable
 | Further capability | Managed Skill/MCP registry, advanced browser exploration, per-user credentials, collaborative approvals, larger visual evaluation sets | Planned; no completion claim |
 | V4 visual foundation | RenderProfile, VoiceSpec/cache, seven motion patterns, semantic cue compiler, continuous clips/contact sheets, waveform, motion editor, revision diff, optional stdio MCP | Implemented; see verification-v4.json for actual checks |
 | V4 reference-quality acceptance | Real provider-generated videos with newly synthesized Mandarin narration, independent critique, full playback/listening and isolated 4K deployment | Still requires target services and human review; fixed silent fixtures do not satisfy this milestone |
+| V4 self-project showcase | Real self-source ingestion, UI recording, Edge male narration/native timing, authored 64.235s 4K video, editable source and measured audio | Verified fixed authored project; 95 backend / 6 browser tests; native inference and full listening remain unverified |
 | V4 further production | Full nonlinear timeline, reference-video automatic ingestion, measured transition-wide review, scene render cache, broader project adapters and managed MCP registry | Planned |
 
 Release acceptance: deliver source, install instructions, design, contracts, test evidence and limitations together. No arbitrary calendar promise substitutes for real verification.
