@@ -4,7 +4,7 @@
       "additionalProperties": false,
       "properties": {
         "path": {
-          "maxLength": 160,
+          "maxLength": 320,
           "minLength": 1,
           "title": "Path",
           "type": "string"
@@ -59,9 +59,24 @@
           "items": {
             "type": "string"
           },
-          "maxItems": 48,
+          "maxItems": 96,
           "minItems": 1,
           "title": "Inspected Frames",
+          "type": "array"
+        },
+        "motion_continuity": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Motion Continuity",
+          "type": "integer"
+        },
+        "inspected_motion_frames": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Inspected Motion Frames",
           "type": "array"
         }
       },
@@ -71,7 +86,9 @@
         "visual_explanation",
         "timing",
         "issues",
-        "inspected_frames"
+        "inspected_frames",
+        "motion_continuity",
+        "inspected_motion_frames"
       ],
       "title": "VisualReview",
       "type": "object"

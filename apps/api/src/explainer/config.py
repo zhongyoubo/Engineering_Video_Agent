@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     git_allowed_hosts: str = "github.com,gitlab.com"
     engineering_render_image: str = "explainer-engineering-render:3.0.0"
     engineering_max_steps: int = Field(18, ge=5, le=40)
-    engineering_tool_timeout: int = Field(300, ge=30, le=1200)
+    engineering_tool_timeout: int = Field(900, ge=30, le=7200)
     native_agent_providers: str = ""
     codex_api_key: str = ""
     claude_api_key: str = ""

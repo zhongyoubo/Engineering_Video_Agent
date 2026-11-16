@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from .specs import RenderProfile, VoiceSpec, SceneSpec, CompiledEvent
 
 
 class StrictModel(BaseModel):
@@ -40,6 +41,9 @@ class Brief(StrictModel):
     agent_change: AgentChange | None = None
     video_mode: Literal["template", "engineering"] = "template"
     quality_profile: Literal["professional", "draft"] = "professional"
+    render_profile: RenderProfile = Field(default_factory=RenderProfile)
+    voice_spec: VoiceSpec = Field(default_factory=VoiceSpec)
+    design_pack: Literal["editorial_warm", "workspace_tech"] = "workspace_tech"
     runtime: Literal["none", "auto", "static-web", "python-cli", "node-web", "python-api", "node-cli"] = (
         "none"
     )
@@ -137,8 +141,8 @@ class Scene(StrictModel):
     id: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,60}$")
     type: SceneType
     title: str = Field(min_length=1, max_length=90)
-    subtitle: str = Field(default="", max_length=160)
-    narration: str = Field(min_length=1, max_length=1600)
+    subtitle: str = Field(default="", max_length=320)
+    narration: str = Field(min_length=1, max_length=3200)
     bullets: list[str] = Field(default_factory=list, max_length=6)
     code: str = Field(default="", max_length=1400)
     claim_ids: list[str] = Field(default_factory=list, max_length=20)
@@ -153,6 +157,8 @@ class Scene(StrictModel):
     cues: list[Cue] = Field(default_factory=list)
     locked: bool = False
     diagram: Diagram | None = None
+    motion: SceneSpec | None = None
+    compiled_events: list[CompiledEvent] = Field(default_factory=list, max_length=24)
 
 
 class StoryboardIR(StrictModel):
@@ -161,16 +167,19 @@ class StoryboardIR(StrictModel):
     language: Literal["zh-CN", "en-US"]
     accent: Literal["blue", "violet", "teal", "amber"] = "blue"
     audience: str
-    scenes: list[Scene] = Field(min_length=1, max_length=16)
+    scenes: list[Scene] = Field(min_length=1, max_length=32)
     fps: Literal[30] = 30
-    width: Literal[1920] = 1920
-    height: Literal[1080] = 1080
+    width: Literal[1920, 3840] = 1920
+    height: Literal[1080, 2160] = 1080
+    design_pack: Literal["editorial_warm", "workspace_tech"] = "workspace_tech"
     total_frames: int = Field(default=2700, ge=1)
     notices: list[str] = Field(default_factory=list)
     audio_alignment: Literal["estimated_sentence", "native_words", "forced_words", "mixed", "none"] = "none"
 
     @model_validator(mode="after")
     def unique_ids(self):
+        if (self.width, self.height) not in {(1920, 1080), (3840, 2160)}:
+            raise ValueError("Unsupported output aspect ratio")
         if len({s.id for s in self.scenes}) != len(self.scenes):
             raise ValueError("Scene IDs must be unique")
         if any(len(b) > 140 for s in self.scenes for b in s.bullets):

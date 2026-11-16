@@ -1,0 +1,45 @@
+name: Engineering checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r requirements.lock
+          .venv/bin/python -m pip install --no-deps -e apps/api
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          echo "CHROME_EXECUTABLE=$(node -e "process.stdout.write(require('playwright').chromium.executablePath())")" >> "$GITHUB_ENV"
+      - run: .venv/bin/python scripts/check.py
+      - run: npm run format:check
+      - run: npm run test:ui
+      - name: Fixed authored visual fixture (no model inference)
+        run: .venv/bin/python scripts/verify_visual_v4.py
+      - name: MCP SDK and authenticated API smoke
+        run: |
+          python -m venv .mcp-venv
+          .mcp-venv/bin/python -m pip install -e 'apps/api[mcp]'
+          .mcp-venv/bin/python scripts/verify_mcp.py --api-python .venv/bin/python
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-evidence
+          path: |
+            .verify-visual-v4/verification.json
+            .verify-visual-v4/final/video.mp4
+            .verify-visual-v4/preview/motion-*.mp4
+            .verify-mcp-v4/verification.json
+            test-results/

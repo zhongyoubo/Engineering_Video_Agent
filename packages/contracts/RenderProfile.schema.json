@@ -1,0 +1,22 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "resolution": {
+      "default": "1080p",
+      "enum": [
+        "1080p",
+        "4k"
+      ],
+      "title": "Resolution",
+      "type": "string"
+    },
+    "fps": {
+      "const": 30,
+      "default": 30,
+      "title": "Fps",
+      "type": "integer"
+    }
+  },
+  "title": "RenderProfile",
+  "type": "object"
+}

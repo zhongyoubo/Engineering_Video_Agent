@@ -2,10 +2,48 @@ import json
 import re
 import shutil
 import textwrap
+import hashlib
 
 import httpx
 
 from ..services.process import ProcessError
+from ..specs import VoiceSpec
+
+
+def voice_configuration(engine, settings, spec=None):
+    spec = spec or VoiceSpec()
+    selected = engine if engine != "auto" else settings.tts_engine
+    if selected == "auto":
+        selected = "espeak" if shutil.which("espeak-ng") else "none"
+    # Explicitly reject unsupported customization instead of silently ignoring it.
+    if selected == "qwen" and (spec.voice_id not in {"", "professional-male"} or spec.model):
+        raise ValueError(
+            "Qwen clone service uses its configured reference/model; change service revision instead"
+        )
+    if selected == "ming" and spec.voice_id:
+        raise ValueError("Ming adapter does not expose voice selection")
+    if selected not in {"ming"} and spec.model:
+        raise ValueError("This voice adapter does not expose model selection")
+    return {
+        "engine": selected,
+        "endpoint": settings.ming_url
+        if selected == "ming"
+        else settings.tts_url
+        if selected == "qwen"
+        else "",
+        "model": spec.model or (settings.ming_model if selected == "ming" else ""),
+        "voice_id": spec.voice_id
+        or (settings.edge_voice if selected == "edge" else "professional-male" if selected == "qwen" else ""),
+        "speed": spec.speed,
+        "revision": spec.revision,
+        "service_revision": settings.tts_revision,
+        "mastering": "highpass65-loudnorm16-peak1.5-lra7-v3",
+    }
+
+
+def voice_cache_key(text, language, engine, settings, spec=None):
+    payload = {"text": text, "language": language, **voice_configuration(engine, settings, spec)}
+    return hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
 def probe(path, runner):
@@ -15,11 +53,10 @@ def probe(path, runner):
     return float(value["format"]["duration"])
 
 
-def synthesize(scene, language, engine, settings, directory, runner):
+def synthesize(scene, language, engine, settings, directory, runner, spec=None):
     raw, mastered = directory / (scene.id + "-raw.wav"), directory / (scene.id + ".wav")
-    selected = engine if engine != "auto" else settings.tts_engine
-    if selected == "auto":
-        selected = "espeak" if shutil.which("espeak-ng") else "none"
+    configuration = voice_configuration(engine, settings, spec)
+    selected = configuration["engine"]
     if selected == "none":
         return {"path": None, "duration": scene.duration, "engine": "none"}
     words = []
@@ -61,7 +98,7 @@ def synthesize(scene, language, engine, settings, directory, runner):
         async def _speak():
             # Cloud Neural voice (Microsoft Edge read-aloud service); mp3 out,
             # mastered to wav by the shared ffmpeg step below.
-            com = edge_tts.Communicate(scene.narration, settings.edge_voice)
+            com = edge_tts.Communicate(scene.narration, configuration["voice_id"])
             await com.save(raw)
 
         try:
@@ -80,7 +117,7 @@ def synthesize(scene, language, engine, settings, directory, runner):
                 settings.ming_url.rstrip("/") + "/v1/audio/speech",
                 headers=headers,
                 json={
-                    "model": settings.ming_model,
+                    "model": configuration["model"],
                     "input": scene.narration,
                     "response_format": "wav",
                 },
@@ -117,6 +154,7 @@ def synthesize(scene, language, engine, settings, directory, runner):
     duration = probe(raw, runner)
     if not 0.1 < duration <= 180:
         raise ValueError("Invalid TTS duration")
+    speed = configuration["speed"]
     runner.run(
         [
             "ffmpeg",
@@ -126,7 +164,7 @@ def synthesize(scene, language, engine, settings, directory, runner):
             "-i",
             raw,
             "-af",
-            "highpass=f=65,loudnorm=I=-16:TP=-1.5:LRA=7",
+            f"atempo={speed},highpass=f=65,loudnorm=I=-16:TP=-1.5:LRA=7",
             "-ar",
             "48000",
             "-ac",
@@ -141,7 +179,8 @@ def synthesize(scene, language, engine, settings, directory, runner):
         "path": str(mastered),
         "duration": probe(mastered, runner),
         "engine": selected,
-        "words": words,
+        "words": [{**w, "start": w["start"] / speed, "end": w["end"] / speed} for w in words],
+        "configuration": configuration,
         "alignment_method": "native_words" if words else "estimated_sentence",
     }
 

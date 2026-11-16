@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "target": {
+      "title": "Target",
+      "type": "string"
+    },
+    "action": {
+      "enum": [
+        "reveal",
+        "highlight",
+        "progress"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "start_frame": {
+      "minimum": 0,
+      "title": "Start Frame",
+      "type": "integer"
+    },
+    "end_frame": {
+      "exclusiveMinimum": 0,
+      "title": "End Frame",
+      "type": "integer"
+    },
+    "timing_source": {
+      "enum": [
+        "measured_words",
+        "estimated_draft"
+      ],
+      "title": "Timing Source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "target",
+    "action",
+    "start_frame",
+    "end_frame",
+    "timing_source"
+  ],
+  "title": "CompiledEvent",
+  "type": "object"
+}

@@ -210,6 +210,9 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
             "default_creation": "engineering",
             "engineering_endpoint": "/api/v3/videos",
             "legacy_endpoint": "/api/v1/videos",
+            "resolutions": ["1080p", "4k"],
+            "design_packs": ["editorial_warm", "workspace_tech"],
+            "motion_patterns": ["overview", "code_scan", "compare", "graph", "capacity", "queue", "depth"],
         },
         "scheduler": settings.scheduler,
         "max_upload_bytes": settings.max_upload_bytes,
@@ -469,6 +472,42 @@ def get_revision(revision_id: str, tenant_id=Depends(tenant), deps=Depends(depen
     return revision_view(db, owned(db, "revisions", revision_id, tenant_id))
 
 
+@app.get("/api/v1/revisions/{revision_id}/compare/{base_id}")
+def compare_revisions(revision_id: str, base_id: str, tenant_id=Depends(tenant), deps=Depends(dependencies)):
+    _, db, _ = deps
+    current = revision_view(db, owned(db, "revisions", revision_id, tenant_id))
+    base = revision_view(db, owned(db, "revisions", base_id, tenant_id))
+    if current["project_id"] != base["project_id"]:
+        raise HTTPException(422, "只能比较同一项目的版本")
+    before = {s["id"]: s for s in (base["storyboard"] or {}).get("scenes", [])}
+    after = {s["id"]: s for s in (current["storyboard"] or {}).get("scenes", [])}
+    changed = []
+    for identifier in sorted(before.keys() | after.keys()):
+        fields = (
+            ["added"]
+            if identifier not in before
+            else ["removed"]
+            if identifier not in after
+            else [
+                key
+                for key in sorted(before[identifier].keys() | after[identifier].keys())
+                if before[identifier].get(key) != after[identifier].get(key)
+            ]
+        )
+        if fields:
+            changed.append({"id": identifier, "fields": fields})
+    return {
+        "revision_id": revision_id,
+        "base_id": base_id,
+        "changed_scenes": changed,
+        "settings_changed": [
+            key
+            for key in sorted(current["brief"].keys() | base["brief"].keys())
+            if current["brief"].get(key) != base["brief"].get(key)
+        ],
+    }
+
+
 @app.post("/api/v1/revisions/{revision_id}/fork", status_code=202)
 async def fork_revision(
     revision_id: str, body: ForkRevision, tenant_id=Depends(tenant), deps=Depends(dependencies)
@@ -505,8 +544,15 @@ async def fork_revision(
                     owned(db, "assets", aid, tenant_id)
                     if not prior or aid not in [prior.audio_id, prior.media_id]:
                         raise HTTPException(422, "不能在分镜中注入未引用的素材")
-            if not prior or scene.narration != prior.narration or brief.voice != old_brief.voice:
+            if (
+                not prior
+                or scene.narration != prior.narration
+                or brief.voice != old_brief.voice
+                or brief.voice_spec != old_brief.voice_spec
+                or brief.language != old_brief.language
+            ):
                 scene.audio_id, scene.cues = None, []
+                scene.compiled_events = []
     brief.mode = "automatic" if body.auto_render else "storyboard"
     return await schedule(
         settings,

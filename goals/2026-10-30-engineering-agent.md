@@ -33,3 +33,8 @@ No Docker or native provider credentials are available in this execution environ
 
 ### Remaining deployment acceptance
 No Docker daemon/gVisor or provider credentials in this environment. Real native-to-video inference, code container isolation, professional audio/listening quality and cross-Worker fault recovery require target-environment acceptance. No fixture result is labelled real native inference. Existing SSO/RBAC/billing and arbitrary project runtime support are not claimed.
+
+
+## V4 follow-up (2026-11-16)
+
+Implementation and fresh checks are recorded in `goals/2026-11-16-visual-explainer-v4.md` and `docs/verification-v4.json`; historical V3 fixture results above are unchanged.

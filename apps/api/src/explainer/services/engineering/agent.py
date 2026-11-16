@@ -33,7 +33,7 @@ class NativeEngineeringAgent:
             ProductionPlan,
             {
                 "phase": "production-planning",
-                "instruction": "Create an audience-focused production plan, full fluent narration, art direction and per-scene visual/motion treatment. Explain mechanisms visually; do not repeat text cards. Use real UI capture when supplied. All source assertions require supplied evidence IDs.",
+                "instruction": "Create an audience-focused production plan, full fluent narration, art direction and per-scene visual/motion treatment. For key explanatory scenes provide motion with purpose, chapter, stable element IDs and events anchored to actual narration phrases. Choose patterns by explanatory relationship, not keyword matching. Use code_scan, compare, graph, capacity, queue, depth or overview where appropriate; custom TSX remains available. Explain mechanisms visually; do not repeat text cards. Use real UI capture when supplied. All source assertions require supplied evidence IDs.",
             },
         )
         board = validate_design(plan.storyboard.model_dump(), self.content, self.brief)
@@ -41,7 +41,10 @@ class NativeEngineeringAgent:
 
     def decide(self, workspace, plan):
         instructions = (ROOT / "docs/design/authoring-contract.md").read_text()
-        frames = [workspace.root / f["name"] for f in workspace.state["frames"]]
+        frames = [
+            workspace.root / f["name"]
+            for f in workspace.state["frames"] + workspace.state.get("motion_frames", [])
+        ]
         files = {
             str(p.relative_to(workspace.project)): p.read_text()
             for p in workspace.project.rglob("*")
@@ -61,6 +64,8 @@ class NativeEngineeringAgent:
                 },
                 "observations": workspace.state["journal"][-12:],
                 "frame_names": [f["name"] for f in workspace.state["frames"]],
+                "motion_frame_names": [f["name"] for f in workspace.state.get("motion_frames", [])],
+                "motion_review_scope": "Contact sheets sample motion; do not claim full playback or listening",
             },
             files,
             frames,

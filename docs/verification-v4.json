@@ -1,0 +1,87 @@
+{
+  "version": "4.0-foundation",
+  "date": "2026-11-16",
+  "base_commit": "4d46238d08dfd84ae751cb370b89fa62b9059a44",
+  "backend": {
+    "baseline_passed": 82,
+    "current_passed": 92,
+    "baseline_tests_removed": false
+  },
+  "browser": {
+    "baseline_count": 5,
+    "current_passed": 6,
+    "added": "4K settings and motion editing survive revision fork",
+    "executable": "compatible headless Chromium 138; system Chromium could not start in execution sandbox"
+  },
+  "ruff": "passed",
+  "typescript": "passed",
+  "frontend_build": "passed",
+  "prettier": "passed",
+  "visual_fixture": {
+    "actual_compiler_renderer": true,
+    "media": {
+      "decode": "passed",
+      "width": 3840,
+      "height": 2160,
+      "fps": 30.0,
+      "frames": 270,
+      "duration": 9.0
+    },
+    "scene_clips": 3,
+    "keyframes": 9,
+    "motion_sheets": 3,
+    "actual_native_inference": false,
+    "new_tts_inference": false,
+    "generated_code_isolation_tested": false,
+    "human_visual_and_listening_review": false,
+    "source": "fixed reviewed repository fixture"
+  },
+  "mcp_smoke": {
+    "initialize": "passed",
+    "tool_discovery": [
+      "video_get_capabilities",
+      "video_create_project",
+      "video_create_job",
+      "video_get_job",
+      "video_get_artifacts",
+      "video_cancel_job",
+      "video_fork_revision"
+    ],
+    "http_authenticated_calls": "passed",
+    "create_read_cancel": "passed",
+    "idempotency_and_revision_fork": "passed",
+    "actual_native_inference": false
+  },
+  "full_pipeline_fixture": {
+    "passed": true,
+    "actual_compiler_renderer_pipeline_storage_export": true,
+    "persisted_steps": 7,
+    "actual_native_inference": false,
+    "generated_code_isolation_tested": false
+  },
+  "visual_inspection": {
+    "performed_by": "assistant",
+    "scope": "three sampled scene images, not complete human playback/listening",
+    "human_approval": false
+  },
+  "render_sources_sha256": {
+    "packages/engineering-template/render.mjs": "1a076c4d30982467e2650c456f8665cd3f2a7a87649c154c20c789c9f5f06172",
+    "packages/engineering-template/src/Root.tsx": "2d1ebf2e93069d0a1d42319ab140b1db709f456ba4cdafc31c2739be91995dbb",
+    "packages/engineering-template/src/motion-kit.tsx": "4fcbbf5169ad924d7dfcc5ea98f3a10bd302b0b576c636aa2b7032aa9bb0ae21",
+    "examples/reference-patterns/Video.tsx": "a507395eea3005e5af3752d34c7e153041756209f499b63c3a48e21ae22a5265"
+  },
+  "unverified": [
+    "Real Codex/Claude provider inference with the V4 contracts",
+    "New natural Mandarin male narration and listening quality",
+    "Docker/gVisor generated-code execution and isolated 4K performance",
+    "Full-video motion/transition coverage and independent reviewer quality",
+    "Target PostgreSQL/S3 deployment and real inference cancellation"
+  ],
+  "limits": [
+    "Motion windows cover up to four seconds near the first event per scene, not every transition",
+    "Native review receives sampled motion sheets, not full audio/video playback",
+    "32 scenes maximum, 30fps, 16:9 only",
+    "MCP does not yet upload sources or register arbitrary third-party servers",
+    "No full nonlinear timeline or scene render cache"
+  ]
+}

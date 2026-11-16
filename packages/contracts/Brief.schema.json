@@ -21,6 +21,61 @@
       ],
       "title": "AgentChange",
       "type": "object"
+    },
+    "RenderProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "resolution": {
+          "default": "1080p",
+          "enum": [
+            "1080p",
+            "4k"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "fps": {
+          "const": 30,
+          "default": 30,
+          "title": "Fps",
+          "type": "integer"
+        }
+      },
+      "title": "RenderProfile",
+      "type": "object"
+    },
+    "VoiceSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "voice_id": {
+          "default": "",
+          "maxLength": 100,
+          "title": "Voice Id",
+          "type": "string"
+        },
+        "model": {
+          "default": "",
+          "maxLength": 100,
+          "title": "Model",
+          "type": "string"
+        },
+        "speed": {
+          "default": 1.0,
+          "maximum": 1.15,
+          "minimum": 0.85,
+          "title": "Speed",
+          "type": "number"
+        },
+        "revision": {
+          "default": "1",
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Revision",
+          "type": "string"
+        }
+      },
+      "title": "VoiceSpec",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -115,6 +170,8 @@
         "auto",
         "espeak",
         "qwen",
+        "edge",
+        "ming",
         "none"
       ],
       "title": "Voice",
@@ -166,6 +223,21 @@
         "draft"
       ],
       "title": "Quality Profile",
+      "type": "string"
+    },
+    "render_profile": {
+      "$ref": "#/$defs/RenderProfile"
+    },
+    "voice_spec": {
+      "$ref": "#/$defs/VoiceSpec"
+    },
+    "design_pack": {
+      "default": "workspace_tech",
+      "enum": [
+        "editorial_warm",
+        "workspace_tech"
+      ],
+      "title": "Design Pack",
       "type": "string"
     },
     "runtime": {

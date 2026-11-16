@@ -21,7 +21,7 @@ def source_path(value):
         or path.is_absolute()
         or not path.parts
         or path.parts[0] != "src"
-        or path.name in {"index.tsx", "Root.tsx", "contracts.ts", "env.d.ts"}
+        or path.name in {"index.tsx", "Root.tsx", "contracts.ts", "env.d.ts", "motion-kit.tsx"}
         or any(p.startswith(".") or p == "node_modules" for p in path.parts)
         or path.suffix not in {".tsx", ".ts", ".css"}
     ):
@@ -101,6 +101,7 @@ class Workspace:
         for key in ["build_hash", "preview_hash", "review_hash"]:
             self.state[key] = None
         self.state["frames"], self.state["review"], self.state["finished"] = [], None, False
+        self.state["clips"], self.state["motion_frames"] = [], []
 
     def record(self, kind, data):
         self.state["journal"].append({"step": self.state["iteration"], "kind": kind, "data": data})
