@@ -40,6 +40,7 @@ jobs:
           include-hidden-files: true
           path: |
             .verify-visual-v4/verification.json
+            .verify-visual-v4/*/result.json
             .verify-visual-v4/final/video.mp4
             .verify-visual-v4/preview/motion-*.mp4
             .verify-mcp-v4/verification.json

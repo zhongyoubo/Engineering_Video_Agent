@@ -88,17 +88,23 @@ def main():
         target.mkdir(exist_ok=True)
         # Exactly this authored fixture, never an externally supplied source file.
         assert workspace.state["files"] == {"src/Video.tsx": source}
-        runner.run(
-            [
-                "node",
-                ROOT / "packages/engineering-template/render.mjs",
-                workspace.project,
-                action,
-                target,
-            ],
-            timeout=900,
-            env=os.environ.copy(),
-        )
+        try:
+            runner.run(
+                [
+                    "node",
+                    ROOT / "packages/engineering-template/render.mjs",
+                    workspace.project,
+                    action,
+                    target,
+                ],
+                timeout=900,
+                env=os.environ.copy(),
+            )
+        except Exception as error:
+            result_path = target / "result.json"
+            if result_path.exists():
+                raise RuntimeError(result_path.read_text()) from error
+            raise
         receipt = json.loads((target / "result.json").read_text())
         if not receipt.get("ok"):
             raise RuntimeError(receipt)
