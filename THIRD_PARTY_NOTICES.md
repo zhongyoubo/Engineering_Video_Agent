@@ -1,0 +1,13 @@
+# 第三方组件
+
+本工程自有代码按 LICENSE（Apache-2.0）提供。该许可不替代下列组件、模型、编解码器或素材的许可。
+
+- Remotion：采用其专有 Remotion License，非 OSI 开源许可。商用组织、自动化服务、最终客户接收源码等情形需按实际条款确认。官方：https://www.remotion.dev/docs/license/faq 。本应用接收业务源码或提示词，生成自己的视频工程，不开放任意 Remotion 工程代渲染。
+- React、Vite、TypeScript、FastAPI、Lucide、Temporal SDK、FFmpeg、eSpeak 等遵循各自许可证。npm/pip 安装会带入相应 NOTICE/LICENSE；发布产品需维护依赖清单，不能仅保留本文件。
+- FFmpeg 的实际许可取决于构建配置，libx264 等组件另有许可；编码专利许可不由 Remotion 或本工程代码许可证覆盖。
+- Noto CJK 字体：原始字体来自之前使用的 Noto Sans CJK SC 字体资产；许可证全文在 assets/fonts/LICENSE.txt，具体版权归原作者。不得冒充自有字体。
+- Qwen3-TTS：仅提供接入代码与配置，模型权重不随包交付，部署前核对官方模型卡与代码许可证。参考声音必须是自设计或已获授权音色。
+- 样例源码、网页和图形为本工程自造测试内容，无外部客户数据。
+
+本次没有对所有依赖做法律审查或完整供应链安全认证。上线前按锁文件进行依赖安全与许可检查。
+

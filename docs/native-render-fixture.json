@@ -1,0 +1,9 @@
+{
+  "result": "passed",
+  "authored_protocol_fixture": true,
+  "actual_native_inference": false,
+  "diagram_rendered": true,
+  "editable_export": true,
+  "exact_frames": 600,
+  "full_decode": true
+}

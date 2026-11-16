@@ -1,0 +1,16 @@
+{
+  "name": "@explainer/video",
+  "version": "3.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/Video.tsx"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.538",
+    "@remotion/cli": "4.0.538",
+    "@remotion/renderer": "4.0.538",
+    "remotion": "4.0.538",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "protocol": "1.0",
+  "scenes": [
+    {
+      "id": "explain",
+      "type": "flow",
+      "title": "From request to response",
+      "subtitle": "",
+      "narration": "A request moves through the service and produces a response.",
+      "bullets": [
+        "Request",
+        "Service",
+        "Response"
+      ],
+      "code": "",
+      "claim_ids": [
+        "c_prompt"
+      ],
+      "evidence_ids": [],
+      "duration": 20,
+      "diagram": {
+        "nodes": [
+          {
+            "id": "request",
+            "label": "Request",
+            "detail": "A clear input",
+            "x": 160,
+            "y": 200,
+            "reveal": 0.05,
+            "emphasis": "none"
+          },
+          {
+            "id": "service",
+            "label": "Service",
+            "detail": "Defined behavior",
+            "x": 740,
+            "y": 200,
+            "reveal": 0.15,
+            "emphasis": "pulse"
+          }
+        ],
+        "edges": [
+          {
+            "source": "request",
+            "target": "service",
+            "label": "Process",
+            "reveal": 0.2
+          }
+        ]
+      }
+    }
+  ]
+}

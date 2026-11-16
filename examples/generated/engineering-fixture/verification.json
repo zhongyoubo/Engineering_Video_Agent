@@ -1,0 +1,12 @@
+{
+  "result": "passed",
+  "actual_tsc_and_remotion": true,
+  "compiler_error_observed_and_repaired": true,
+  "frames": 600,
+  "sampled_keyframes": 9,
+  "full_decode": "passed",
+  "actual_native_inference": false,
+  "review": "programmed fixture; manual visual inspection separate",
+  "voice": "reused actual approved Qwen sample; no new TTS inference",
+  "generated_code_isolation_tested": false
+}

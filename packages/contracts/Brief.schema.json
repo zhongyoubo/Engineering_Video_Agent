@@ -1,0 +1,220 @@
+{
+  "$defs": {
+    "AgentChange": {
+      "additionalProperties": false,
+      "properties": {
+        "scene_id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "instruction": {
+          "maxLength": 3000,
+          "minLength": 1,
+          "title": "Instruction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scene_id",
+        "instruction"
+      ],
+      "title": "AgentChange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "prompt": {
+      "default": "",
+      "maxLength": 12000,
+      "title": "Prompt",
+      "type": "string"
+    },
+    "input_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Input Id"
+    },
+    "language": {
+      "default": "zh-CN",
+      "enum": [
+        "zh-CN",
+        "en-US"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "audience": {
+      "default": "general",
+      "enum": [
+        "general",
+        "developer",
+        "beginner",
+        "executive"
+      ],
+      "title": "Audience",
+      "type": "string"
+    },
+    "target_seconds": {
+      "default": 90,
+      "maximum": 900,
+      "minimum": 20,
+      "title": "Target Seconds",
+      "type": "integer"
+    },
+    "duration_mode": {
+      "default": "target",
+      "enum": [
+        "target",
+        "exact",
+        "max"
+      ],
+      "title": "Duration Mode",
+      "type": "string"
+    },
+    "max_tempo": {
+      "default": 1.15,
+      "maximum": 1.3,
+      "minimum": 1,
+      "title": "Max Tempo",
+      "type": "number"
+    },
+    "require_alignment": {
+      "default": false,
+      "title": "Require Alignment",
+      "type": "boolean"
+    },
+    "accent": {
+      "default": "blue",
+      "enum": [
+        "blue",
+        "violet",
+        "teal",
+        "amber"
+      ],
+      "title": "Accent",
+      "type": "string"
+    },
+    "voice": {
+      "default": "auto",
+      "enum": [
+        "auto",
+        "espeak",
+        "qwen",
+        "none"
+      ],
+      "title": "Voice",
+      "type": "string"
+    },
+    "mode": {
+      "default": "automatic",
+      "enum": [
+        "automatic",
+        "storyboard"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "agent_engine": {
+      "default": "pipeline",
+      "enum": [
+        "pipeline",
+        "codex",
+        "claude-code"
+      ],
+      "title": "Agent Engine",
+      "type": "string"
+    },
+    "agent_change": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AgentChange"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "video_mode": {
+      "default": "template",
+      "enum": [
+        "template",
+        "engineering"
+      ],
+      "title": "Video Mode",
+      "type": "string"
+    },
+    "quality_profile": {
+      "default": "professional",
+      "enum": [
+        "professional",
+        "draft"
+      ],
+      "title": "Quality Profile",
+      "type": "string"
+    },
+    "runtime": {
+      "default": "none",
+      "enum": [
+        "none",
+        "auto",
+        "static-web",
+        "python-cli",
+        "node-web",
+        "python-api",
+        "node-cli"
+      ],
+      "title": "Runtime",
+      "type": "string"
+    },
+    "runtime_entry": {
+      "default": "",
+      "maxLength": 300,
+      "title": "Runtime Entry",
+      "type": "string"
+    },
+    "require_real_demo": {
+      "default": false,
+      "title": "Require Real Demo",
+      "type": "boolean"
+    },
+    "runtime_actions": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "maxItems": 24,
+      "title": "Runtime Actions",
+      "type": "array"
+    },
+    "api_requests": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "maxItems": 12,
+      "title": "Api Requests",
+      "type": "array"
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "title": "Brief",
+  "type": "object"
+}

@@ -1,0 +1,413 @@
+{
+  "$defs": {
+    "Cue": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "minimum": 0,
+          "title": "Start",
+          "type": "number"
+        },
+        "end": {
+          "exclusiveMinimum": 0,
+          "title": "End",
+          "type": "number"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "text"
+      ],
+      "title": "Cue",
+      "type": "object"
+    },
+    "Diagram": {
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/DiagramNode"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Nodes",
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/DiagramEdge"
+          },
+          "maxItems": 24,
+          "title": "Edges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "nodes",
+        "edges"
+      ],
+      "title": "Diagram",
+      "type": "object"
+    },
+    "DiagramEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 24,
+          "title": "Label",
+          "type": "string"
+        },
+        "reveal": {
+          "maximum": 0.9,
+          "minimum": 0,
+          "title": "Reveal",
+          "type": "number"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "label",
+        "reveal"
+      ],
+      "title": "DiagramEdge",
+      "type": "object"
+    },
+    "DiagramNode": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,32}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "detail": {
+          "maxLength": 60,
+          "title": "Detail",
+          "type": "string"
+        },
+        "x": {
+          "maximum": 1460,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 460,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "reveal": {
+          "maximum": 0.9,
+          "minimum": 0,
+          "title": "Reveal",
+          "type": "number"
+        },
+        "emphasis": {
+          "enum": [
+            "none",
+            "pulse"
+          ],
+          "title": "Emphasis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "detail",
+        "x",
+        "y",
+        "reveal",
+        "emphasis"
+      ],
+      "title": "DiagramNode",
+      "type": "object"
+    },
+    "Scene": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/SceneType"
+        },
+        "title": {
+          "maxLength": 90,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "subtitle": {
+          "default": "",
+          "maxLength": 160,
+          "title": "Subtitle",
+          "type": "string"
+        },
+        "narration": {
+          "maxLength": 1600,
+          "minLength": 1,
+          "title": "Narration",
+          "type": "string"
+        },
+        "bullets": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 6,
+          "title": "Bullets",
+          "type": "array"
+        },
+        "code": {
+          "default": "",
+          "maxLength": 1400,
+          "title": "Code",
+          "type": "string"
+        },
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Claim Ids",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "verification": {
+          "default": "concept",
+          "enum": [
+            "user_provided",
+            "static",
+            "runtime",
+            "concept"
+          ],
+          "title": "Verification",
+          "type": "string"
+        },
+        "duration": {
+          "default": 12,
+          "maximum": 180,
+          "minimum": 2,
+          "title": "Duration",
+          "type": "number"
+        },
+        "start_frame": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Start Frame",
+          "type": "integer"
+        },
+        "frames": {
+          "default": 360,
+          "minimum": 1,
+          "title": "Frames",
+          "type": "integer"
+        },
+        "audio_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audio Id"
+        },
+        "media_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Id"
+        },
+        "media_kind": {
+          "default": "image",
+          "enum": [
+            "image",
+            "video"
+          ],
+          "title": "Media Kind",
+          "type": "string"
+        },
+        "cues": {
+          "items": {
+            "$ref": "#/$defs/Cue"
+          },
+          "title": "Cues",
+          "type": "array"
+        },
+        "locked": {
+          "default": false,
+          "title": "Locked",
+          "type": "boolean"
+        },
+        "diagram": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Diagram"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "title",
+        "narration"
+      ],
+      "title": "Scene",
+      "type": "object"
+    },
+    "SceneType": {
+      "enum": [
+        "title",
+        "cards",
+        "flow",
+        "architecture",
+        "code",
+        "terminal",
+        "ui",
+        "summary"
+      ],
+      "title": "SceneType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "language": {
+      "enum": [
+        "zh-CN",
+        "en-US"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "accent": {
+      "default": "blue",
+      "enum": [
+        "blue",
+        "violet",
+        "teal",
+        "amber"
+      ],
+      "title": "Accent",
+      "type": "string"
+    },
+    "audience": {
+      "title": "Audience",
+      "type": "string"
+    },
+    "scenes": {
+      "items": {
+        "$ref": "#/$defs/Scene"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Scenes",
+      "type": "array"
+    },
+    "fps": {
+      "const": 30,
+      "default": 30,
+      "title": "Fps",
+      "type": "integer"
+    },
+    "width": {
+      "const": 1920,
+      "default": 1920,
+      "title": "Width",
+      "type": "integer"
+    },
+    "height": {
+      "const": 1080,
+      "default": 1080,
+      "title": "Height",
+      "type": "integer"
+    },
+    "total_frames": {
+      "default": 2700,
+      "minimum": 1,
+      "title": "Total Frames",
+      "type": "integer"
+    },
+    "notices": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notices",
+      "type": "array"
+    },
+    "audio_alignment": {
+      "default": "none",
+      "enum": [
+        "estimated_sentence",
+        "native_words",
+        "forced_words",
+        "mixed",
+        "none"
+      ],
+      "title": "Audio Alignment",
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "language",
+    "audience",
+    "scenes"
+  ],
+  "title": "StoryboardIR",
+  "type": "object"
+}

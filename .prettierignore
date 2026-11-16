@@ -1,0 +1,10 @@
+node_modules
+.data
+.venv
+.test-data
+.media-smoke
+.source-smoke
+dist
+package-lock.json
+packages/contracts/*.json
+

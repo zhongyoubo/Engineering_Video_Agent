@@ -1,0 +1,45 @@
+# Optional PostgreSQL + external S3-compatible storage deployment.
+# Create the S3 bucket first; supply required variables in .env.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: explainer
+      POSTGRES_USER: explainer
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U explainer -d explainer"]
+      interval: 5s
+      retries: 20
+  api:
+    build: .
+    env_file: .env
+    environment: &shared
+      EXPLAINER_DATA_DIR: /data
+      EXPLAINER_DATABASE_URL: postgresql://explainer:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@postgres:5432/explainer
+      EXPLAINER_STORAGE_BACKEND: s3
+      EXPLAINER_S3_BUCKET: ${EXPLAINER_S3_BUCKET:?Set a pre-created S3 bucket}
+      EXPLAINER_API_TOKEN: ${EXPLAINER_API_TOKEN:?Set EXPLAINER_API_TOKEN}
+      EXPLAINER_ENABLE_SANDBOX: "false"
+    command: ["python", "-m", "uvicorn", "explainer.api:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports: ["127.0.0.1:8000:8000"]
+    volumes: ["api-data:/data"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    init: true
+  worker:
+    build: .
+    env_file: .env
+    environment: *shared
+    command: ["python", "-m", "explainer.worker"]
+    volumes: ["worker-data:/data"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    init: true
+    shm_size: 512mb
+    healthcheck: {disable: true}
+volumes:
+  postgres-data:
+  api-data:
+  worker-data:

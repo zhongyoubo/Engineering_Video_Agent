@@ -1,0 +1,22 @@
+stages: [check]
+
+backend:
+  stage: check
+  image: python:3.12-slim
+  script:
+    - pip install -r requirements.lock
+    - pip install --no-deps -e apps/api
+    - ruff check apps/api/src apps/api/tests
+    - pytest apps/api/tests -q
+
+frontend:
+  stage: check
+  image: node:22-bookworm
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run typecheck
+    - npm run build
+  artifacts:
+    paths: [apps/studio/dist]
+    expire_in: 7 days
+

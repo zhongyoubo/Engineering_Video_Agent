@@ -1,0 +1,31 @@
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "apps/api/src"))
+from explainer.api import app
+from explainer.services.engineering.contracts import (
+    ProductionPlan,
+    EngineeringAction,
+    schema,
+)
+from explainer.adapters.native_contract import strict_schema
+from explainer.domain import Brief, ContentIR, Scene, StoryboardIR, Finding
+
+directory = ROOT / "packages/contracts"
+for model in [Brief, ContentIR, Scene, StoryboardIR, Finding]:
+    (directory / (model.__name__ + ".schema.json")).write_text(
+        json.dumps(model.model_json_schema(), ensure_ascii=False, indent=2) + "\n"
+    )
+(directory / "openapi.json").write_text(
+    json.dumps(app.openapi(), ensure_ascii=False, indent=2) + "\n"
+)
+(directory / "AgentDesign.schema.json").write_text(
+    json.dumps(strict_schema(), ensure_ascii=False, indent=2) + "\n"
+)
+for model in [ProductionPlan, EngineeringAction]:
+    (directory / (model.__name__ + ".schema.json")).write_text(
+        json.dumps(schema(model), ensure_ascii=False, indent=2) + "\n"
+    )
+print("Contracts exported")

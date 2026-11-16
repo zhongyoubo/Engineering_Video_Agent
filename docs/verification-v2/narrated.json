@@ -1,0 +1,13 @@
+{
+  "result": "passed",
+  "actual_qwen": true,
+  "forced_alignment": true,
+  "exact_frames": 600,
+  "seconds": 20,
+  "full_decode": true,
+  "scenes": 3,
+  "model_revision": {
+    "repo": "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+    "revision": "5d83992436eae1d760afd27aff78a71d676296fc"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "version": "3.0.0",
+  "date": "2026-10-30",
+  "backend": {
+    "baseline_passed": 54,
+    "current_passed": 82,
+    "baseline_tests_removed": false
+  },
+  "browser": {
+    "baseline_passed": 4,
+    "current_passed": 5,
+    "legacy_flows_explicitly_select_template": true,
+    "engineering_default_tested": true
+  },
+  "ruff": "passed",
+  "typescript": "passed including standalone engineering template",
+  "frontend_build": "passed",
+  "format": "passed",
+  "fixture_render": {
+    "result": "passed",
+    "actual_tsc_and_remotion": true,
+    "compiler_error_observed_and_repaired": true,
+    "frames": 600,
+    "sampled_keyframes": 9,
+    "full_decode": "passed",
+    "actual_native_inference": false,
+    "review": "programmed fixture; manual visual inspection separate",
+    "voice": "reused actual approved Qwen sample; no new TTS inference",
+    "generated_code_isolation_tested": false
+  },
+  "full_pipeline_fixture": {
+    "result": "passed",
+    "actual_native_inference": false,
+    "actual_compiler_renderer_pipeline_storage_export": true,
+    "persisted_steps": 7,
+    "keyframe_assets": 9,
+    "complete_source_delivered": true,
+    "draft": true,
+    "generated_code_isolation_tested": false
+  },
+  "visual_inspection": {
+    "performed_by": "assistant",
+    "sampled_frames": [
+      91,
+      379,
+      571
+    ],
+    "checked": [
+      "Chinese legibility",
+      "layout",
+      "caption area",
+      "separate scene treatment"
+    ],
+    "human_approval": false
+  },
+  "unverified": [
+    "Real Codex and Claude inference through engineering loop",
+    "Docker/gVisor generated-code container execution",
+    "Professional Qwen synthesis and speech/listening quality in a complete V3 task",
+    "Real inference cancellation and distributed recovery",
+    "Real PostgreSQL and S3 deployment acceptance"
+  ],
+  "limitations": [
+    "Bounded managed dependencies; no arbitrary npm install",
+    "Native CLI API-key authentication only",
+    "No cross-provider internal session migration",
+    "Existing IR importer does not import arbitrary external Remotion projects as trusted state",
+    "Source font/glyph checks and pixel checks are not full OCR or semantic quality certification"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "version": "2.1.0",
+  "date": "2026-10-29",
+  "backend_tests": 54,
+  "browser_tests": 4,
+  "typecheck": "passed",
+  "build": "passed",
+  "format": "passed",
+  "actual_cli_smoke": [
+    {
+      "provider": "codex",
+      "installed_cli": "0.165.0",
+      "flags_accepted": true,
+      "unauthenticated_offline_run_rejected": true,
+      "inference_tested": false
+    },
+    {
+      "provider": "claude-code",
+      "installed_cli": "2.1.312",
+      "flags_accepted": true,
+      "unauthenticated_offline_run_rejected": true,
+      "inference_tested": false
+    }
+  ],
+  "render_fixture": {
+    "result": "passed",
+    "authored_protocol_fixture": true,
+    "actual_native_inference": false,
+    "diagram_rendered": true,
+    "editable_export": true,
+    "exact_frames": 600,
+    "full_decode": true
+  },
+  "actual_native_inference_tested": false,
+  "docker_gvisor_tested": false,
+  "credentials_available": false,
+  "included": [
+    "Native CLI adapters for Codex and Claude Code",
+    "Native single-scene changes",
+    "Structured animated diagram renderer",
+    "SSE status and provenance export",
+    "Dedicated Worker Docker image recipes",
+    "Real-deployment acceptance script"
+  ],
+  "boundaries": [
+    "Declarative animation only; no execution of arbitrary generated TSX",
+    "API-key authentication only; no subscription/OAuth reuse",
+    "No automatic repository hooks, Skills, or MCP loading",
+    "No cross-provider native session migration"
+  ]
+}

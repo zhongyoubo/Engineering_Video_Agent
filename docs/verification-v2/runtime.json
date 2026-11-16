@@ -1,0 +1,56 @@
+{
+  "result": "passed",
+  "actual_runners": [
+    {
+      "kind": "python-cli",
+      "passed": true,
+      "actions": [],
+      "requests": 0
+    },
+    {
+      "kind": "static-web",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "click",
+          "target": "#go",
+          "passed": true,
+          "elapsed_ms": 60
+        },
+        {
+          "kind": "assert_text",
+          "target": "#result",
+          "passed": true,
+          "elapsed_ms": 16
+        }
+      ],
+      "requests": 0
+    },
+    {
+      "kind": "python-api",
+      "passed": true,
+      "actions": [],
+      "requests": 1
+    },
+    {
+      "kind": "node-web",
+      "passed": true,
+      "actions": [],
+      "requests": 0
+    },
+    {
+      "kind": "vue-vite",
+      "passed": true,
+      "actions": [],
+      "requests": 0
+    },
+    {
+      "kind": "react-vite",
+      "passed": true,
+      "actions": [],
+      "requests": 0
+    }
+  ],
+  "container_isolation_tested": false,
+  "note": "Only authored fixtures executed directly; production upload path still requires Docker isolation"
+}

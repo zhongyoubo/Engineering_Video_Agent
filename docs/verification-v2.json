@@ -1,0 +1,144 @@
+{
+  "version": "2.0.0",
+  "date": "2026-10-29",
+  "backend_tests": {
+    "passed": 37
+  },
+  "browser_tests": {
+    "passed": 3
+  },
+  "typecheck": "passed",
+  "frontend_build": "passed",
+  "reports": {
+    "storage": {
+      "result": "passed",
+      "database": "PGlite PostgreSQL engine over psycopg TCP",
+      "object_service": "independent Moto S3 HTTP server",
+      "native_upserts": true,
+      "shared_metadata": true,
+      "separate_worker_directories": true,
+      "s3_download_checksum": true,
+      "cross_tenant_denied": true,
+      "lease_fencing": true,
+      "actual_storyboard_job": true,
+      "native_postgres_multi_connection_concurrency": "requires deployment acceptance; PGlite multiplexes a single engine connection"
+    },
+    "runtime": {
+      "result": "passed",
+      "actual_runners": [
+        {
+          "kind": "python-cli",
+          "passed": true,
+          "actions": [],
+          "requests": 0
+        },
+        {
+          "kind": "static-web",
+          "passed": true,
+          "actions": [
+            {
+              "kind": "click",
+              "target": "#go",
+              "passed": true,
+              "elapsed_ms": 60
+            },
+            {
+              "kind": "assert_text",
+              "target": "#result",
+              "passed": true,
+              "elapsed_ms": 16
+            }
+          ],
+          "requests": 0
+        },
+        {
+          "kind": "python-api",
+          "passed": true,
+          "actions": [],
+          "requests": 1
+        },
+        {
+          "kind": "node-web",
+          "passed": true,
+          "actions": [],
+          "requests": 0
+        },
+        {
+          "kind": "vue-vite",
+          "passed": true,
+          "actions": [],
+          "requests": 0
+        },
+        {
+          "kind": "react-vite",
+          "passed": true,
+          "actions": [],
+          "requests": 0
+        }
+      ],
+      "container_isolation_tested": false,
+      "note": "Only authored fixtures executed directly; production upload path still requires Docker isolation"
+    },
+    "temporal": {
+      "result": "passed",
+      "actual_temporal_service": true,
+      "per_stage_activity_count": 9,
+      "idempotent_dispatch": true,
+      "actual_video_rendered": true,
+      "exact_frames": 600,
+      "completed_stages": [
+        "export",
+        "planning",
+        "quality",
+        "render",
+        "runtime",
+        "timeline",
+        "understanding",
+        "voice"
+      ],
+      "outcome": {
+        "mode": "automatic",
+        "state": "SUCCEEDED"
+      }
+    },
+    "qwen": {
+      "result": "passed",
+      "actual_http_service": true,
+      "actual_qwen_inference": true,
+      "model": {
+        "repo": "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+        "revision": "5d83992436eae1d760afd27aff78a71d676296fc"
+      },
+      "duration": "3.520000",
+      "compute_seconds": 32.15872420100004,
+      "text": "从项目源码或提示词出发，自动生成讲解视频。",
+      "reference": "synthetic-professional-male-from-approved-V16"
+    },
+    "narrated": {
+      "result": "passed",
+      "actual_qwen": true,
+      "forced_alignment": true,
+      "exact_frames": 600,
+      "seconds": 20,
+      "full_decode": true,
+      "scenes": 3,
+      "model_revision": {
+        "repo": "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+        "revision": "5d83992436eae1d760afd27aff78a71d676296fc"
+      }
+    }
+  },
+  "not_verified": [
+    "Docker/gVisor image and isolation",
+    "Native PostgreSQL multi-connection concurrency",
+    "Real S3 provider",
+    "Remote public Git import",
+    "External LLM quality"
+  ],
+  "not_implemented": [
+    "Private Git credentials",
+    "Organization SSO/RBAC/billing",
+    "Mobile/desktop/hardware runtime adapters",
+    "Universal dependency repair"
+  ]
+}

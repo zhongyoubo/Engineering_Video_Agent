@@ -1,0 +1,17 @@
+services:
+  studio:
+    build: .
+    ports: ["127.0.0.1:8000:8000"]
+    env_file: .env
+    environment:
+      EXPLAINER_API_TOKEN: ${EXPLAINER_API_TOKEN:?Set a unique EXPLAINER_API_TOKEN in .env}
+      EXPLAINER_DATA_DIR: /data
+      EXPLAINER_ENABLE_SANDBOX: "false"
+      EXPLAINER_ALLOWED_ORIGINS: http://localhost:8000,http://127.0.0.1:8000
+    volumes: ["studio-data:/data"]
+    shm_size: 512mb
+    init: true
+    restart: unless-stopped
+volumes:
+  studio-data:
+

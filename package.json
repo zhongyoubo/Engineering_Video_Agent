@@ -1,0 +1,31 @@
+{
+  "name": "explainer-studio-monorepo",
+  "version": "3.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/studio",
+    "packages/video"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "vite --config apps/studio/vite.config.ts",
+    "build": "npm run build --workspace=@explainer/studio",
+    "typecheck": "tsc --noEmit -p apps/studio/tsconfig.json && tsc --noEmit -p packages/video/tsconfig.json && tsc --noEmit -p packages/engineering-template/tsconfig.json",
+    "browser:install": "remotion browser ensure",
+    "test:ui": "playwright test --config playwright.config.ts",
+    "format": "prettier --write apps/studio/src packages/video/src packages/video/render.mjs tests/browser playwright.config.ts packages/engineering-template/src packages/engineering-template/render.mjs",
+    "format:check": "prettier --check apps/studio/src packages/video/src packages/video/render.mjs tests/browser playwright.config.ts packages/engineering-template/src packages/engineering-template/render.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "@electric-sql/pglite-socket": "0.2.11",
+    "@playwright/test": "1.56.1",
+    "@types/node": "22.15.3",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "prettier": "3.5.3",
+    "typescript": "5.9.3"
+  }
+}

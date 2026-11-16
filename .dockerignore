@@ -1,0 +1,16 @@
+node_modules
+.venv
+.data
+.env
+.git
+__pycache__
+test-results
+playwright-report
+.tools
+apps/studio/dist
+
+
+.models
+.tools
+.speech-venv
+.verify-*

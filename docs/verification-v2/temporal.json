@@ -1,0 +1,22 @@
+{
+  "result": "passed",
+  "actual_temporal_service": true,
+  "per_stage_activity_count": 9,
+  "idempotent_dispatch": true,
+  "actual_video_rendered": true,
+  "exact_frames": 600,
+  "completed_stages": [
+    "export",
+    "planning",
+    "quality",
+    "render",
+    "runtime",
+    "timeline",
+    "understanding",
+    "voice"
+  ],
+  "outcome": {
+    "mode": "automatic",
+    "state": "SUCCEEDED"
+  }
+}

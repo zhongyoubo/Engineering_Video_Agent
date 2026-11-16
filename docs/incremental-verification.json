@@ -1,0 +1,7 @@
+{
+  "result": "passed",
+  "scenario": "Change only scene title; render new revision; retain all narration asset IDs",
+  "all_audio_assets_reused": true,
+  "old_revision_preserved": true,
+  "actual_render_completed": true
+}

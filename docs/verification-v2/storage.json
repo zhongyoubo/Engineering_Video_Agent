@@ -1,0 +1,13 @@
+{
+  "result": "passed",
+  "database": "PGlite PostgreSQL engine over psycopg TCP",
+  "object_service": "independent Moto S3 HTTP server",
+  "native_upserts": true,
+  "shared_metadata": true,
+  "separate_worker_directories": true,
+  "s3_download_checksum": true,
+  "cross_tenant_denied": true,
+  "lease_fencing": true,
+  "actual_storyboard_job": true,
+  "native_postgres_multi_connection_concurrency": "requires deployment acceptance; PGlite multiplexes a single engine connection"
+}

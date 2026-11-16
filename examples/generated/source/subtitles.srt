@@ -1,0 +1,103 @@
+1
+00:00:00,000 --> 00:00:01,979
+This is an evidence-based introduction t
+
+2
+00:00:01,979 --> 00:00:03,413
+o Source project walkthrough.
+
+3
+00:00:03,413 --> 00:00:05,392
+We will inspect its structure, key inter
+
+4
+00:00:05,392 --> 00:00:06,579
+faces, and example code.
+
+5
+00:00:06,579 --> 00:00:08,558
+Runtime results are reported separately.
+
+6
+00:00:08,567 --> 00:00:10,535
+The snapshot contains 2 readable text fi
+
+7
+00:00:10,535 --> 00:00:10,732
+les.
+
+8
+00:00:10,732 --> 00:00:12,700
+The following highlights are extracted f
+
+9
+00:00:12,700 --> 00:00:14,668
+rom the supplied source and documentatio
+
+10
+00:00:14,668 --> 00:00:14,767
+n.
+
+11
+00:00:14,767 --> 00:00:16,641
+These are the top-level source groups.
+
+12
+00:00:16,641 --> 00:00:18,614
+The diagram shows an organizational view
+
+13
+00:00:18,614 --> 00:00:20,390
+, not a verified runtime call graph.
+
+14
+00:00:20,400 --> 00:00:22,365
+This excerpt is taken from the source sn
+
+15
+00:00:22,365 --> 00:00:22,709
+apshot.
+
+16
+00:00:22,709 --> 00:00:24,674
+Read the entry points and parameters tog
+
+17
+00:00:24,674 --> 00:00:26,639
+ether with the tests before assuming beh
+
+18
+00:00:26,639 --> 00:00:26,933
+avior.
+
+19
+00:00:26,933 --> 00:00:28,889
+A reproducible demonstration starts with
+
+20
+00:00:28,889 --> 00:00:30,845
+ isolated input data, executes the examp
+
+21
+00:00:30,845 --> 00:00:32,801
+le, checks output, and preserves evidenc
+
+22
+00:00:32,801 --> 00:00:32,899
+e.
+
+23
+00:00:32,900 --> 00:00:34,870
+We have reviewed the source structure an
+
+24
+00:00:34,870 --> 00:00:36,150
+d implementation evidence.
+
+25
+00:00:36,150 --> 00:00:38,119
+Add a supported isolated runtime to obta
+
+26
+00:00:38,119 --> 00:00:39,990
+in a verified execution demonstration.

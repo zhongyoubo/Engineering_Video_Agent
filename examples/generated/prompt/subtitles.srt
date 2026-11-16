@@ -1,0 +1,19 @@
+1
+00:00:00,000 --> 00:00:03,496
+An API is a defined interface between software systems.
+
+2
+00:00:04,133 --> 00:00:05,773
+A client sends a request.
+
+3
+00:00:05,773 --> 00:00:08,922
+The service processes it and returns a response.
+
+4
+00:00:09,600 --> 00:00:13,882
+Inputs, outputs, and errors form a contract that both sides can
+
+5
+00:00:13,882 --> 00:00:14,630
+understand.

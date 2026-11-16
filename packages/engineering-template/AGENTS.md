@@ -1,0 +1,10 @@
+# Generated video project instructions
+
+This is an editable Remotion engineering project. Read README.md, production-plan.json, props.json and visual-review.json before modifying it.
+
+- Put visual implementation in src/Video.tsx and src/scenes or src/components; preserve trusted Root/index/contracts unless deliberately changing the standalone project's runtime contract.
+- Audio and captions use exact compiled scene frames; do not change narration timing casually.
+- Preserve image aspect ratios and the bundled CJK font. No remote fonts/assets or nondeterministic Date/random animation.
+- Run npm run check, npm run preview and inspect frames before npm run render.
+- When editing untrusted generated code, use an isolated, no-network environment without credentials.
+- Compiler success and an Agent score do not replace visual and listening review. Regenerate reviews after source or props changes.

@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-28",
+  "release": "1.0.0",
+  "environment": {
+    "os": "Linux x86_64",
+    "python": "3.12.14",
+    "node": "24.22.1",
+    "ffmpeg": "system FFmpeg",
+    "renderer": "Remotion 4.0.538",
+    "browser": "Chrome Headless 153"
+  },
+  "checks": {
+    "backend_pytest": {
+      "passed": 27,
+      "failed": 0
+    },
+    "browser_playwright": {
+      "passed": 3,
+      "failed": 0,
+      "scenarios": [
+        "prompt -> storyboard -> edit -> revision",
+        "source upload -> evidence",
+        "exported media package import -> natural-language modification"
+      ]
+    },
+    "ruff": "passed",
+    "typescript": "passed",
+    "production_frontend_build": "passed",
+    "prettier": "passed",
+    "python_compilation": "passed",
+    "optional_service_imports": "passed without loading weights",
+    "incremental_render": {
+      "result": "passed",
+      "scenario": "Change only scene title; render new revision; retain all narration asset IDs",
+      "all_audio_assets_reused": true,
+      "old_revision_preserved": true,
+      "actual_render_completed": true
+    }
+  },
+  "actual_media_outputs": [
+    {
+      "scenario": "prompt",
+      "file": "examples/generated/prompt/explainer.mp4",
+      "duration_seconds": 15.275,
+      "width": 1920,
+      "height": 1080,
+      "frames": 458,
+      "fps": "30/1",
+      "audio": true,
+      "decode": "passed during pipeline"
+    },
+    {
+      "scenario": "source",
+      "file": "examples/generated/source/explainer.mp4",
+      "duration_seconds": 40.0,
+      "width": 1920,
+      "height": 1080,
+      "frames": 1200,
+      "fps": "30/1",
+      "audio": false,
+      "decode": "passed during pipeline"
+    },
+    {
+      "scenario": "chinese",
+      "file": "examples/generated/chinese/explainer.mp4",
+      "duration_seconds": 20.117,
+      "width": 1920,
+      "height": 1080,
+      "frames": 603,
+      "fps": "30/1",
+      "audio": true,
+      "decode": "passed during pipeline"
+    }
+  ],
+  "not_integration_tested": [
+    "Docker image build",
+    "gVisor source execution",
+    "Temporal service integration",
+    "Qwen3-TTS model inference and voice listening",
+    "real external chat model"
+  ],
+  "limitations": [
+    "single-host SQLite/local storage",
+    "template fallback without language model",
+    "eSpeak development voice unless Qwen configured",
+    "estimated sentence captions, not forced alignment"
+  ]
+}

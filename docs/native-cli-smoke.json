@@ -1,0 +1,16 @@
+[
+  {
+    "provider": "codex",
+    "installed_cli": "0.165.0",
+    "flags_accepted": true,
+    "unauthenticated_offline_run_rejected": true,
+    "inference_tested": false
+  },
+  {
+    "provider": "claude-code",
+    "installed_cli": "2.1.312",
+    "flags_accepted": true,
+    "unauthenticated_offline_run_rejected": true,
+    "inference_tested": false
+  }
+]

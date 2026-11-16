@@ -1,0 +1,126 @@
+{
+  "$defs": {
+    "SourceEdit": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 50000,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "content"
+      ],
+      "title": "SourceEdit",
+      "type": "object"
+    },
+    "VisualReview": {
+      "additionalProperties": false,
+      "properties": {
+        "accepted": {
+          "title": "Accepted",
+          "type": "boolean"
+        },
+        "legibility": {
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Legibility",
+          "type": "integer"
+        },
+        "visual_explanation": {
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Visual Explanation",
+          "type": "integer"
+        },
+        "timing": {
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Timing",
+          "type": "integer"
+        },
+        "issues": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 30,
+          "title": "Issues",
+          "type": "array"
+        },
+        "inspected_frames": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 48,
+          "minItems": 1,
+          "title": "Inspected Frames",
+          "type": "array"
+        }
+      },
+      "required": [
+        "accepted",
+        "legibility",
+        "visual_explanation",
+        "timing",
+        "issues",
+        "inspected_frames"
+      ],
+      "title": "VisualReview",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "write_files",
+        "build",
+        "render_preview",
+        "review",
+        "finish"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "summary": {
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/SourceEdit"
+      },
+      "maxItems": 30,
+      "title": "Files",
+      "type": "array"
+    },
+    "review": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VisualReview"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "action",
+    "summary",
+    "files",
+    "review"
+  ],
+  "title": "EngineeringAction",
+  "type": "object"
+}
