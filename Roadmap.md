@@ -35,3 +35,8 @@ scene coverage, purpose-specific review, Studio creation/target editing and shar
 Verified by 143 backend tests, 8 browser flows, typecheck/build, six authored strategy samples
 and the fixed creator renderer. Structural validation is separate from real native quality.
 Real generated samples across all six purposes remain deployment acceptance.
+
+Review follow-up: moved typed/domain/publication validation into bounded native retries,
+rejected conflicting duplicate editorial plans, invalidated stale title/language/mode plans
+and exposed pending request changes without reusing the old strategy display. Verification
+details are recorded in goals/2026-11-18-content-taxonomy.md.

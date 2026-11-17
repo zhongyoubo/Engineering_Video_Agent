@@ -169,7 +169,7 @@ def test_native_planning_carries_guidance_and_rejects_missing_strategy(settings,
     agent = NativeEngineeringAgent(settings, Runner(), content, brief, {}, tmp_path, lambda *args: None)
     seen = []
 
-    def call(model, payload):
+    def call(model, payload, **kwargs):
         seen.append(payload)
         return plan, {"fixture": True}
 
@@ -265,3 +265,157 @@ def test_each_dimension_change_replans_and_persists(client, headers, settings, d
     for key, value in change.items():
         assert saved["storyboard"]["editorial_request"][key] == value
     assert saved["storyboard"]["editorial"] is None  # No model or fake auto classification.
+
+
+def production_fixture():
+    from explainer.adapters.native_contract import DesignedScene
+    from explainer.services.engineering.contracts import ProductionPlan
+
+    brief, board, content = sample("tutorial")
+    brief.agent_engine = "codex"
+    plan = ProductionPlan(
+        objective="Teach the audience to prepare an API request",
+        story_arc=["Prepare", "Do", "Check"],
+        art_direction="Use readable examples and request flow diagrams",
+        voice_direction="Use clear natural Mandarin narration",
+        shots=[
+            dict(
+                scene_id=s.id,
+                visual="Show the actual scene purpose",
+                movement="Reveal with narration",
+                assets=[],
+            )
+            for s in board.scenes
+        ],
+        storyboard={
+            "protocol": "1.0",
+            "scenes": [{k: s.model_dump()[k] for k in DesignedScene.model_fields} for s in board.scenes],
+        },
+        editorial=board.editorial,
+    )
+    return brief, content, plan
+
+
+@pytest.mark.parametrize("defect", ["schema", "editorial", "strategy", "evidence", "material", "conflict"])
+@pytest.mark.parametrize("repaired", [True, False])
+def test_native_contract_failures_use_bounded_repair_without_leaking_output(
+    settings, tmp_path, monkeypatch, defect, repaired
+):
+    from explainer.adapters.native_agent import NativeAgentError
+    from explainer.services.engineering.agent import NativeEngineeringAgent
+
+    brief, content, valid = production_fixture()
+    invalid = valid.model_dump()
+    secret = "UNTRUSTED_OUTPUT_MUST_NOT_BE_ECHOED"
+    if defect == "schema":
+        invalid["objective"] = {"credential": secret}
+    elif defect == "editorial":
+        invalid["editorial"] = None
+    elif defect == "strategy":
+        for beat in invalid["editorial"]["strategy"]["outline"]:
+            if beat["function"] == "check":
+                beat["function"] = "evidence"
+    elif defect == "evidence":
+        invalid["storyboard"]["scenes"][0]["evidence_ids"] = [secret]
+    elif defect == "material":
+        invalid["shots"][0]["assets"] = ["library:" + secret + "@1.0"]
+    elif defect == "conflict":
+        invalid["storyboard"]["editorial"] = valid.editorial.model_dump()
+        invalid["storyboard"]["editorial"]["core_message"] = secret
+    settings.native_agent_providers = "codex"
+    settings.codex_api_key = "PROVIDER_SECRET_MUST_NOT_BE_LOGGED"
+    settings.native_agent_repairs = 1
+    monkeypatch.setattr("explainer.adapters.native_agent.shutil.which", lambda _: "/usr/bin/docker")
+    cleanup = []
+    monkeypatch.setattr("explainer.adapters.native_agent.subprocess.run", lambda *a, **kw: cleanup.append(a))
+    requests, events = [], []
+    directory = tmp_path / "native"
+
+    class FixtureRunner:
+        def guard(self):
+            pass
+
+        def run(self, args, **kwargs):
+            requests.append(json.loads((directory / "call-000/request.json").read_text()))
+            payload = valid.model_dump() if repaired and len(requests) == 2 else invalid
+            kwargs["on_line"](json.dumps(dict(protocol="1.0", type="result", ok=True, design=payload)))
+
+    agent = NativeEngineeringAgent(
+        settings, FixtureRunner(), content, brief, {}, directory, lambda *e: events.append(e)
+    )
+    if repaired:
+        plan, board, report = agent.plan()
+        assert report["attempts"] == 2
+        assert board.editorial == plan.editorial
+        require_publishable(board, content)
+    else:
+        import traceback
+
+        with pytest.raises(NativeAgentError, match="修复次数已用尽") as error:
+            agent.plan()
+        assert secret not in str(error.value)
+        assert secret not in "".join(traceback.format_exception(error.value))
+    assert len(requests) == len(cleanup) == 2
+    assert requests[0]["repair"] == ""
+    assert "previous output failed" in requests[1]["repair"]
+    assert secret not in requests[1]["repair"]
+    assert secret not in repr(events) and settings.codex_api_key not in repr(events)
+    assert not list(directory.rglob("*.tsx"))  # Validation never executes generated source.
+
+
+def test_production_editorial_is_unambiguous_and_legacy_null_is_loadable():
+    from explainer.services.engineering.contracts import ProductionPlan
+
+    _, _, plan = production_fixture()
+    payload = plan.model_dump()
+    assert ProductionPlan.model_validate(payload).storyboard.editorial is None
+    payload["storyboard"]["editorial"] = plan.editorial.model_dump()
+    assert ProductionPlan.model_validate(payload).editorial == plan.editorial
+    payload["storyboard"]["editorial"]["core_message"] = "A conflicting main message"
+    with pytest.raises(ValueError, match="must be null or match"):
+        ProductionPlan.model_validate(payload)
+
+
+@pytest.mark.parametrize(
+    "change",
+    [{"title": "新的主题"}, {"language": "en-US"}, {"video_mode": "engineering", "agent_engine": "codex"}],
+)
+def test_changed_title_language_or_production_mode_invalidates_saved_plan(
+    client, headers, settings, db, change
+):
+    from explainer.worker import run_once
+
+    p = client.post("/api/v1/projects", headers=headers, json={"name": "Revision consistency"}).json()
+    created = client.post(
+        "/api/v1/videos",
+        headers=headers,
+        json={
+            "project_id": p["id"],
+            "brief": {"title": "原主题", "prompt": "请求和响应", "mode": "storyboard"},
+        },
+    ).json()
+    run_once(settings, db, job_id=created["job_id"])
+    original = client.get("/api/v1/revisions/" + created["revision_id"], headers=headers).json()
+    brief = {**original["brief"], **change}
+    response = client.post(
+        "/api/v1/revisions/" + original["id"] + "/fork",
+        headers=headers,
+        json={
+            "expected_version": original["version"],
+            "brief": brief,
+            "storyboard": original["storyboard"],
+            "auto_render": False,
+        },
+    )
+    assert response.status_code == 202
+    row = db.one("SELECT storyboard,content FROM revisions WHERE id=?", (response.json()["revision_id"],))
+    assert row["storyboard"] is None
+    if "title" in change:
+        assert row["content"] is None
+    if "video_mode" not in change:
+        run_once(settings, db, job_id=response.json()["job_id"])
+        updated = client.get("/api/v1/revisions/" + response.json()["revision_id"], headers=headers).json()
+        assert updated["storyboard"]["title"] == brief["title"]
+        assert updated["storyboard"]["language"] == brief["language"]
+    unchanged = client.get("/api/v1/revisions/" + original["id"], headers=headers).json()
+    assert unchanged["storyboard"] == original["storyboard"]

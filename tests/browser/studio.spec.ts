@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 
 test('4K design settings and editable motion survive a revision fork', async ({
   page,
@@ -264,10 +265,48 @@ test('six purposes stay independent of subject, audience and form across replann
   await page.getByText('调整内容目标', { exact: true }).click();
   await page.getByLabel('版本内容目的', { exact: true }).selectOption('advice');
   await page.getByLabel('版本讲述深度', { exact: true }).selectOption('intermediate');
+  await expect(page.getByLabel('内容定位摘要')).toContainText('待另存版本后重新策划');
+  await expect(page.getByLabel('内容定位摘要')).toContainText('建议决策');
   const forked = page.waitForRequest((r) => r.url().endsWith('/fork') && r.method() === 'POST');
   await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
   expect((await forked).postDataJSON().brief.editorial.intent).toBe('advice');
   await expect(page.getByLabel('内容定位摘要')).toContainText('建议决策', { timeout: 30000 });
   await expect(page.getByLabel('内容定位摘要')).toContainText('进阶');
   await expect(page.getByLabel('内容定位摘要')).toContainText('图解动画、案例讲解');
+  await expect(page.getByLabel('内容定位摘要')).not.toContainText('待另存版本后重新策划');
+});
+
+test('edited goals hide an obsolete resolved strategy until replanning', async ({
+  page,
+  context,
+}) => {
+  // Authored UI fixture only: this does not simulate or certify native inference.
+  const fixture = JSON.parse(readFileSync('examples/content-strategies/explanation.json', 'utf8'));
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.route('**/api/v1/revisions/*', async (route) => {
+    if (route.request().method() !== 'GET') return route.continue();
+    const response = await route.fetch();
+    const data = await response.json();
+    if (data.storyboard && !data.brief.editorial.core_message) {
+      data.storyboard.editorial = fixture.editorial;
+    }
+    await route.fulfill({ response, json: data });
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const summary = page.getByLabel('内容定位摘要');
+  await expect(summary).toContainText(fixture.editorial.strategy.rationale, { timeout: 30000 });
+  await page.getByText('调整内容目标', { exact: true }).click();
+  await page.getByLabel('版本核心主张', { exact: true }).fill('新主张需要重新检查整条内容');
+  await expect(summary).toContainText('待另存版本后重新策划');
+  await expect(summary).not.toContainText(fixture.editorial.strategy.rationale);
+  await expect(summary.getByText('叙事结构与验收目标', { exact: true })).toHaveCount(0);
+  await page.getByLabel('版本核心主张', { exact: true }).fill('');
+  await expect(summary).toContainText(fixture.editorial.strategy.rationale);
+  await expect(summary).not.toContainText('待另存版本后重新策划');
 });

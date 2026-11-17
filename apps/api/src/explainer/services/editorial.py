@@ -40,6 +40,7 @@ def prepare_presentation(board, brief, editorial=None):
     """
     board.presentation_profile = brief.presentation_profile
     board.creator_brand = brief.creator_brand
+    board.accent = brief.accent
     board.editorial_request = brief.editorial.model_copy(deep=True)
     if editorial is not None:
         board.editorial = editorial

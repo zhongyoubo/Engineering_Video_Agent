@@ -46,6 +46,15 @@ once. Every strategy ends in a conclusion. Minimum functions vary by primary pur
 | advice | decision, plus steps or application |
 | tutorial | steps and check |
 
+New engineering output is validated inside the bounded native repair loop: typed response,
+shot/storyboard consistency, material references, scene/evidence validation and creator
+publication requirements must all pass before planning succeeds. The configured
+`native_agent_repairs` bounds retries; exhaustion fails without a template fallback.
+Repair feedback uses controlled platform messages, never raw validation inputs, invented
+asset/evidence names or provider credentials. Engineering actions use the same typed-response
+repair boundary. `ProductionPlan.editorial` is authoritative; the optional duplicate
+`storyboard.editorial` must be null or identical, and saved revisions clear the nested copy.
+
 A filled structural function does not prove a good argument or tutorial. Native review must
 consider the actual script, images and purpose-specific success criteria. `purpose_fulfillment`
 must reach 4/5 for a creator plan containing strategy; all prior publication, visual and motion
@@ -62,6 +71,11 @@ All four dimensions live in Brief.editorial, so the existing whole-object compar
 replanning when any changes. Studio can edit targets in a saved revision and posts the edited
 request as Brief when forking. The original revision remains immutable. Narration reuse is still
 based on exact text/provider/voice cache keys; changed source/props invalidates visual hashes.
+Studio marks locally edited targets as pending, hides old strategy rationale/criteria and
+shows the edited request until a new version is planned. Reverting the request restores the
+saved strategy display. Title, language or production-mode changes also invalidate saved
+storyboards; a new title invalidates understanding metadata. Accent-only changes synchronize
+presentation metadata while keeping the script. These are separate from voice invalidation.
 
 The deprecated legacy `intent=knowledge` is accepted as an exact data migration: intent becomes
 auto, subject becomes knowledge only if no explicit subject was supplied. Existing core text

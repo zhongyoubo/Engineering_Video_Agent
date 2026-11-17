@@ -29,6 +29,8 @@ class ProductionPlan(StrictModel):
         ids = [scene.id for scene in self.storyboard.scenes]
         if sorted(shot.scene_id for shot in self.shots) != sorted(ids):
             raise ValueError("Every scene requires exactly one visual and motion design")
+        if self.storyboard.editorial is not None and self.storyboard.editorial != self.editorial:
+            raise ValueError("Storyboard editorial must be null or match the production-plan editorial")
         return self
 
 

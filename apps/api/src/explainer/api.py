@@ -541,12 +541,18 @@ async def fork_revision(
         if source["project_id"] != original["project_id"]:
             raise HTTPException(422, "输入不属于当前项目")
     content = original["content"]
-    if brief.input_id != old_brief.input_id or brief.prompt != old_brief.prompt:
+    if (
+        brief.input_id != old_brief.input_id
+        or brief.prompt != old_brief.prompt
+        or brief.title != old_brief.title
+    ):
         content, board = None, None
     if (
         brief.editorial != old_brief.editorial
         or brief.presentation_profile != old_brief.presentation_profile
         or brief.audience != old_brief.audience
+        or brief.language != old_brief.language
+        or brief.video_mode != old_brief.video_mode
     ):
         board = None
     if board:

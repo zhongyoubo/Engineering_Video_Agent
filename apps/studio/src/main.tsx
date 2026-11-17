@@ -41,6 +41,7 @@ import {
   ContentBriefEditor,
   ContentBriefSummary,
   defaultEditorialRequest,
+  editorialRequestChanged,
 } from './ContentBriefEditor';
 
 const finalStates = ['SUCCEEDED', 'PARTIAL', 'FAILED', 'CANCELED'];
@@ -1198,14 +1199,22 @@ function App() {
                   <div className="publication-panel" style={{ padding: 20 }}>
                     <h3>封面与内容主线</h3>
                     <ContentBriefSummary
-                      request={board.editorial_request}
+                      request={board.editorial_request || revision?.brief.editorial}
                       strategy={board.editorial?.strategy}
                       taxonomy={caps?.content_taxonomy}
+                      pending={editorialRequestChanged(
+                        board.editorial_request || revision?.brief.editorial,
+                        revision?.brief.editorial,
+                      )}
                     />
                     <details>
                       <summary>调整内容目标</summary>
                       <ContentBriefEditor
-                        value={board.editorial_request || defaultEditorialRequest}
+                        value={
+                          board.editorial_request ||
+                          revision?.brief.editorial ||
+                          defaultEditorialRequest
+                        }
                         onChange={(value) => setBoard({ ...board, editorial_request: value })}
                         taxonomy={caps?.content_taxonomy}
                         prefix="版本"

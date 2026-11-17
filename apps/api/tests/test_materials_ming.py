@@ -124,7 +124,7 @@ def test_native_planning_receives_library_and_rejects_invented_materials(setting
     agent = NativeEngineeringAgent(settings, Runner(), analyze(brief), brief, {}, tmp_path, lambda _: None)
     seen = []
 
-    def call(model, payload):
+    def call(model, payload, **kwargs):
         seen.append(payload)
         return production_plan(), {"fixture": True}
 

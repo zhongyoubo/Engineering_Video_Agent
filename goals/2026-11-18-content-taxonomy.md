@@ -58,3 +58,49 @@ All matched files use Prettier code style!
 git diff --check
 (no errors)
 ```
+
+## Second review and fixes · 2026-11-18
+
+Reviewed the actual execution/revision/UI paths again from af303756, without broadening
+content classification or weakening existing gates. Found and fixed:
+
+- Engineering schema/domain/material/editorial validation ran after the adapter's bounded
+  retry loop, so an otherwise repairable plan failed on its first response. The complete
+  planning validator now runs inside that loop; typed engineering actions share the repair
+  boundary. Retry feedback uses trusted messages; exhaustion suppresses raw chained inputs
+  in Worker tracebacks and still fails without fallback.
+- ProductionPlan and its nested storyboard could contain conflicting editorial plans.
+  Reject new conflicts; null or identical nested data remain compatible. Persisted revisions
+  clear the nested copy and keep the outer plan authoritative.
+- Title, language and template/engineering mode changes could retain an old board. Replan
+  these changes, refresh understanding for title changes, synchronize accent metadata, and
+  preserve the immutable parent revision.
+- Studio still displayed the saved resolved rationale/criteria while the request was edited.
+  Display the new request as pending, hide obsolete strategy details, and restore the saved
+  strategy only if the user reverts to the saved targets.
+
+Verification:
+
+```text
+.venv/bin/python scripts/check.py
+ruff passed; 159 backend tests passed (5 existing dependency warnings)
+TypeScript passed; Vite production build passed (existing size advisory)
+
+CHROME_EXECUTABLE=<configured Headless Shell> npm run test:ui
+9 passed (45.5s)
+
+.venv/bin/python scripts/verify_content_taxonomy.py
+Six authored editorial strategy contracts passed
+
+.venv/bin/python -m pytest apps/api/tests/test_content_taxonomy.py apps/api/tests/test_native_agent.py -q
+61 passed (after adding traceback-redaction assertion)
+
+npm run format:check; git diff --check
+passed
+```
+
+Added 16 backend cases and one browser flow. Native retry fixtures cover schema, missing
+editorial, purpose structure, evidence, materials and duplicate-plan conflicts, both corrected
+and exhausted. Browser fixtures explicitly identify authored strategy data; no real native
+inference is claimed. No renderer/TSX/media changes, new video or real provider/TTS deployment
+acceptance in this review. Previous fixed-render evidence remains scoped to its original run.

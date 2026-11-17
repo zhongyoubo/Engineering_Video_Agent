@@ -26,6 +26,13 @@ export const defaultEditorialRequest: EditorialRequest = {
   viewer_takeaway: '',
 };
 
+export function editorialRequestChanged(a?: EditorialRequest, b?: EditorialRequest) {
+  return (
+    JSON.stringify({ ...defaultEditorialRequest, ...a }) !==
+    JSON.stringify({ ...defaultEditorialRequest, ...b })
+  );
+}
+
 export function ContentBriefEditor({
   value,
   onChange,
@@ -172,17 +179,21 @@ export function ContentBriefEditor({
 
 export function ContentBriefSummary({
   request,
-  strategy,
+  strategy: savedStrategy,
   taxonomy,
+  pending = false,
 }: {
   request?: EditorialRequest;
   strategy?: ContentStrategy | null;
   taxonomy?: Taxonomy;
+  pending?: boolean;
 }) {
+  const strategy = pending ? null : savedStrategy;
   const label = (items: Option[] | undefined, id: string | undefined) =>
     items?.find((i) => i.id === id)?.label || (id === 'auto' || !id ? '待策划' : id);
   return (
     <div className="content-strategy-summary" aria-label="内容定位摘要">
+      {pending && <p role="status">内容目标已修改，待另存版本后重新策划；当前画面仍为原分镜。</p>}
       <p>
         <b>主要目的：</b>
         {label(taxonomy?.intents, strategy?.intent || request?.intent)}

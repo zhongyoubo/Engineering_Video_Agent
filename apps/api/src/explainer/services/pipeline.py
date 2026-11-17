@@ -234,6 +234,8 @@ class Pipeline:
                     )
                 if board.editorial:
                     production_plan["editorial"] = board.editorial.model_dump()
+                # One authoritative editorial plan; avoid stale nested copies on revisions.
+                production_plan["storyboard"]["editorial"] = None
                 outputs["production_plan"] = self.store.put(
                     self.tenant,
                     encode(production_plan).encode(),

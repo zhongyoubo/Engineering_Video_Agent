@@ -82,3 +82,9 @@ Expanded creator/editor contracts without changing protected visual execution be
 The fixed creator fixture was recompiled and rendered for both paths, including separate
 4K thumbnail and first/closing samples. New purpose metadata does not become an on-screen
 badge. Structural six-genre samples remain distinct from native inference quality.
+
+### Review follow-up · 2026-11-18
+Fixed pending-target UI using obsolete strategy details, plus plan/revision consistency
+and bounded native validation retries. 159 backend / 9 browser flows and build passed;
+no new renderer, media or real native-quality acceptance claimed. Details:
+goals/2026-11-18-content-taxonomy.md.

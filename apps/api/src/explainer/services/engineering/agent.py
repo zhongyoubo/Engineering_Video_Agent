@@ -1,6 +1,7 @@
 """Native planning and engineering actions. No template or model fallback."""
 
-from ...adapters.native_agent import native_plan
+from pydantic import ValidationError
+from ...adapters.native_agent import native_plan, NativeOutputError
 from ...adapters.native_contract import validate_design
 from ...config import ROOT
 from ...content_taxonomy import planning_guidance
@@ -16,7 +17,22 @@ class NativeEngineeringAgent:
         self.manifest, self.directory, self.emit = manifest, directory, emit
         directory.mkdir(parents=True, exist_ok=True)
 
-    def call(self, model, payload, files=None, frames=None):
+    def call(self, model, payload, files=None, frames=None, validate=None):
+        def validate_response(value):
+            try:
+                parsed = model.model_validate(value)
+            except ValidationError as exc:
+                # Do not echo Pydantic input/context or untrusted field names to the provider/logs.
+                raise NativeOutputError(
+                    "Match all required schema fields, enum choices, bounds and cross-field constraints."
+                ) from exc
+            if validate:
+                try:
+                    validate(parsed)
+                except EditorialError as exc:
+                    raise NativeOutputError(str(exc)) from exc
+            return parsed
+
         manifest = {"files": dict((self.manifest or {}).get("files", {}))}
         for name, text in (files or {}).items():
             manifest["files"]["project/" + name] = {"text": text}
@@ -29,6 +45,7 @@ class NativeEngineeringAgent:
             self.runner,
             self.emit,
             engineering_contract={"schema": schema(model), "payload": payload, "frames": frames or []},
+            validate_result=validate_response,
         )
         return model.model_validate(value), report
 
@@ -50,17 +67,36 @@ class NativeEngineeringAgent:
                 "instruction": EDITORIAL_INSTRUCTION
                 + " Create full fluent narration, art direction and per-scene visual/motion treatment. Anchor events to narration phrases. Choose patterns by explanatory relationship, not keyword matching. Custom TSX remains available. Use supplied real UI captures. All source assertions require supplied evidence IDs.",
             },
+            validate=lambda candidate: self.prepare_plan(candidate, library),
         )
-        validate_material_references(plan, library)
         report = {**report, "material_library_revision": library["revision"]}
-        board = validate_design(plan.storyboard.model_dump(), self.content, self.brief)
+        board = self.prepare_plan(plan, library)
+        return plan, board, report
+
+    def prepare_plan(self, plan, library):
+        try:
+            validate_material_references(plan, library)
+        except ValueError as exc:
+            raise NativeOutputError(
+                "Use only supplied, non-blocked material-library IDs and exact versions."
+            ) from exc
+        try:
+            board = validate_design(plan.storyboard.model_dump(), self.content, self.brief)
+        except ValueError as exc:
+            raise NativeOutputError(
+                "Storyboard scenes must satisfy the scene schema and reference only supplied evidence IDs."
+            ) from exc
         if self.brief.presentation_profile == "creator" and plan.editorial is None:
             raise EditorialError("创作者制作方案缺少内容主张与观众收益，请补充 editorial 策划。")
         if self.brief.presentation_profile == "creator" and plan.editorial.strategy is None:
             raise EditorialError("新创作者策划必须解析表达目的、讲述对象、观众与表现形式，并给出叙事结构。")
         prepare_presentation(board, self.brief, plan.editorial)
-        require_publishable(board, self.content)
-        return plan, board, report
+        try:
+            require_publishable(board, self.content)
+        except EditorialError as exc:
+            # EditorialError messages are controlled by publication policy, never provider output.
+            raise NativeOutputError(str(exc)) from exc
+        return board
 
     def decide(self, workspace, plan):
         instructions = (ROOT / "docs/design/authoring-contract.md").read_text()

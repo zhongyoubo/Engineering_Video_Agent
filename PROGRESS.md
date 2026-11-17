@@ -25,3 +25,11 @@ forms. Updated native guidance, semantic auto contract, ordered scene coverage a
 score, migration and Studio revision targets. Verified: 143 backend tests, 8 browser flows, TypeScript/build, six authored strategy
 contracts and the fixed creator render fixture. Evidence: `goals/2026-11-18-content-taxonomy.md`
 and `docs/verification-taxonomy.json`. Real native/TTS quality across six purposes remains unverified.
+
+## 2026-11-18 · Second content-strategy review
+
+Fixed validation outside native repair, conflicting duplicate editorial plans, stale
+revision boards after title/language/mode changes, and obsolete strategy display during
+local goal edits. 159 backend tests, 9 browser flows, TypeScript/build, six authored
+strategy contracts and formatting passed. Real native/TTS quality remains target acceptance.
+See goals/2026-11-18-content-taxonomy.md.
