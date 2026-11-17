@@ -100,7 +100,7 @@ class RenderTools:
                 raise EngineeringError("Invalid tool protocol")
             if result["ok"] and action == "preview":
                 frames = result.get("frames", [])
-                if not 1 <= len(frames) <= 96:
+                if not 1 <= len(frames) <= 128:
                     raise EngineeringError("Missing sampled keyframes")
                 for frame in frames:
                     p = output / frame["name"]
@@ -112,6 +112,11 @@ class RenderTools:
                     ):
                         raise EngineeringError("Invalid review frame")
                 props = json.loads((workspace.project / "props.json").read_text())
+                if props.get("presentation_profile") == "creator" and props.get("cover"):
+                    if not any(f.get("kind") == "thumbnail" and f["name"] == "cover.png" for f in frames):
+                        raise EngineeringError("Missing independent publication thumbnail")
+                    if not any(f.get("kind") != "thumbnail" and f["frame"] == 0 for f in frames):
+                        raise EngineeringError("Missing frame-zero opening review")
                 hashes = [
                     inspect_frame(output / f["name"], props.get("width", 1920), props.get("height", 1080))
                     for f in frames
@@ -128,7 +133,11 @@ class RenderTools:
                     "distinct": len(set(hashes)),
                 }
                 result["frames"] = [
-                    {"name": str((output / f["name"]).relative_to(workspace.root)), "frame": f["frame"]}
+                    {
+                        "name": str((output / f["name"]).relative_to(workspace.root)),
+                        "frame": f["frame"],
+                        "kind": f.get("kind", "keyframe"),
+                    }
                     for f in frames
                 ]
                 if props.get("motion_review_required"):

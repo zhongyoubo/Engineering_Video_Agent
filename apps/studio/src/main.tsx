@@ -110,6 +110,11 @@ function App() {
     [voiceSpeed, setVoiceSpeed] = useState(1);
   const [videoMode, setVideoMode] = useState('engineering'),
     [qualityProfile, setQualityProfile] = useState('professional');
+  const [presentationProfile, setPresentationProfile] = useState('creator');
+  const [contentIntent, setContentIntent] = useState('auto');
+  const [coreMessage, setCoreMessage] = useState(''),
+    [viewerTakeaway, setViewerTakeaway] = useState(''),
+    [creatorBrand, setCreatorBrand] = useState('');
   const [agentEvents, setAgentEvents] = useState<any[]>([]);
   const [durationMode, setDurationMode] = useState('target'),
     [requireAlignment, setRequireAlignment] = useState(false);
@@ -284,6 +289,14 @@ function App() {
           agent_engine: agentEngine,
           video_mode: videoMode,
           quality_profile: qualityProfile,
+          presentation_profile: presentationProfile,
+          creator_brand: creatorBrand,
+          editorial: {
+            intent: contentIntent,
+            subject_kind: 'auto',
+            core_message: coreMessage,
+            viewer_takeaway: viewerTakeaway,
+          },
           render_profile: { resolution, fps: 30 },
           design_pack: designPack,
           voice_spec: { voice_id: voiceId, speed: voiceSpeed, model: '', revision: '1' },
@@ -749,6 +762,52 @@ function App() {
                     </select>
                   </div>
                 </div>
+                <label>内容目的</label>
+                <select
+                  aria-label="内容目的"
+                  value={contentIntent}
+                  onChange={(e) => setContentIntent(e.target.value)}
+                >
+                  <option value="auto">根据主题策划</option>
+                  <option value="viewpoint">表达观点</option>
+                  <option value="advice">给出建议</option>
+                  <option value="analysis">分析项目</option>
+                  <option value="knowledge">分享知识</option>
+                  <option value="explanation">解释概念与原理</option>
+                </select>
+                <label>核心主张（可选）</label>
+                <input
+                  aria-label="核心主张"
+                  maxLength={500}
+                  value={coreMessage}
+                  onChange={(e) => setCoreMessage(e.target.value)}
+                  placeholder="希望观众记住的一句话"
+                />
+                <label>观众收益（可选）</label>
+                <input
+                  aria-label="观众收益"
+                  maxLength={500}
+                  value={viewerTakeaway}
+                  onChange={(e) => setViewerTakeaway(e.target.value)}
+                  placeholder="看完能够理解、判断或行动什么"
+                />
+                <label>发布用途</label>
+                <select
+                  aria-label="发布用途"
+                  value={presentationProfile}
+                  onChange={(e) => setPresentationProfile(e.target.value)}
+                >
+                  <option value="creator">自媒体内容</option>
+                  <option value="internal_demo">内部演示</option>
+                  <option value="engineering_report">工程报告</option>
+                </select>
+                <label>账号或栏目名（可选）</label>
+                <input
+                  aria-label="账号或栏目名"
+                  maxLength={80}
+                  value={creatorBrand}
+                  onChange={(e) => setCreatorBrand(e.target.value)}
+                />
                 <label>制作方式</label>
                 <select
                   aria-label="制作方式"
@@ -1131,7 +1190,7 @@ function App() {
                     compositionWidth={props.width}
                     compositionHeight={props.height}
                     fps={props.fps}
-                    initialFrame={Math.min(30, Math.max(0, props.total_frames - 1))}
+                    initialFrame={0}
                     durationInFrames={Math.max(1, props.total_frames)}
                     controls
                     style={{ width: '100%', aspectRatio: '16/9' }}
@@ -1157,9 +1216,52 @@ function App() {
                     <video src={media(revision.outputs.video)} controls preload="metadata" />
                   </div>
                 )}
+                {board?.cover && (
+                  <div className="publication-panel" style={{ padding: 20 }}>
+                    <h3>封面与内容主线</h3>
+                    <label>封面标题</label>
+                    <input
+                      aria-label="封面标题"
+                      maxLength={100}
+                      value={board.cover.headline}
+                      onChange={(e) =>
+                        setBoard({ ...board, cover: { ...board.cover!, headline: e.target.value } })
+                      }
+                    />
+                    <label>封面辅助文案</label>
+                    <input
+                      aria-label="封面辅助文案"
+                      maxLength={160}
+                      value={board.cover.subtitle}
+                      onChange={(e) =>
+                        setBoard({ ...board, cover: { ...board.cover!, subtitle: e.target.value } })
+                      }
+                    />
+                    {board.editorial && (
+                      <>
+                        <p>
+                          <b>核心主张：</b>
+                          {board.editorial.core_message}
+                        </p>
+                        <p>
+                          <b>观众收益：</b>
+                          {board.editorial.viewer_takeaway}
+                        </p>
+                      </>
+                    )}
+                    {revision?.outputs?.cover && (
+                      <img
+                        alt="实际导出的发布封面"
+                        src={media(revision.outputs.cover)}
+                        style={{ width: '100%', marginTop: 16 }}
+                      />
+                    )}
+                  </div>
+                )}
                 <div className="download-row">
                   {[
                     ['video', '视频 MP4'],
+                    ['cover', '独立封面 PNG'],
                     ['script', '演讲脚本'],
                     ['subtitles', '字幕 SRT'],
                     ['package', '可编辑工程'],

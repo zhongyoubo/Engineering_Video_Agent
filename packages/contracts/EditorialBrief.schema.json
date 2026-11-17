@@ -1,0 +1,45 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "intent": {
+      "default": "auto",
+      "enum": [
+        "auto",
+        "viewpoint",
+        "advice",
+        "analysis",
+        "knowledge",
+        "explanation"
+      ],
+      "title": "Intent",
+      "type": "string"
+    },
+    "subject_kind": {
+      "default": "auto",
+      "enum": [
+        "auto",
+        "project",
+        "knowledge",
+        "concept",
+        "mechanism",
+        "workflow"
+      ],
+      "title": "Subject Kind",
+      "type": "string"
+    },
+    "core_message": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Core Message",
+      "type": "string"
+    },
+    "viewer_takeaway": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Viewer Takeaway",
+      "type": "string"
+    }
+  },
+  "title": "EditorialBrief",
+  "type": "object"
+}

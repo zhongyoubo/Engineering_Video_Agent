@@ -80,3 +80,17 @@ API 可增加 `render_profile: {"resolution":"4k","fps":30}`、`design_pack: "ed
 `assets/library/catalog.json` 提供 15 项带版本、来源和校验指纹的代码/字体素材，`GET /api/v1/material-library` 和工作台“环境与能力”可查看；原生策划可选用并记录 `library:<id>@<version>`。详见 `docs/design/material-library-and-speech-cn.md`。
 
 `scripts/verify_project_bookends.py` 为已有自测片补独立 3 秒封面和 4 秒结束页，校验正文指纹后复用，实际生成 71.23 秒 4K 影片，并保留原正文与合成工程。它不重新配音，仍是 Edge 云希。Ming 的新参考音色与种子参数仅完成协议验证；真实服务、音质和对齐仍需验收。
+
+## 自媒体内容制作
+
+默认以观众为中心策划观点、建议、项目分析、知识分享和概念/原理讲解。
+创建页可选择内容目的，填写核心主张、观众收益和账号/栏目名。
+原生工程方案增加结构化内容策划；正文围绕主线展开，结尾给出结论或建议。
+
+两条渲染路径均提供独立发布封面与片内开场；首帧主题可读。创作者画面不再
+常驻显示“概念讲解”或工具页眉，制作方式与供应商记录保留在工作台和报告。
+代码示意/样本来源等必要说明在相关镜头局部显示。可修改封面文案并另存版本，
+下载封面 PNG；修改内容意图会重新策划，修改旁白继续触发音轨与时间轴重算。
+
+详情见 `docs/design/creator-production.md`，固定样例验证见
+`docs/verification-creator.json`。当前仍支持 16:9；竖屏与方形布局待后续实施。

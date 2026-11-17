@@ -3,6 +3,7 @@
 from pydantic import Field
 from ..domain import StrictModel, Scene, SceneType, StoryboardIR, Diagram
 from ..specs import SceneSpec
+from ..editorial import SceneRole, ViewerDisclosure
 
 
 class DesignedScene(StrictModel):
@@ -18,6 +19,10 @@ class DesignedScene(StrictModel):
     duration: float = Field(ge=2, le=180)
     diagram: Diagram | None
     motion: SceneSpec | None = None
+    role: SceneRole = "content"
+    message: str = Field(default="", max_length=500)
+    viewer_question: str = Field(default="", max_length=500)
+    disclosures: list[ViewerDisclosure] = Field(default_factory=list, max_length=4)
 
 
 class AgentDesign(StrictModel):
@@ -65,6 +70,8 @@ def validate_design(payload, content, brief):
         width=brief.render_profile.width,
         height=brief.render_profile.height,
         design_pack=brief.design_pack,
+        presentation_profile=brief.presentation_profile,
+        creator_brand=brief.creator_brand,
         scenes=scenes,
         notices=[f"{brief.agent_engine} 原生 Agent 生成；尚未自动认定为运行验证。"],
     )

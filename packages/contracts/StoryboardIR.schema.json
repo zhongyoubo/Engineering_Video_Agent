@@ -50,6 +50,28 @@
       "title": "CompiledEvent",
       "type": "object"
     },
+    "CoverSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "headline": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Headline",
+          "type": "string"
+        },
+        "subtitle": {
+          "default": "",
+          "maxLength": 160,
+          "title": "Subtitle",
+          "type": "string"
+        }
+      },
+      "required": [
+        "headline"
+      ],
+      "title": "CoverSpec",
+      "type": "object"
+    },
     "Cue": {
       "additionalProperties": false,
       "properties": {
@@ -231,6 +253,64 @@
         "emphasis"
       ],
       "title": "DiagramNode",
+      "type": "object"
+    },
+    "EditorialPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "audience_question": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Audience Question",
+          "type": "string"
+        },
+        "core_message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Core Message",
+          "type": "string"
+        },
+        "viewer_takeaway": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Viewer Takeaway",
+          "type": "string"
+        },
+        "hook": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Hook",
+          "type": "string"
+        },
+        "supports": {
+          "items": {
+            "$ref": "#/$defs/SupportPoint"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Supports",
+          "type": "array"
+        },
+        "closing": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Closing",
+          "type": "string"
+        },
+        "cover": {
+          "$ref": "#/$defs/CoverSpec"
+        }
+      },
+      "required": [
+        "audience_question",
+        "core_message",
+        "viewer_takeaway",
+        "hook",
+        "supports",
+        "closing",
+        "cover"
+      ],
+      "title": "EditorialPlan",
       "type": "object"
     },
     "MotionEvent": {
@@ -437,6 +517,44 @@
           "maxItems": 24,
           "title": "Compiled Events",
           "type": "array"
+        },
+        "role": {
+          "default": "content",
+          "enum": [
+            "content",
+            "opening",
+            "hook",
+            "problem",
+            "argument",
+            "example",
+            "mechanism",
+            "demonstration",
+            "limitation",
+            "recommendation",
+            "closing"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "message": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Message",
+          "type": "string"
+        },
+        "viewer_question": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Viewer Question",
+          "type": "string"
+        },
+        "disclosures": {
+          "items": {
+            "$ref": "#/$defs/ViewerDisclosure"
+          },
+          "maxItems": 4,
+          "title": "Disclosures",
+          "type": "array"
         }
       },
       "required": [
@@ -530,6 +648,68 @@
       ],
       "title": "SceneType",
       "type": "string"
+    },
+    "SupportPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Claim Ids",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "SupportPoint",
+      "type": "object"
+    },
+    "ViewerDisclosure": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "start_seconds": {
+          "default": 0,
+          "maximum": 180,
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "default": 4,
+          "exclusiveMinimum": 0,
+          "maximum": 180,
+          "title": "End Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "ViewerDisclosure",
+      "type": "object"
     },
     "VisualElement": {
       "additionalProperties": false,
@@ -630,6 +810,44 @@
       ],
       "title": "Design Pack",
       "type": "string"
+    },
+    "presentation_profile": {
+      "default": "creator",
+      "enum": [
+        "creator",
+        "internal_demo",
+        "engineering_report"
+      ],
+      "title": "Presentation Profile",
+      "type": "string"
+    },
+    "creator_brand": {
+      "default": "",
+      "maxLength": 80,
+      "title": "Creator Brand",
+      "type": "string"
+    },
+    "cover": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CoverSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "editorial": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EditorialPlan"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "total_frames": {
       "default": 2700,

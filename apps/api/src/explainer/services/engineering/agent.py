@@ -5,6 +5,7 @@ from ...adapters.native_contract import validate_design
 from ...config import ROOT
 from ...specs import PATTERN_ELEMENT_LIMITS, PATTERN_LABEL_LIMITS
 from ..materials import material_library, validate_material_references
+from ..editorial import EDITORIAL_INSTRUCTION, prepare_presentation, require_publishable, EditorialError
 from .contracts import ProductionPlan, EngineeringAction, schema
 
 
@@ -44,12 +45,17 @@ class NativeEngineeringAgent:
                     "layout": "grid or fan; fan is available only for overview",
                     "overflow": "Split into multiple scenes or author custom TSX; never silently discard elements or text",
                 },
-                "instruction": "Create an audience-focused production plan, full fluent narration, art direction and per-scene visual/motion treatment. For key explanatory scenes provide motion with purpose, chapter, stable element IDs and events anchored to actual narration phrases. Choose patterns by explanatory relationship, not keyword matching. Use code_scan, compare, graph, capacity, queue, depth or overview where appropriate; custom TSX remains available. Explain mechanisms visually; do not repeat text cards. Use real UI capture when supplied. All source assertions require supplied evidence IDs.",
+                "instruction": EDITORIAL_INSTRUCTION
+                + " Create full fluent narration, art direction and per-scene visual/motion treatment. Anchor events to narration phrases. Choose patterns by explanatory relationship, not keyword matching. Custom TSX remains available. Use supplied real UI captures. All source assertions require supplied evidence IDs.",
             },
         )
         validate_material_references(plan, library)
         report = {**report, "material_library_revision": library["revision"]}
         board = validate_design(plan.storyboard.model_dump(), self.content, self.brief)
+        if self.brief.presentation_profile == "creator" and plan.editorial is None:
+            raise EditorialError("创作者制作方案缺少内容主张与观众收益，请补充 editorial 策划。")
+        prepare_presentation(board, self.brief, plan.editorial)
+        require_publishable(board, self.content)
         return plan, board, report
 
     def decide(self, workspace, plan):
@@ -79,6 +85,8 @@ class NativeEngineeringAgent:
                 "frame_names": [f["name"] for f in workspace.state["frames"]],
                 "motion_frame_names": [f["name"] for f in workspace.state.get("motion_frames", [])],
                 "motion_review_scope": "Contact sheets sample motion; do not claim full playback or listening",
+                "publication_contract": EDITORIAL_INSTRUCTION,
+                "editorial_review": "When props.presentation_profile is creator, score content_focus, cover_promise, opening_closing and viewer_presentation from actual script/props and rendered images. All must be at least 4, including the separate thumbnail and frame zero. No claim of full playback/listening from sampled frames.",
             },
             files,
             frames,

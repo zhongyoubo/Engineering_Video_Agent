@@ -1125,6 +1125,25 @@
             "title": "Design Pack",
             "default": "workspace_tech"
           },
+          "presentation_profile": {
+            "type": "string",
+            "enum": [
+              "creator",
+              "internal_demo",
+              "engineering_report"
+            ],
+            "title": "Presentation Profile",
+            "default": "creator"
+          },
+          "editorial": {
+            "$ref": "#/components/schemas/EditorialBrief"
+          },
+          "creator_brand": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Creator Brand",
+            "default": ""
+          },
           "runtime": {
             "type": "string",
             "enum": [
@@ -1250,6 +1269,28 @@
           "timing_source"
         ],
         "title": "CompiledEvent"
+      },
+      "CoverSpec": {
+        "properties": {
+          "headline": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Headline"
+          },
+          "subtitle": {
+            "type": "string",
+            "maxLength": 160,
+            "title": "Subtitle",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "headline"
+        ],
+        "title": "CoverSpec"
       },
       "CreateEngineeringVideo": {
         "properties": {
@@ -1486,6 +1527,109 @@
         ],
         "title": "DiagramNode"
       },
+      "EditorialBrief": {
+        "properties": {
+          "intent": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "viewpoint",
+              "advice",
+              "analysis",
+              "knowledge",
+              "explanation"
+            ],
+            "title": "Intent",
+            "default": "auto"
+          },
+          "subject_kind": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "project",
+              "knowledge",
+              "concept",
+              "mechanism",
+              "workflow"
+            ],
+            "title": "Subject Kind",
+            "default": "auto"
+          },
+          "core_message": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Core Message",
+            "default": ""
+          },
+          "viewer_takeaway": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Viewer Takeaway",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "EditorialBrief"
+      },
+      "EditorialPlan": {
+        "properties": {
+          "audience_question": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Audience Question"
+          },
+          "core_message": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Core Message"
+          },
+          "viewer_takeaway": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Viewer Takeaway"
+          },
+          "hook": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Hook"
+          },
+          "supports": {
+            "items": {
+              "$ref": "#/components/schemas/SupportPoint"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Supports"
+          },
+          "closing": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Closing"
+          },
+          "cover": {
+            "$ref": "#/components/schemas/CoverSpec"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "audience_question",
+          "core_message",
+          "viewer_takeaway",
+          "hook",
+          "supports",
+          "closing",
+          "cover"
+        ],
+        "title": "EditorialPlan"
+      },
       "EngineeringBrief": {
         "properties": {
           "title": {
@@ -1641,6 +1785,25 @@
             ],
             "title": "Design Pack",
             "default": "workspace_tech"
+          },
+          "presentation_profile": {
+            "type": "string",
+            "enum": [
+              "creator",
+              "internal_demo",
+              "engineering_report"
+            ],
+            "title": "Presentation Profile",
+            "default": "creator"
+          },
+          "editorial": {
+            "$ref": "#/components/schemas/EditorialBrief"
+          },
+          "creator_brand": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Creator Brand",
+            "default": ""
           },
           "runtime": {
             "type": "string",
@@ -2000,6 +2163,44 @@
             "type": "array",
             "maxItems": 24,
             "title": "Compiled Events"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "content",
+              "opening",
+              "hook",
+              "problem",
+              "argument",
+              "example",
+              "mechanism",
+              "demonstration",
+              "limitation",
+              "recommendation",
+              "closing"
+            ],
+            "title": "Role",
+            "default": "content"
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Message",
+            "default": ""
+          },
+          "viewer_question": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Viewer Question",
+            "default": ""
+          },
+          "disclosures": {
+            "items": {
+              "$ref": "#/components/schemas/ViewerDisclosure"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "title": "Disclosures"
           }
         },
         "additionalProperties": false,
@@ -2172,6 +2373,42 @@
             "title": "Design Pack",
             "default": "workspace_tech"
           },
+          "presentation_profile": {
+            "type": "string",
+            "enum": [
+              "creator",
+              "internal_demo",
+              "engineering_report"
+            ],
+            "title": "Presentation Profile",
+            "default": "creator"
+          },
+          "creator_brand": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Creator Brand",
+            "default": ""
+          },
+          "cover": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CoverSpec"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "editorial": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EditorialPlan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "total_frames": {
             "type": "integer",
             "minimum": 1.0,
@@ -2208,6 +2445,38 @@
         ],
         "title": "StoryboardIR"
       },
+      "SupportPoint": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Message"
+          },
+          "claim_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Claim Ids"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Evidence Ids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "SupportPoint"
+      },
       "ValidationError": {
         "properties": {
           "loc": {
@@ -2240,6 +2509,36 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "ViewerDisclosure": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Text"
+          },
+          "start_seconds": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": 0.0,
+            "title": "Start Seconds",
+            "default": 0
+          },
+          "end_seconds": {
+            "type": "number",
+            "maximum": 180.0,
+            "exclusiveMinimum": 0.0,
+            "title": "End Seconds",
+            "default": 4
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "ViewerDisclosure"
       },
       "VisualElement": {
         "properties": {

@@ -17,6 +17,7 @@ from .ingestion import analyze
 from .planning import plan
 from .process import Runner
 from .quality import inspect, inspect_video
+from .editorial import prepare_presentation, require_publishable, publication_findings, EditorialError
 from .timeline import allocate, required_tempo, word_cues, TimelineConflict
 from ..adapters.alignment import forced_align, validate_words
 
@@ -123,7 +124,7 @@ class Pipeline:
                 self.job,
                 "FAILED",
                 str(exc)
-                if isinstance(exc, (TimelineConflict, NativeAgentError, EngineeringError))
+                if isinstance(exc, (TimelineConflict, NativeAgentError, EngineeringError, EditorialError))
                 else f"{code}: 阶段 {self.db.one('SELECT stage FROM jobs WHERE id=?', (self.job['id'],))['stage']} 未完成；检查服务和运行配置。",
             )
             raise
@@ -205,6 +206,7 @@ class Pipeline:
                 )["id"]
             else:
                 board = plan(content, self.brief, self.settings)
+            prepare_presentation(board, self.brief)
             valid = {x.id for x in content.claims}
             evid = {x.id for x in content.evidence}
             if any(set(s.claim_ids) - valid or set(s.evidence_ids) - evid for s in board.scenes):
@@ -224,6 +226,8 @@ class Pipeline:
                         if editing
                         else "Use the saved edited storyboard and actual props as authoritative."
                     )
+                if board.editorial:
+                    production_plan["editorial"] = board.editorial.model_dump()
                 outputs["production_plan"] = self.store.put(
                     self.tenant,
                     encode(production_plan).encode(),
@@ -299,6 +303,8 @@ class Pipeline:
                 ]
         # Revalidate after runtime insertion, before paying for narration.
         board = StoryboardIR.model_validate(board.model_dump())
+        if self.brief.presentation_profile == "creator":
+            require_publishable(board, content)
 
         def voice():
             if self.brief.video_mode == "engineering":
@@ -577,12 +583,21 @@ class Pipeline:
             cover = directory / "cover.png"
             if cover.exists():
                 outputs["cover"] = self.asset(cover, "cover", "image/png", "cover.png")
+            if self.brief.presentation_profile == "creator" and "cover" not in outputs:
+                raise EditorialError("创作者成片缺少实际渲染的独立封面")
             return {"metadata": metadata, "outputs": outputs}
 
         rendered = self.stage("render", 0.58, rendering)
 
         def quality():
             report = inspect(board, content, runtime_result, audio, self.brief.target_seconds)
+            report["publication"] = {
+                "presentation_profile": board.presentation_profile,
+                "editorial_plan": board.editorial.model_dump() if board.editorial else None,
+                "findings": publication_findings(board, content),
+                "cover_exported": bool(rendered.get("outputs", {}).get("cover")),
+            }
+            report["findings"].extend(report["publication"]["findings"])
             report["media"] = rendered["metadata"]
             report["video_mode"] = self.brief.video_mode
             report["quality_profile"] = self.brief.quality_profile
@@ -669,6 +684,7 @@ class Pipeline:
                 z.writestr("content.json", encode(content.model_dump()))
                 z.writestr("quality.json", encode(report))
                 for role, name in [
+                    ("cover", "cover.png"),
                     ("production_plan", "production-plan.json"),
                     ("visual_review", "visual-review.json"),
                     ("authoring_journal", "authoring-journal.json"),

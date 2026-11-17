@@ -54,6 +54,16 @@ try {
           if (!frames.includes(frame)) frames.push(frame);
         }
       }
+      for (const frame of [
+        0,
+        Math.min(15, props.total_frames - 1),
+        Math.min(45, props.total_frames - 1),
+        Math.max(0, (props.scenes[0]?.frames || 1) - 1),
+        props.total_frames - 1,
+      ]) {
+        if (!frames.includes(frame)) frames.push(frame);
+      }
+      frames.sort((a, b) => a - b);
       const files = [];
       for (const frame of frames) {
         const name = `frame-${String(frame).padStart(6, '0')}.png`;
@@ -70,6 +80,24 @@ try {
         });
         files.push({ name, frame });
       }
+      const thumbnail = await selectComposition({
+        serveUrl,
+        id: 'PublicationThumbnail',
+        inputProps: props,
+        puppeteerInstance: browser,
+        browserExecutable,
+      });
+      await renderStill({
+        serveUrl,
+        composition: thumbnail,
+        inputProps: props,
+        puppeteerInstance: browser,
+        browserExecutable,
+        frame: 0,
+        output: resolve(output, 'cover.png'),
+        imageFormat: 'png',
+      });
+      files.push({ name: 'cover.png', frame: 0, kind: 'thumbnail' });
       const clips = [],
         motionFrames = [];
       if (props.motion_review_required) {

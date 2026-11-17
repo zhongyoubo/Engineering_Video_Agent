@@ -4,6 +4,7 @@ import re
 import httpx
 
 from ..domain import StoryboardIR, Scene
+from .editorial import EDITORIAL_INSTRUCTION
 
 
 def trimmed(text, limit=90):
@@ -19,6 +20,8 @@ def distribute(board, target):
 
 
 def template_plan(content, brief):
+    if brief.presentation_profile == "creator":
+        return creator_template_plan(content, brief)
     en = brief.language == "en-US"
     scenes = []
     if content.kind == "source":
@@ -174,6 +177,69 @@ def template_plan(content, brief):
     return distribute(board, brief.target_seconds)
 
 
+def creator_template_plan(content, brief):
+    """Explicit compatibility draft: arrange supplied facts without inventing analysis."""
+    en = brief.language == "en-US"
+    if content.kind == "source":
+        points = [(c.statement[:500], [c.id], c.evidence_ids) for c in content.claims[:4]]
+    else:
+        points = [
+            (p.strip()[:500], ["c_prompt"], [])
+            for p in re.split(r"[\n。；;!?！？]+", brief.prompt)
+            if p.strip()
+        ][:4]
+    points = points or [(brief.title, [], [])]
+    opening = brief.editorial.core_message or (
+        f"Let's explore {brief.title}." if en else f"{brief.title}，可以怎样理解和应用？"
+    )
+    closing = brief.editorial.viewer_takeaway or brief.editorial.core_message or points[-1][0]
+    scenes = [
+        Scene(
+            id="intro",
+            type="title",
+            role="opening",
+            title=brief.title,
+            narration=opening,
+            claim_ids=points[0][1],
+            evidence_ids=points[0][2],
+        )
+    ]
+    for index, (text, claims, evidence) in enumerate(points):
+        scenes.append(
+            Scene(
+                id=f"point_{index + 1}",
+                type="cards",
+                role="argument",
+                title=trimmed(text, 40),
+                narration=text,
+                message=text,
+                bullets=[trimmed(text, 130)],
+                claim_ids=claims,
+                evidence_ids=evidence,
+                verification="static" if content.kind == "source" else "user_provided",
+            )
+        )
+    scenes.append(
+        Scene(
+            id="summary",
+            type="summary",
+            role="closing",
+            title=trimmed(closing, 60),
+            narration=closing,
+            message=closing,
+        )
+    )
+    board = StoryboardIR(
+        title=brief.title,
+        language=brief.language,
+        accent=brief.accent,
+        audience=brief.audience,
+        scenes=scenes,
+        notices=["兼容草稿仅编排已提供内容；未调用内容策划模型。核心主张与表达仍需审阅。"],
+    )
+    return distribute(board, brief.target_seconds)
+
+
 def plan(content, brief, settings):
     fallback = template_plan(content, brief)
     if not (settings.model_url and settings.model_name and settings.allow_external_model):
@@ -190,7 +256,7 @@ def plan(content, brief, settings):
         "No media/audio IDs or URLs. Reference only supplied claim/evidence IDs. "
         "Never claim execution, verified results or metrics without evidence. "
         "For prompt input, provide a helpful educational explanation and distinguish assumptions. "
-        "Use short visual bullets. Do not include arbitrary code execution commands."
+        "Use short visual bullets. Do not include arbitrary code execution commands. " + EDITORIAL_INSTRUCTION
     )
     try:
         with httpx.Client(timeout=90, follow_redirects=False, trust_env=False) as client:

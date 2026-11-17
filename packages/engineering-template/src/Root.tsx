@@ -12,6 +12,7 @@ import {
   useCurrentFrame,
 } from 'remotion';
 import EngineeringVideo from './Video';
+import { Bookend, PublicationThumbnail, ViewerDisclosures } from './presentation';
 import type { VideoProps, Scene } from './contracts';
 
 function Caption({ scene }: { scene: Scene }) {
@@ -74,6 +75,11 @@ function TrustedVideo(props: VideoProps) {
       <EngineeringVideo {...props} />
       {props.scenes.map((scene) => (
         <Sequence key={scene.id} from={scene.start_frame} durationInFrames={scene.frames}>
+          {(props.presentation_profile || 'creator') === 'creator' &&
+            (scene.role === 'opening' || scene.role === 'closing') && (
+              <Bookend scene={scene} props={props} />
+            )}
+          <ViewerDisclosures scene={scene} fps={props.fps} />
           {scene.audio_src && <Audio src={staticFile(scene.audio_src)} />}
           <Caption scene={scene} />
         </Sequence>
@@ -84,14 +90,25 @@ function TrustedVideo(props: VideoProps) {
 export function Root() {
   const props = getInputProps() as unknown as VideoProps;
   return (
-    <Composition
-      id="EngineeringVideo"
-      component={TrustedVideo}
-      width={props.width || 1920}
-      height={props.height || 1080}
-      fps={props.fps || 30}
-      durationInFrames={props.total_frames}
-      defaultProps={props}
-    />
+    <>
+      <Composition
+        id="EngineeringVideo"
+        component={TrustedVideo}
+        width={props.width || 1920}
+        height={props.height || 1080}
+        fps={props.fps || 30}
+        durationInFrames={props.total_frames}
+        defaultProps={props}
+      />
+      <Composition
+        id="PublicationThumbnail"
+        component={PublicationThumbnail}
+        width={props.width || 1920}
+        height={props.height || 1080}
+        fps={30}
+        durationInFrames={1}
+        defaultProps={props}
+      />
+    </>
   );
 }

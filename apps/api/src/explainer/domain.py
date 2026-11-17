@@ -2,6 +2,14 @@ from enum import Enum
 from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from .specs import RenderProfile, VoiceSpec, SceneSpec, CompiledEvent
+from .editorial import (
+    EditorialBrief,
+    EditorialPlan,
+    CoverSpec,
+    ViewerDisclosure,
+    PresentationProfile,
+    SceneRole,
+)
 
 
 class StrictModel(BaseModel):
@@ -44,6 +52,9 @@ class Brief(StrictModel):
     render_profile: RenderProfile = Field(default_factory=RenderProfile)
     voice_spec: VoiceSpec = Field(default_factory=VoiceSpec)
     design_pack: Literal["editorial_warm", "workspace_tech"] = "workspace_tech"
+    presentation_profile: PresentationProfile = "creator"
+    editorial: EditorialBrief = Field(default_factory=EditorialBrief)
+    creator_brand: str = Field(default="", max_length=80)
     runtime: Literal["none", "auto", "static-web", "python-cli", "node-web", "python-api", "node-cli"] = (
         "none"
     )
@@ -159,6 +170,10 @@ class Scene(StrictModel):
     diagram: Diagram | None = None
     motion: SceneSpec | None = None
     compiled_events: list[CompiledEvent] = Field(default_factory=list, max_length=24)
+    role: SceneRole = "content"
+    message: str = Field(default="", max_length=500)
+    viewer_question: str = Field(default="", max_length=500)
+    disclosures: list[ViewerDisclosure] = Field(default_factory=list, max_length=4)
 
 
 class StoryboardIR(StrictModel):
@@ -172,6 +187,10 @@ class StoryboardIR(StrictModel):
     width: Literal[1920, 3840] = 1920
     height: Literal[1080, 2160] = 1080
     design_pack: Literal["editorial_warm", "workspace_tech"] = "workspace_tech"
+    presentation_profile: PresentationProfile = "creator"
+    creator_brand: str = Field(default="", max_length=80)
+    cover: CoverSpec | None = None
+    editorial: EditorialPlan | None = None
     total_frames: int = Field(default=2700, ge=1)
     notices: list[str] = Field(default_factory=list)
     audio_alignment: Literal["estimated_sentence", "native_words", "forced_words", "mixed", "none"] = "none"

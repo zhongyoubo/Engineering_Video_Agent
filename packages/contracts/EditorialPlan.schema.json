@@ -1,0 +1,114 @@
+{
+  "$defs": {
+    "CoverSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "headline": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Headline",
+          "type": "string"
+        },
+        "subtitle": {
+          "default": "",
+          "maxLength": 160,
+          "title": "Subtitle",
+          "type": "string"
+        }
+      },
+      "required": [
+        "headline"
+      ],
+      "title": "CoverSpec",
+      "type": "object"
+    },
+    "SupportPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Claim Ids",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "SupportPoint",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "audience_question": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Audience Question",
+      "type": "string"
+    },
+    "core_message": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Core Message",
+      "type": "string"
+    },
+    "viewer_takeaway": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Viewer Takeaway",
+      "type": "string"
+    },
+    "hook": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Hook",
+      "type": "string"
+    },
+    "supports": {
+      "items": {
+        "$ref": "#/$defs/SupportPoint"
+      },
+      "maxItems": 6,
+      "minItems": 1,
+      "title": "Supports",
+      "type": "array"
+    },
+    "closing": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Closing",
+      "type": "string"
+    },
+    "cover": {
+      "$ref": "#/$defs/CoverSpec"
+    }
+  },
+  "required": [
+    "audience_question",
+    "core_message",
+    "viewer_takeaway",
+    "hook",
+    "supports",
+    "closing",
+    "cover"
+  ],
+  "title": "EditorialPlan",
+  "type": "object"
+}

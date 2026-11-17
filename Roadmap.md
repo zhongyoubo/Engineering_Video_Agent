@@ -16,3 +16,12 @@ The product is an engineering video Agent, with Codex/Claude Code as replaceable
 | V4 further production | Full nonlinear timeline, reference-video automatic ingestion, measured transition-wide review, scene render cache, broader project adapters and managed MCP registry | Planned |
 
 Release acceptance: deliver source, install instructions, design, contracts, test evidence and limitations together. No arbitrary calendar promise substitutes for real verification.
+
+## Creator publication update · 2026-11-17
+
+Implemented structured editorial brief/plan, scene roles and local viewer disclosures;
+independent thumbnail/opening/closing in both render paths; creator-default UI, cover
+editing/download, pre-TTS publication policy and current-hash content/cover review gates.
+Compatibility drafts are explicitly limited to supplied content. Verified by 115 backend tests, 7 browser flows, TypeScript/build and fixed authored media checks; see verification-creator.json.
+No new Ming video, native model quality, real TTS or isolated deployment acceptance is claimed.
+Vertical/square composition, platform presets and advanced thumbnail art direction remain planned.

@@ -15,6 +15,7 @@ import {
   useVideoConfig,
 } from 'remotion';
 import type { Scene, VideoProps } from './types';
+import { Bookend, ViewerDisclosures } from '../../engineering-template/src/presentation';
 export type { Scene, Storyboard, VideoProps } from './types';
 
 const colors = { blue: '#3869ef', violet: '#7953df', teal: '#087f83', amber: '#bc7620' };
@@ -376,17 +377,22 @@ function SceneView({
   total,
   accent,
   language,
+  props,
 }: {
   scene: Scene;
   index: number;
   total: number;
   accent: string;
   language: string;
+  props: VideoProps;
 }) {
   const f = useCurrentFrame(),
     { fps } = useVideoConfig();
   const progress = Math.min(1, f / Math.max(scene.frames - 1, 1));
-  const opacity = reveal(f);
+  const bookend =
+    (props.presentation_profile || 'creator') === 'creator' &&
+    (scene.role === 'opening' || scene.role === 'closing');
+  const opacity = scene.type === 'title' || scene.role === 'opening' ? 1 : reveal(f);
   const cue = scene.cues.find((c) => f / fps >= c.start && f / fps < c.end);
   const text = cue?.text || (!scene.cues.length ? scene.narration.slice(0, 65) : '');
   const labels = {
@@ -414,23 +420,25 @@ function SceneView({
           borderRadius: '50%',
         }}
       />
-      <div
-        style={{
-          position: 'absolute',
-          top: 48,
-          left: 100,
-          right: 100,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <span style={{ fontSize: 18, letterSpacing: 4, color: accent }}>
-          EXPLAINER STUDIO / {String(index + 1).padStart(2, '0')}
-        </span>
-        <Badge text={labels[scene.verification]} color={accent} />
-      </div>
-      {scene.type !== 'title' && scene.type !== 'summary' && (
+      {(props.presentation_profile || 'creator') !== 'creator' && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 48,
+            left: 100,
+            right: 100,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <span style={{ fontSize: 18, letterSpacing: 4, color: accent }}>
+            EXPLAINER STUDIO / {String(index + 1).padStart(2, '0')}
+          </span>
+          <Badge text={labels[scene.verification]} color={accent} />
+        </div>
+      )}
+      {!bookend && scene.type !== 'title' && scene.type !== 'summary' && (
         <div
           style={{
             position: 'absolute',
@@ -457,8 +465,13 @@ function SceneView({
           opacity,
         }}
       >
-        <Content scene={scene} color={accent} />
+        {!bookend && <Content scene={scene} color={accent} />}
       </div>
+      {(props.presentation_profile || 'creator') === 'creator' &&
+        (scene.role === 'opening' || scene.role === 'closing') && (
+          <Bookend scene={scene} props={props} />
+        )}
+      <ViewerDisclosures scene={scene} fps={fps} />
       {text && (
         <div
           style={{ position: 'absolute', bottom: 72, left: 140, right: 140, textAlign: 'center' }}
@@ -540,6 +553,7 @@ export function Video(props: VideoProps) {
             total={props.scenes.length}
             accent={colors[props.accent]}
             language={props.language}
+            props={props}
           />
         </Sequence>
       ))}

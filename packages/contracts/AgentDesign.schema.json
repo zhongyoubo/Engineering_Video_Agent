@@ -125,6 +125,44 @@
             }
           ],
           "default": null
+        },
+        "role": {
+          "default": "content",
+          "enum": [
+            "content",
+            "opening",
+            "hook",
+            "problem",
+            "argument",
+            "example",
+            "mechanism",
+            "demonstration",
+            "limitation",
+            "recommendation",
+            "closing"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "message": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Message",
+          "type": "string"
+        },
+        "viewer_question": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Viewer Question",
+          "type": "string"
+        },
+        "disclosures": {
+          "items": {
+            "$ref": "#/$defs/ViewerDisclosure"
+          },
+          "maxItems": 4,
+          "title": "Disclosures",
+          "type": "array"
         }
       },
       "required": [
@@ -139,7 +177,11 @@
         "evidence_ids",
         "duration",
         "diagram",
-        "motion"
+        "motion",
+        "role",
+        "message",
+        "viewer_question",
+        "disclosures"
       ],
       "title": "DesignedScene",
       "type": "object"
@@ -390,6 +432,38 @@
       ],
       "title": "SceneType",
       "type": "string"
+    },
+    "ViewerDisclosure": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "start_seconds": {
+          "default": 0,
+          "maximum": 180,
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "default": 4,
+          "exclusiveMinimum": 0,
+          "maximum": 180,
+          "title": "End Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "text",
+        "start_seconds",
+        "end_seconds"
+      ],
+      "title": "ViewerDisclosure",
+      "type": "object"
     },
     "VisualElement": {
       "additionalProperties": false,
