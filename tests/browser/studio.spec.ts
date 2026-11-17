@@ -74,8 +74,8 @@ test('prompt → storyboard → edit → independent revision', async ({ page, c
   await expect(page.getByText('已注册适配器')).toBeVisible();
   await expect(page.getByText('source.static', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: '自有素材库', exact: true })).toBeVisible();
-  await expect(page.getByText(/独立品牌封面 · v1.0/)).toBeVisible();
-  await expect(page.getByText(/关系网络 · v1.0 · 未验证/)).toBeVisible();
+  await expect(page.getByText(/主题封面 · v1.1/)).toBeVisible();
+  await expect(page.getByText(/关系网络 · v1.1 · 未验证/)).toBeVisible();
 });
 
 test('upload source → evidence-backed storyboard', async ({ page, context }) => {
@@ -169,4 +169,50 @@ test('engineering is the default and submits a native professional production re
   expect(brief.voice).toBe('qwen');
   await expect(page.getByText(/原生 Agent 未就绪/)).toBeVisible({ timeout: 30000 });
   await expect(page.getByText('工程 Agent 制作中', { exact: true })).toBeVisible();
+});
+
+test('creator intent and cover survive editing, and frame zero has no internal badge', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('内容目的').selectOption('advice');
+  await page.getByLabel('核心主张', { exact: true }).fill('先理解请求和响应');
+  await page.getByLabel('观众收益', { exact: true }).fill('能用例子说明 API');
+  await page.getByLabel('账号或栏目名').fill('研发小课堂');
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  const submitted = page.waitForRequest(
+    (r) => r.url().endsWith('/api/v1/videos') && r.method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const brief = (await submitted).postDataJSON().brief;
+  expect(brief.presentation_profile).toBe('creator');
+  expect(brief.editorial.intent).toBe('advice');
+  expect(brief.editorial.core_message).toBe('先理解请求和响应');
+  await expect(page.getByLabel('封面标题', { exact: true })).toHaveValue('解释一个概念', {
+    timeout: 30000,
+  });
+  await expect(
+    page.locator('[data-publication-card]').getByText('解释一个概念', { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.locator('[data-publication-card]').getByText('研发小课堂', { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator('.preview-panel').getByText('概念讲解', { exact: true })).toHaveCount(
+    0,
+  );
+  await expect(page.locator('.preview-panel').getByText(/EXPLAINER STUDIO/)).toHaveCount(0);
+  await page.getByLabel('封面标题', { exact: true }).fill('API 可以这样理解');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  await expect(page.getByLabel('封面标题', { exact: true })).toHaveValue('API 可以这样理解', {
+    timeout: 30000,
+  });
+  await expect(
+    page.locator('[data-publication-card]').getByText('API 可以这样理解', { exact: true }),
+  ).toBeVisible();
 });

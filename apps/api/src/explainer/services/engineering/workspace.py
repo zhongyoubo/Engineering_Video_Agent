@@ -21,7 +21,8 @@ def source_path(value):
         or path.is_absolute()
         or not path.parts
         or path.parts[0] != "src"
-        or path.name in {"index.tsx", "Root.tsx", "contracts.ts", "env.d.ts", "motion-kit.tsx"}
+        or path.name
+        in {"index.tsx", "Root.tsx", "contracts.ts", "env.d.ts", "motion-kit.tsx", "presentation.tsx"}
         or any(p.startswith(".") or p == "node_modules" for p in path.parts)
         or path.suffix not in {".tsx", ".ts", ".css"}
     ):

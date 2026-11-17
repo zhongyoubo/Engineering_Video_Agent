@@ -68,3 +68,10 @@ The GitHub Actions workflow is newly added; local success does not assert a remo
 - Ming adapter forwards configured reference audio/text and seed; hashes reference identity into only the Ming cache. Existing Edge/Qwen cache configuration is unchanged. Actual HTTP/PCM test is explicitly a fixture, not inference. Official Ming and SGLang sources checked; undocumented SDK control fields are not sent to the compatibility endpoint.
 - Full check: 105 backend tests, Ruff, TypeScript and frontend build passed; 6 browser tests passed including material browsing. Formatting passed. No test was deleted/skipped or existing content threshold relaxed.
 - No Ming endpoint, Qwen service, alignment weights or GPU CLI is configured; new video retains existing Edge speech. Naturalness, pronunciation and voice comparison remain unverified. Documented a same-script audition and separate oral-script/term/phrasing work before replacing the narration.
+
+## 2026-11-17 publication follow-up
+
+Creator presentation removes permanent tool/verification banners. Protected bookends are
+topic-driven; preview adds the separate thumbnail and opening/final boundary samples.
+Existing motion review and project-hash invalidation are preserved. See creator-production
+implementation and fixed-render evidence; these samples do not establish full listening.

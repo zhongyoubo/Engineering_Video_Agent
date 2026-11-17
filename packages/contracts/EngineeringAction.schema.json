@@ -59,7 +59,7 @@
           "items": {
             "type": "string"
           },
-          "maxItems": 96,
+          "maxItems": 128,
           "minItems": 1,
           "title": "Inspected Frames",
           "type": "array"
@@ -78,6 +78,34 @@
           "maxItems": 32,
           "title": "Inspected Motion Frames",
           "type": "array"
+        },
+        "content_focus": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Content Focus",
+          "type": "integer"
+        },
+        "cover_promise": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Cover Promise",
+          "type": "integer"
+        },
+        "opening_closing": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Opening Closing",
+          "type": "integer"
+        },
+        "viewer_presentation": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Viewer Presentation",
+          "type": "integer"
         }
       },
       "required": [
@@ -88,7 +116,11 @@
         "issues",
         "inspected_frames",
         "motion_continuity",
-        "inspected_motion_frames"
+        "inspected_motion_frames",
+        "content_focus",
+        "cover_promise",
+        "opening_closing",
+        "viewer_presentation"
       ],
       "title": "VisualReview",
       "type": "object"

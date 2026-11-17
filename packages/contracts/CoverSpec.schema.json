@@ -1,0 +1,22 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "headline": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Headline",
+      "type": "string"
+    },
+    "subtitle": {
+      "default": "",
+      "maxLength": 160,
+      "title": "Subtitle",
+      "type": "string"
+    }
+  },
+  "required": [
+    "headline"
+  ],
+  "title": "CoverSpec",
+  "type": "object"
+}

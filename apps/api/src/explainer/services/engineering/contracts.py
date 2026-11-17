@@ -4,6 +4,7 @@ from typing import Literal
 from pydantic import Field, model_validator
 from ...domain import StrictModel
 from ...adapters.native_contract import AgentDesign
+from ...editorial import EditorialPlan
 
 
 class MotionShot(StrictModel):
@@ -20,6 +21,8 @@ class ProductionPlan(StrictModel):
     voice_direction: str = Field(min_length=10, max_length=1000)
     shots: list[MotionShot] = Field(min_length=1, max_length=32)
     storyboard: AgentDesign
+    # Optional only for loading historic saved plans. New creator planning requires it.
+    editorial: EditorialPlan | None = None
 
     @model_validator(mode="after")
     def match_shots(self):
@@ -40,9 +43,13 @@ class VisualReview(StrictModel):
     visual_explanation: int = Field(ge=0, le=5)
     timing: int = Field(ge=0, le=5)
     issues: list[str] = Field(max_length=30)
-    inspected_frames: list[str] = Field(min_length=1, max_length=96)
+    inspected_frames: list[str] = Field(min_length=1, max_length=128)
     motion_continuity: int = Field(default=0, ge=0, le=5)
     inspected_motion_frames: list[str] = Field(default_factory=list, max_length=32)
+    content_focus: int = Field(default=0, ge=0, le=5)
+    cover_promise: int = Field(default=0, ge=0, le=5)
+    opening_closing: int = Field(default=0, ge=0, le=5)
+    viewer_presentation: int = Field(default=0, ge=0, le=5)
 
 
 class EngineeringAction(StrictModel):

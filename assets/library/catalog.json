@@ -3,7 +3,7 @@
   "items": [
     {
       "id": "design.editorial_warm",
-      "version": "1.0",
+      "version": "1.1",
       "name": "暖白讲解风格",
       "kind": "design",
       "purpose": "统一暖白底、深青主体、红色强调与版式留白。",
@@ -16,7 +16,7 @@
     },
     {
       "id": "design.workspace_tech",
-      "version": "1.0",
+      "version": "1.1",
       "name": "科技工作台风格",
       "kind": "design",
       "purpose": "统一蓝白背景、青色强调与软件工程界面表达。",
@@ -29,7 +29,7 @@
     },
     {
       "id": "visual.overview",
-      "version": "1.0",
+      "version": "1.1",
       "name": "网格与扇形概览",
       "kind": "visual",
       "purpose": "展示一组概念，逐项展开并建立章节结构。",
@@ -42,7 +42,7 @@
     },
     {
       "id": "visual.code_scan",
-      "version": "1.0",
+      "version": "1.1",
       "name": "代码扫描",
       "kind": "visual",
       "purpose": "沿真实源码逐行扫描，关联侧边问题或解释清单。",
@@ -55,7 +55,7 @@
     },
     {
       "id": "visual.compare",
-      "version": "1.0",
+      "version": "1.1",
       "name": "方案对比",
       "kind": "visual",
       "purpose": "并排比较少量方案、输入或结果，保持同一比较维度。",
@@ -68,7 +68,7 @@
     },
     {
       "id": "visual.graph",
-      "version": "1.0",
+      "version": "1.1",
       "name": "关系网络",
       "kind": "visual",
       "purpose": "显示一个中心与周边对象的关系及连线进展。",
@@ -81,7 +81,7 @@
     },
     {
       "id": "visual.capacity",
-      "version": "1.0",
+      "version": "1.1",
       "name": "容量变化",
       "kind": "visual",
       "purpose": "用容器中的层级和进度表达占用与容量变化。",
@@ -94,7 +94,7 @@
     },
     {
       "id": "visual.queue",
-      "version": "1.0",
+      "version": "1.1",
       "name": "队列瓶颈",
       "kind": "visual",
       "purpose": "用流入粒子、队列积累与处理服务解释并发瓶颈。",
@@ -107,7 +107,7 @@
     },
     {
       "id": "visual.depth",
-      "version": "1.0",
+      "version": "1.1",
       "name": "浅坑与深井",
       "kind": "visual",
       "purpose": "用投入的深度表达分散和持续积累的差别。",
@@ -120,7 +120,7 @@
     },
     {
       "id": "motion.reveal",
-      "version": "1.0",
+      "version": "1.1",
       "name": "分步显现",
       "kind": "motion",
       "purpose": "按照实际旁白词边界显现目标对象。",
@@ -133,7 +133,7 @@
     },
     {
       "id": "motion.highlight",
-      "version": "1.0",
+      "version": "1.1",
       "name": "局部强调",
       "kind": "motion",
       "purpose": "按照旁白词边界改变目标对象的强调状态。",
@@ -146,7 +146,7 @@
     },
     {
       "id": "motion.progress",
-      "version": "1.0",
+      "version": "1.1",
       "name": "进度变化",
       "kind": "motion",
       "purpose": "按照实际旁白驱动目标对象从初始到目标状态。",
@@ -159,10 +159,10 @@
     },
     {
       "id": "scene.cover",
-      "version": "1.0",
-      "name": "独立品牌封面",
+      "version": "1.1",
+      "name": "主题封面",
       "kind": "bookend",
-      "purpose": "从第零帧显示项目名称、价值主张与源码到视频图形。",
+      "purpose": "独立主题封面；首帧可读；标题、辅助文案由视频内容决定。",
       "source": "packages/engineering-template/src/motion-kit.tsx",
       "symbol": "CoverScene",
       "provenance": "项目内原创 React/SVG 代码；参考视频用于分析，没有提取其画面或音轨。",
@@ -172,10 +172,10 @@
     },
     {
       "id": "scene.outro",
-      "version": "1.0",
-      "name": "独立结束页",
+      "version": "1.1",
+      "name": "内容结尾",
       "kind": "bookend",
-      "purpose": "停留显示价值总结、仓库地址与实际配音来源。",
+      "purpose": "以当前主题的结论或建议收束内容，不插入工具自宣传。",
       "source": "packages/engineering-template/src/motion-kit.tsx",
       "symbol": "EndScene",
       "provenance": "项目内原创 React/SVG 代码；参考视频用于分析，没有提取其画面或音轨。",

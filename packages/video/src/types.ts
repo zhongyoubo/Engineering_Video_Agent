@@ -12,6 +12,21 @@ export type Diagram = {
 };
 export type Scene = {
   id: string;
+  role?:
+    | 'content'
+    | 'opening'
+    | 'hook'
+    | 'problem'
+    | 'argument'
+    | 'example'
+    | 'mechanism'
+    | 'demonstration'
+    | 'limitation'
+    | 'recommendation'
+    | 'closing';
+  message?: string;
+  viewer_question?: string;
+  disclosures?: { text: string; start_seconds: number; end_seconds: number }[];
   type: 'title' | 'cards' | 'flow' | 'architecture' | 'code' | 'terminal' | 'ui' | 'summary';
   title: string;
   subtitle: string;
@@ -62,6 +77,18 @@ export type Storyboard = {
   language: 'zh-CN' | 'en-US';
   accent: 'blue' | 'violet' | 'teal' | 'amber';
   audience: string;
+  presentation_profile?: 'creator' | 'internal_demo' | 'engineering_report';
+  creator_brand?: string;
+  cover?: { headline: string; subtitle: string } | null;
+  editorial?: {
+    audience_question: string;
+    core_message: string;
+    viewer_takeaway: string;
+    hook: string;
+    closing: string;
+    supports: { message: string; claim_ids: string[]; evidence_ids: string[] }[];
+    cover: { headline: string; subtitle: string };
+  } | null;
   scenes: Scene[];
   fps: 30;
   width: 1920 | 3840;

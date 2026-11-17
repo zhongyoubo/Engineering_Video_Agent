@@ -42,3 +42,10 @@ Implementation and fresh checks are recorded in `goals/2026-11-16-visual-explain
 Self-project narrated 4K follow-up: see `docs/verification-project-intro.json` and the final section of `goals/2026-11-16-visual-explainer-v4.md`. This extends actual media verification, not native-model or isolation acceptance.
 
 Material/bookend follow-up: see `docs/design/material-library-and-speech-cn.md` and `docs/verification-bookends.json`; actual Ming inference is not claimed.
+
+## 2026-11-17 creator publication follow-up
+
+Added audience/intent editorial contracts, independently rendered publication thumbnail,
+readable first-frame opening, topic-driven closing and hash-bound content review. Both
+render paths and editable exports updated. Evidence is in goals/2026-11-17-creator-production.md
+and docs/verification-creator.json; real native/TTS/isolation acceptance remains separate.

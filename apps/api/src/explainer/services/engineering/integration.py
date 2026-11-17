@@ -17,6 +17,11 @@ def check_font(board, font):
     if not font.is_file():
         raise EngineeringError("Required Chinese font is missing")
     text = "".join(s.title + s.subtitle + s.narration + "".join(s.bullets) for s in board.scenes)
+    if board.cover:
+        text += board.cover.headline + board.cover.subtitle
+    text += board.creator_brand + "".join(
+        s.message + "".join(d.text for d in s.disclosures) for s in board.scenes
+    )
     if "\ufffd" in text:
         raise EngineeringError("Text contains Unicode replacement characters")
     with TTFont(font) as face:
@@ -188,7 +193,10 @@ def build_engineering_video(pipeline, board, content, manifest, props, public, p
     journal = p.store.put(
         p.tenant, encode(w.state["journal"]).encode(), "report", "authoring-journal.json", "application/json"
     )
-    preview = p.asset(w.root / w.state["frames"][0]["name"], "cover", "image/png", "cover.png")
+    thumbnail = next((f for f in w.state["frames"] if f.get("kind") == "thumbnail"), None)
+    if not thumbnail:
+        raise EngineeringError("Missing independently rendered publication thumbnail")
+    preview = p.asset(w.root / thumbnail["name"], "cover", "image/png", "cover.png")
     return Path(result["video"]), {
         "engineering_project": p.asset(
             archive, "engineering-project", "application/zip", "remotion-project.zip"

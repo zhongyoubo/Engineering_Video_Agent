@@ -536,6 +536,12 @@ async def fork_revision(
     content = original["content"]
     if brief.input_id != old_brief.input_id or brief.prompt != old_brief.prompt:
         content, board = None, None
+    if (
+        brief.editorial != old_brief.editorial
+        or brief.presentation_profile != old_brief.presentation_profile
+        or brief.audience != old_brief.audience
+    ):
+        board = None
     if board:
         old = {s.id: s for s in old_board.scenes} if old_board else {}
         for scene in board.scenes:

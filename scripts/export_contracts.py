@@ -20,9 +20,15 @@ from explainer.specs import (
     CompiledEvent,
 )
 
+from explainer.editorial import EditorialBrief, EditorialPlan, CoverSpec, ViewerDisclosure
+
 directory = ROOT / "packages/contracts"
 for model in [
     Brief,
+    EditorialBrief,
+    EditorialPlan,
+    CoverSpec,
+    ViewerDisclosure,
     ContentIR,
     Scene,
     StoryboardIR,

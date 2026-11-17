@@ -52,20 +52,47 @@ def test_material_paths_cannot_expose_unapproved_sources(path):
 
 
 def production_plan():
+    design = json.loads((ROOT / "examples/native-agent-design.json").read_text())
+    opening = {**design["scenes"][0], "id": "opening", "type": "title", "role": "opening"}
+    closing = {**design["scenes"][0], "id": "closing", "type": "summary", "role": "closing"}
+    design["scenes"] = [opening, *design["scenes"], closing]
     return ProductionPlan(
+        editorial={
+            "audience_question": "How does a request travel?",
+            "core_message": "Requests connect software systems",
+            "viewer_takeaway": "Follow input and response",
+            "hook": "Where does a request go?",
+            "supports": [
+                {"message": "A request connects systems", "claim_ids": ["c_prompt"], "evidence_ids": []}
+            ],
+            "closing": "Follow the input and response",
+            "cover": {"headline": "Follow a request", "subtitle": "Input to response"},
+        },
         objective="Explain an engineering process clearly",
         story_arc=["Start", "Explain"],
         art_direction="Use readable visual diagrams and controlled movement",
         voice_direction="Natural Mandarin male narration with smooth phrasing",
         shots=[
             {
+                "scene_id": "opening",
+                "visual": "Show the audience question",
+                "movement": "Keep the headline visible on frame zero",
+                "assets": [],
+            },
+            {
+                "scene_id": "closing",
+                "visual": "Show the final takeaway",
+                "movement": "Hold the conclusion for reading",
+                "assets": [],
+            },
+            {
                 "scene_id": "explain",
                 "visual": "Show the source and output relationships",
                 "movement": "Reveal the relationship along narration cues",
-                "assets": ["library:scene.cover@1.0"],
-            }
+                "assets": ["library:scene.cover@1.1"],
+            },
         ],
-        storyboard=json.loads((ROOT / "examples/native-agent-design.json").read_text()),
+        storyboard=design,
     )
 
 
@@ -83,12 +110,12 @@ def test_native_planning_receives_library_and_rejects_invented_materials(setting
     assert (
         report["fixture"] and report["material_library_revision"] == seen[0]["material_library"]["revision"]
     )
-    assert "library:scene.cover@1.0" in plan.shots[0].assets and board.scenes
+    assert "library:scene.cover@1.1" in plan.shots[2].assets and board.scenes
     library = material_library()
-    plan.shots[0].assets = ["library:invented@1.0"]
+    plan.shots[2].assets = ["library:invented@1.0"]
     with pytest.raises(ValueError, match="Unknown or blocked"):
         validate_material_references(plan, library)
-    plan.shots[0].assets = ["library:scene.cover@1.0"]
+    plan.shots[2].assets = ["library:scene.cover@1.1"]
     next(x for x in library["items"] if x["id"] == "scene.cover")["readiness"] = "blocked"
     with pytest.raises(ValueError, match="blocked"):
         validate_material_references(plan, library)

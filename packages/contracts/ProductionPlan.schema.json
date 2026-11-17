@@ -25,6 +25,29 @@
       "title": "AgentDesign",
       "type": "object"
     },
+    "CoverSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "headline": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Headline",
+          "type": "string"
+        },
+        "subtitle": {
+          "default": "",
+          "maxLength": 160,
+          "title": "Subtitle",
+          "type": "string"
+        }
+      },
+      "required": [
+        "headline",
+        "subtitle"
+      ],
+      "title": "CoverSpec",
+      "type": "object"
+    },
     "CueAnchor": {
       "additionalProperties": false,
       "properties": {
@@ -150,6 +173,44 @@
             }
           ],
           "default": null
+        },
+        "role": {
+          "default": "content",
+          "enum": [
+            "content",
+            "opening",
+            "hook",
+            "problem",
+            "argument",
+            "example",
+            "mechanism",
+            "demonstration",
+            "limitation",
+            "recommendation",
+            "closing"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "message": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Message",
+          "type": "string"
+        },
+        "viewer_question": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Viewer Question",
+          "type": "string"
+        },
+        "disclosures": {
+          "items": {
+            "$ref": "#/$defs/ViewerDisclosure"
+          },
+          "maxItems": 4,
+          "title": "Disclosures",
+          "type": "array"
         }
       },
       "required": [
@@ -164,7 +225,11 @@
         "evidence_ids",
         "duration",
         "diagram",
-        "motion"
+        "motion",
+        "role",
+        "message",
+        "viewer_question",
+        "disclosures"
       ],
       "title": "DesignedScene",
       "type": "object"
@@ -285,6 +350,64 @@
         "emphasis"
       ],
       "title": "DiagramNode",
+      "type": "object"
+    },
+    "EditorialPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "audience_question": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Audience Question",
+          "type": "string"
+        },
+        "core_message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Core Message",
+          "type": "string"
+        },
+        "viewer_takeaway": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Viewer Takeaway",
+          "type": "string"
+        },
+        "hook": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Hook",
+          "type": "string"
+        },
+        "supports": {
+          "items": {
+            "$ref": "#/$defs/SupportPoint"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Supports",
+          "type": "array"
+        },
+        "closing": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Closing",
+          "type": "string"
+        },
+        "cover": {
+          "$ref": "#/$defs/CoverSpec"
+        }
+      },
+      "required": [
+        "audience_question",
+        "core_message",
+        "viewer_takeaway",
+        "hook",
+        "supports",
+        "closing",
+        "cover"
+      ],
+      "title": "EditorialPlan",
       "type": "object"
     },
     "MotionEvent": {
@@ -453,6 +576,72 @@
       "title": "SceneType",
       "type": "string"
     },
+    "SupportPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Claim Ids",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "message",
+        "claim_ids",
+        "evidence_ids"
+      ],
+      "title": "SupportPoint",
+      "type": "object"
+    },
+    "ViewerDisclosure": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "start_seconds": {
+          "default": 0,
+          "maximum": 180,
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "default": 4,
+          "exclusiveMinimum": 0,
+          "maximum": 180,
+          "title": "End Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "text",
+        "start_seconds",
+        "end_seconds"
+      ],
+      "title": "ViewerDisclosure",
+      "type": "object"
+    },
     "VisualElement": {
       "additionalProperties": false,
       "properties": {
@@ -516,6 +705,17 @@
     },
     "storyboard": {
       "$ref": "#/$defs/AgentDesign"
+    },
+    "editorial": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EditorialPlan"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [
@@ -524,7 +724,8 @@
     "art_direction",
     "voice_direction",
     "shots",
-    "storyboard"
+    "storyboard",
+    "editorial"
   ],
   "title": "ProductionPlan",
   "type": "object"

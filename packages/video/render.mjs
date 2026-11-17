@@ -27,13 +27,20 @@ try {
     puppeteerInstance: browser,
     browserExecutable,
   });
-  await renderStill({
+  const thumbnail = await selectComposition({
     serveUrl,
-    composition,
+    id: 'PublicationThumbnail',
     inputProps: props,
     puppeteerInstance: browser,
     browserExecutable,
-    frame: Math.min(45, composition.durationInFrames - 1),
+  });
+  await renderStill({
+    serveUrl,
+    composition: thumbnail,
+    inputProps: props,
+    puppeteerInstance: browser,
+    browserExecutable,
+    frame: 0,
     output: resolve(directory, 'cover.png'),
     imageFormat: 'png',
   });

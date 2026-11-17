@@ -1,0 +1,91 @@
+{
+  "fixture": "fixed repository-authored silent draft; no native inference or TTS",
+  "source_hash": "498749d7e26ddf287ebd33fa99e136e4841e4168fd0acbb7a4a9f7f121e563bc",
+  "compatibility_source_hash": "350fbfe33e43a1dfe7fec08a8d247475ba0390c7fa253c195d37017ded1c3ec9",
+  "engineering_media": {
+    "decode": "passed",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0,
+    "frames": 180,
+    "duration": 6.0
+  },
+  "compatibility_media": {
+    "decode": "passed",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0,
+    "frames": 180,
+    "duration": 6.0
+  },
+  "review_samples": [
+    {
+      "name": "frame-000000.png",
+      "frame": 0
+    },
+    {
+      "name": "frame-000006.png",
+      "frame": 6
+    },
+    {
+      "name": "frame-000015.png",
+      "frame": 15
+    },
+    {
+      "name": "frame-000027.png",
+      "frame": 27
+    },
+    {
+      "name": "frame-000045.png",
+      "frame": 45
+    },
+    {
+      "name": "frame-000051.png",
+      "frame": 51
+    },
+    {
+      "name": "frame-000059.png",
+      "frame": 59
+    },
+    {
+      "name": "frame-000066.png",
+      "frame": 66
+    },
+    {
+      "name": "frame-000087.png",
+      "frame": 87
+    },
+    {
+      "name": "frame-000111.png",
+      "frame": 111
+    },
+    {
+      "name": "frame-000126.png",
+      "frame": 126
+    },
+    {
+      "name": "frame-000147.png",
+      "frame": 147
+    },
+    {
+      "name": "frame-000171.png",
+      "frame": 171
+    },
+    {
+      "name": "frame-000179.png",
+      "frame": 179
+    },
+    {
+      "name": "cover.png",
+      "frame": 0,
+      "kind": "thumbnail"
+    }
+  ],
+  "independent_thumbnail_composition": "PublicationThumbnail",
+  "thumbnail_4k": {
+    "width": 3840,
+    "height": 2160,
+    "sha256": "0146691949ae10ad5573afdf3943c04d6296b594915449cb32025b3f0c089988"
+  },
+  "full_human_playback_and_listening": false
+}
