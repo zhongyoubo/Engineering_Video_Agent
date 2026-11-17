@@ -2,25 +2,27 @@
 
 from pydantic import Field
 from ..domain import StrictModel, Scene, SceneType, StoryboardIR, Diagram
+from ..specs import SceneSpec
 
 
 class DesignedScene(StrictModel):
     id: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,60}$")
     type: SceneType
     title: str = Field(min_length=1, max_length=90)
-    subtitle: str = Field(max_length=160)
-    narration: str = Field(min_length=1, max_length=1600)
+    subtitle: str = Field(max_length=320)
+    narration: str = Field(min_length=1, max_length=3200)
     bullets: list[str] = Field(max_length=6)
     code: str = Field(max_length=1400)
     claim_ids: list[str] = Field(max_length=20)
     evidence_ids: list[str] = Field(max_length=20)
     duration: float = Field(ge=2, le=180)
     diagram: Diagram | None
+    motion: SceneSpec | None = None
 
 
 class AgentDesign(StrictModel):
     protocol: str = Field(pattern=r"^1\.0$")
-    scenes: list[DesignedScene] = Field(min_length=1, max_length=16)
+    scenes: list[DesignedScene] = Field(min_length=1, max_length=32)
 
 
 def strict_schema():
@@ -60,6 +62,9 @@ def validate_design(payload, content, brief):
         language=brief.language,
         accent=brief.accent,
         audience=brief.audience,
+        width=brief.render_profile.width,
+        height=brief.render_profile.height,
+        design_pack=brief.design_pack,
         scenes=scenes,
         notices=[f"{brief.agent_engine} 原生 Agent 生成；尚未自动认定为运行验证。"],
     )

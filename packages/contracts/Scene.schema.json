@@ -1,5 +1,55 @@
 {
   "$defs": {
+    "CompiledEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "reveal",
+            "highlight",
+            "progress"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "start_frame": {
+          "minimum": 0,
+          "title": "Start Frame",
+          "type": "integer"
+        },
+        "end_frame": {
+          "exclusiveMinimum": 0,
+          "title": "End Frame",
+          "type": "integer"
+        },
+        "timing_source": {
+          "enum": [
+            "measured_words",
+            "estimated_draft"
+          ],
+          "title": "Timing Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "target",
+        "action",
+        "start_frame",
+        "end_frame",
+        "timing_source"
+      ],
+      "title": "CompiledEvent",
+      "type": "object"
+    },
     "Cue": {
       "additionalProperties": false,
       "properties": {
@@ -24,6 +74,45 @@
         "text"
       ],
       "title": "Cue",
+      "type": "object"
+    },
+    "CueAnchor": {
+      "additionalProperties": false,
+      "properties": {
+        "phrase": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Phrase",
+          "type": "string"
+        },
+        "occurrence": {
+          "default": 1,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "edge": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "title": "Edge",
+          "type": "string"
+        },
+        "offset_ms": {
+          "default": 0,
+          "maximum": 2000,
+          "minimum": -2000,
+          "title": "Offset Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "CueAnchor",
       "type": "object"
     },
     "Diagram": {
@@ -144,6 +233,116 @@
       "title": "DiagramNode",
       "type": "object"
     },
+    "MotionEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "reveal",
+            "highlight",
+            "progress"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "anchor": {
+          "$ref": "#/$defs/CueAnchor"
+        },
+        "duration_ms": {
+          "default": 700,
+          "maximum": 5000,
+          "minimum": 100,
+          "title": "Duration Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "target",
+        "action",
+        "anchor"
+      ],
+      "title": "MotionEvent",
+      "type": "object"
+    },
+    "SceneSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "4.0",
+          "default": "4.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "purpose": {
+          "maxLength": 500,
+          "minLength": 5,
+          "title": "Purpose",
+          "type": "string"
+        },
+        "chapter": {
+          "default": "",
+          "maxLength": 100,
+          "title": "Chapter",
+          "type": "string"
+        },
+        "pattern": {
+          "enum": [
+            "overview",
+            "code_scan",
+            "compare",
+            "graph",
+            "capacity",
+            "queue",
+            "depth"
+          ],
+          "title": "Pattern",
+          "type": "string"
+        },
+        "layout": {
+          "default": "grid",
+          "enum": [
+            "grid",
+            "fan"
+          ],
+          "title": "Layout",
+          "type": "string"
+        },
+        "elements": {
+          "items": {
+            "$ref": "#/$defs/VisualElement"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Elements",
+          "type": "array"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/MotionEvent"
+          },
+          "maxItems": 24,
+          "title": "Events",
+          "type": "array"
+        }
+      },
+      "required": [
+        "purpose",
+        "pattern",
+        "elements"
+      ],
+      "title": "SceneSpec",
+      "type": "object"
+    },
     "SceneType": {
       "enum": [
         "title",
@@ -157,6 +356,28 @@
       ],
       "title": "SceneType",
       "type": "string"
+    },
+    "VisualElement": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "title": "VisualElement",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -177,12 +398,12 @@
     },
     "subtitle": {
       "default": "",
-      "maxLength": 160,
+      "maxLength": 320,
       "title": "Subtitle",
       "type": "string"
     },
     "narration": {
-      "maxLength": 1600,
+      "maxLength": 3200,
       "minLength": 1,
       "title": "Narration",
       "type": "string"
@@ -302,6 +523,25 @@
         }
       ],
       "default": null
+    },
+    "motion": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SceneSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "compiled_events": {
+      "items": {
+        "$ref": "#/$defs/CompiledEvent"
+      },
+      "maxItems": 24,
+      "title": "Compiled Events",
+      "type": "array"
     }
   },
   "required": [

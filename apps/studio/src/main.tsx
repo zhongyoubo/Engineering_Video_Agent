@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { media, post, request, type Project, type Job } from './api';
 import './style.css';
+import { ProductionInspector } from './ProductionInspector';
 
 const finalStates = ['SUCCEEDED', 'PARTIAL', 'FAILED', 'CANCELED'];
 const stateLabels: Record<string, string> = {
@@ -103,6 +104,10 @@ function App() {
     [voice, setVoice] = useState('qwen'),
     [mode, setMode] = useState('automatic');
   const [agentEngine, setAgentEngine] = useState('codex');
+  const [resolution, setResolution] = useState('1080p'),
+    [designPack, setDesignPack] = useState('workspace_tech'),
+    [voiceId, setVoiceId] = useState(''),
+    [voiceSpeed, setVoiceSpeed] = useState(1);
   const [videoMode, setVideoMode] = useState('engineering'),
     [qualityProfile, setQualityProfile] = useState('professional');
   const [agentEvents, setAgentEvents] = useState<any[]>([]);
@@ -121,7 +126,7 @@ function App() {
     [board, setBoard] = useState<Storyboard | null>(null),
     [sceneIndex, setSceneIndex] = useState(0);
   const [instruction, setInstruction] = useState('');
-  const [panel, setPanel] = useState<'script' | 'evidence' | 'quality'>('script'),
+  const [panel, setPanel] = useState<'script' | 'evidence' | 'quality' | 'timeline'>('script'),
     [help, setHelp] = useState(false),
     [toast, setToast] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -279,6 +284,9 @@ function App() {
           agent_engine: agentEngine,
           video_mode: videoMode,
           quality_profile: qualityProfile,
+          render_profile: { resolution, fps: 30 },
+          design_pack: designPack,
+          voice_spec: { voice_id: voiceId, speed: voiceSpeed, model: '', revision: '1' },
           duration_mode: durationMode,
           require_alignment: requireAlignment,
           runtime_actions: actions,
@@ -754,6 +762,24 @@ function App() {
                   <option value="engineering">工程 Agent · 编写并验证 Remotion 工程</option>
                   <option value="template">模板兼容模式</option>
                 </select>
+                <label>输出分辨率</label>
+                <select
+                  aria-label="输出分辨率"
+                  value={resolution}
+                  onChange={(e) => setResolution(e.target.value)}
+                >
+                  <option value="1080p">1920 × 1080</option>
+                  <option value="4k">3840 × 2160 · 4K</option>
+                </select>
+                <label>设计体系</label>
+                <select
+                  aria-label="设计体系"
+                  value={designPack}
+                  onChange={(e) => setDesignPack(e.target.value)}
+                >
+                  <option value="workspace_tech">工作台技术风格</option>
+                  <option value="editorial_warm">暖色图解风格</option>
+                </select>
                 {videoMode === 'engineering' && (
                   <>
                     <label>交付质量</label>
@@ -765,7 +791,7 @@ function App() {
                         setVoice(e.target.value === 'professional' ? 'qwen' : 'none');
                       }}
                     >
-                      <option value="professional">正式成片 · Qwen 与真实对齐</option>
+                      <option value="professional">正式成片 · 明确的配音服务与真实对齐</option>
                       <option value="draft">草稿 · 可无配音</option>
                     </select>
                   </>
@@ -819,15 +845,41 @@ function App() {
                 <select
                   aria-label="旁白音色"
                   value={voice}
-                  onChange={(e) => setVoice(e.target.value)}
+                  onChange={(e) => {
+                    setVoice(e.target.value);
+                    setVoiceId('');
+                  }}
                 >
                   <option value="auto">自动选择本地引擎</option>
                   <option value="espeak">eSpeak · 开发音色</option>
                   <option value="qwen">Qwen3-TTS · 专业音色服务</option>
-                  <option value="edge">Edge 云端 · 专业音色（云希）</option>
+                  <option value="edge">Edge 朗读 · 候选音色（需试听）</option>
                   <option value="ming">Ming-TTS · 本地音色设计（需配置服务）</option>
                   <option value="none">无旁白 · 字幕版</option>
                 </select>
+                {voice === 'edge' && (
+                  <label>
+                    Edge 声音 ID
+                    <input
+                      aria-label="声音 ID"
+                      value={voiceId}
+                      placeholder="默认使用服务配置"
+                      onChange={(e) => setVoiceId(e.target.value)}
+                    />
+                  </label>
+                )}
+                <label>
+                  旁白速度
+                  <input
+                    aria-label="旁白速度"
+                    type="number"
+                    min="0.85"
+                    max="1.15"
+                    step="0.05"
+                    value={voiceSpeed}
+                    onChange={(e) => setVoiceSpeed(Number(e.target.value))}
+                  />
+                </label>
                 <div className="palette-label">
                   <label>视觉主题</label>
                   <span>清晰 · 简洁 · 有节奏</span>
@@ -1033,7 +1085,8 @@ function App() {
                 </button>
               ) : (
                 <span className="subtle">
-                  {Math.round((board?.total_frames || 0) / 30)} SEC · 1080P
+                  {Math.round((board?.total_frames || 0) / (board?.fps || 30))} SEC ·{' '}
+                  {board?.width === 3840 ? '4K' : '1080P'}
                 </span>
               )}
             </div>
@@ -1048,10 +1101,10 @@ function App() {
                   <span>16:9 / 30 FPS</span>
                 </div>
                 {revision?.brief?.video_mode === 'engineering' ? (
-                  revision?.outputs?.video ? (
+                  revision?.outputs?.video || revision?.outputs?.motion_preview ? (
                     <video
                       style={{ width: '100%' }}
-                      src={media(revision.outputs.video)}
+                      src={media(revision.outputs.video || revision.outputs.motion_preview)}
                       controls
                       preload="metadata"
                     />
@@ -1075,9 +1128,10 @@ function App() {
                     key={revision?.id + '-' + props.total_frames}
                     component={Video}
                     inputProps={props}
-                    compositionWidth={1920}
-                    compositionHeight={1080}
-                    fps={30}
+                    compositionWidth={props.width}
+                    compositionHeight={props.height}
+                    fps={props.fps}
+                    initialFrame={Math.min(30, Math.max(0, props.total_frames - 1))}
                     durationInFrames={Math.max(1, props.total_frames)}
                     controls
                     style={{ width: '100%', aspectRatio: '16/9' }}
@@ -1118,6 +1172,8 @@ function App() {
                     ['keyframes', '关键帧索引'],
                     ['authoring_journal', '工程执行记录'],
                     ['narration', '完整旁白 WAV'],
+                    ['motion_previews', '连续预览索引'],
+                    ['audio_analysis', '音频测量与波形'],
                   ].map(
                     ([key, label]) =>
                       revision?.outputs?.[key] && (
@@ -1152,6 +1208,7 @@ function App() {
                     ['script', '脚本与分镜'],
                     ['evidence', '内容证据'],
                     ['quality', '质量检查'],
+                    ['timeline', '音画时间轴'],
                   ].map(([key, label]) => (
                     <button
                       key={key}
@@ -1162,6 +1219,32 @@ function App() {
                     </button>
                   ))}
                 </div>
+                {panel === 'timeline' && current && revision && (
+                  <>
+                    <ProductionInspector
+                      revision={revision}
+                      scene={current}
+                      onEdit={editScene}
+                      disabled={inProgress || current.locked}
+                    />
+                    <div className="scene-form">
+                      <button
+                        className="primary"
+                        disabled={busy || inProgress}
+                        onClick={() => fork(true)}
+                      >
+                        保存为新版并导出
+                      </button>
+                      <button
+                        className="secondary full"
+                        disabled={busy || inProgress}
+                        onClick={() => fork(false)}
+                      >
+                        仅保存脚本分镜
+                      </button>
+                    </div>
+                  </>
+                )}
                 {panel === 'script' && current && (
                   <div className="scene-form">
                     <div className="scene-form-title">
@@ -1416,6 +1499,29 @@ function App() {
               ))}
             </div>
             <section className="panel adapter-panel">
+              <h2>自有素材库</h2>
+              <p>按讲解目的选用图形与动效。已实现不代表整片或听感验收通过。</p>
+              {caps?.material_library?.items?.map((item: any) => (
+                <details key={item.id} className="material-entry">
+                  <summary>
+                    {item.name} · v{item.version} ·{' '}
+                    {
+                      (
+                        { implemented: '已实现', unverified: '未验证', blocked: '受阻' } as Record<
+                          string,
+                          string
+                        >
+                      )[item.readiness]
+                    }
+                  </summary>
+                  <p>{item.purpose}</p>
+                  <small>
+                    {item.kind} / {item.id}
+                  </small>
+                  <p>{item.provenance}</p>
+                  <p>{item.rights}</p>
+                </details>
+              ))}
               <h2>原生 Agent</h2>
               {caps?.native_agents?.map((item: any) => (
                 <p key={item.provider}>

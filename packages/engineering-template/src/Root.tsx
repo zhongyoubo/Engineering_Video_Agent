@@ -61,7 +61,16 @@ function TrustedVideo(props: VideoProps) {
       .catch((error) => cancelRender(error));
   }, [handle]);
   return (
-    <AbsoluteFill style={{ fontFamily: 'EngineeringNoto, sans-serif', background: '#f5f8fc' }}>
+    <AbsoluteFill
+      style={{
+        fontFamily: 'EngineeringNoto, sans-serif',
+        background: '#f5f8fc',
+        width: 1920,
+        height: 1080,
+        transform: `scale(${(props.width || 1920) / 1920})`,
+        transformOrigin: 'top left',
+      }}
+    >
       <EngineeringVideo {...props} />
       {props.scenes.map((scene) => (
         <Sequence key={scene.id} from={scene.start_frame} durationInFrames={scene.frames}>
@@ -78,9 +87,9 @@ export function Root() {
     <Composition
       id="EngineeringVideo"
       component={TrustedVideo}
-      width={1920}
-      height={1080}
-      fps={30}
+      width={props.width || 1920}
+      height={props.height || 1080}
+      fps={props.fps || 30}
       durationInFrames={props.total_frames}
       defaultProps={props}
     />

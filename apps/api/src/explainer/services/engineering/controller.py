@@ -1,5 +1,6 @@
 """Observe/repair loop with revision-specific build, preview and visual gates."""
 
+import json
 from .workspace import EngineeringError
 
 
@@ -64,6 +65,7 @@ class EngineeringController:
         elif action.action == "build":
             w.state["build_hash"], w.state["preview_hash"], w.state["review_hash"] = None, None, None
             w.state["frames"], w.state["review"] = [], None
+            w.state["clips"], w.state["motion_frames"] = [], []
             result = self.tools.execute(w, "build")
             w.state["build_hash"] = fingerprint if result.get("ok") else None
             w.state["preview_hash"], w.state["review_hash"] = None, None
@@ -73,9 +75,12 @@ class EngineeringController:
                 raise EngineeringError("Build the current source before rendering keyframes")
             w.state["preview_hash"], w.state["review_hash"] = None, None
             w.state["frames"], w.state["review"] = [], None
+            w.state["clips"], w.state["motion_frames"] = [], []
             result = self.tools.execute(w, "preview")
             w.state["preview_hash"] = fingerprint if result.get("ok") else None
             w.state["frames"] = result.get("frames", []) if result.get("ok") else []
+            w.state["clips"] = result.get("clips", []) if result.get("ok") else []
+            w.state["motion_frames"] = result.get("motion_frames", []) if result.get("ok") else []
             w.state["review_hash"] = None
             w.record("preview", result)
         elif action.action == "review":
@@ -87,16 +92,32 @@ class EngineeringController:
             if reviewed != available:
                 raise EngineeringError("Visual review must name every supplied sampled frame")
             review = action.review.model_dump()
+            motion_required = json.loads((w.project / "props.json").read_text()).get(
+                "motion_review_required", False
+            )
+            motion_available = {f["name"] for f in w.state.get("motion_frames", [])}
+            if motion_required and (
+                not w.state.get("clips")
+                or not motion_available
+                or set(review["inspected_motion_frames"]) != motion_available
+            ):
+                raise EngineeringError(
+                    "Motion review requires current continuous previews and sampled motion sheets"
+                )
             accepted = (
                 review["accepted"]
                 and not review["issues"]
                 and min(review["legibility"], review["visual_explanation"], review["timing"]) >= 4
+                and (not motion_required or review["motion_continuity"] >= 4)
             )
             w.state["review"] = {
                 **review,
                 "accepted": accepted,
                 "project_hash": fingerprint,
                 "reviewer": "native-agent; not human certification",
+                "motion_evidence": "sampled contact sheets; not full playback/listening"
+                if motion_required
+                else "legacy keyframes",
             }
             w.state["review_hash"] = fingerprint if accepted else None
             w.record("review", w.state["review"])

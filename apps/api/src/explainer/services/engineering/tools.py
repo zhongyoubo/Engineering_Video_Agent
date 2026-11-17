@@ -11,12 +11,12 @@ from ..process import ProcessError
 from .workspace import EngineeringError
 
 
-def inspect_frame(path):
+def inspect_frame(path, width=1920, height=1080):
     with Image.open(path) as image:
-        if image.format != "PNG" or image.size != (1920, 1080):
-            raise EngineeringError("Preview must be a real 1920x1080 PNG")
+        if image.format != "PNG" or image.size != (width, height):
+            raise EngineeringError(f"Preview must be a real {width}x{height} PNG")
         image.load()
-        region = image.convert("RGB").crop((0, 0, 1920, 900))
+        region = image.convert("RGB").crop((0, 0, width, round(height * 5 / 6)))
         if max(ImageStat.Stat(region).stddev) < 3:
             raise EngineeringError("Preview is visually empty above the caption area")
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -100,7 +100,7 @@ class RenderTools:
                 raise EngineeringError("Invalid tool protocol")
             if result["ok"] and action == "preview":
                 frames = result.get("frames", [])
-                if not 1 <= len(frames) <= 48:
+                if not 1 <= len(frames) <= 96:
                     raise EngineeringError("Missing sampled keyframes")
                 for frame in frames:
                     p = output / frame["name"]
@@ -111,7 +111,11 @@ class RenderTools:
                         or p.stat().st_size > 20 * 1024 * 1024
                     ):
                         raise EngineeringError("Invalid review frame")
-                hashes = [inspect_frame(output / f["name"]) for f in frames]
+                props = json.loads((workspace.project / "props.json").read_text())
+                hashes = [
+                    inspect_frame(output / f["name"], props.get("width", 1920), props.get("height", 1080))
+                    for f in frames
+                ]
                 if len(frames) >= 3 and len(set(hashes)) == 1:
                     return {
                         "ok": False,
@@ -127,6 +131,44 @@ class RenderTools:
                     {"name": str((output / f["name"]).relative_to(workspace.root)), "frame": f["frame"]}
                     for f in frames
                 ]
+                if props.get("motion_review_required"):
+                    clips, strips = result.get("clips", []), result.get("motion_frames", [])
+                    if len(clips) != len(props["scenes"]) or len(strips) != len(clips):
+                        raise EngineeringError("Missing continuous scene previews")
+                    for item in [*clips, *strips]:
+                        file = output / item["name"]
+                        if (
+                            Path(item["name"]).name != item["name"]
+                            or file.is_symlink()
+                            or not file.is_file()
+                            or file.stat().st_size > 40 * 1024 * 1024
+                        ):
+                            raise EngineeringError("Invalid motion preview asset")
+                    for item in strips:
+                        inspect_frame(output / item["name"], 1280, 360)
+                    for item in clips:
+                        metadata = json.loads(
+                            self.runner.run(
+                                [
+                                    "ffprobe",
+                                    "-v",
+                                    "error",
+                                    "-show_streams",
+                                    "-show_format",
+                                    "-of",
+                                    "json",
+                                    output / item["name"],
+                                ]
+                            )
+                        )
+                        video = next(s for s in metadata["streams"] if s["codec_type"] == "video")
+                        if (video["width"], video["height"]) != (1280, 720) or not 0 < float(
+                            metadata["format"]["duration"]
+                        ) <= 4.1:
+                            raise EngineeringError("Invalid motion preview dimensions/duration")
+                    for items in [clips, strips]:
+                        for item in items:
+                            item["name"] = str((output / item["name"]).relative_to(workspace.root))
             if result["ok"] and action == "final":
                 if not (output / "video.mp4").is_file() or (output / "video.mp4").is_symlink():
                     raise EngineeringError("Missing final video")

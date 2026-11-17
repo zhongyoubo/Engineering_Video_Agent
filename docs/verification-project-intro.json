@@ -1,0 +1,38 @@
+{
+  "media": {
+    "decode": "passed",
+    "width": 3840,
+    "height": 2160,
+    "fps": 30.0,
+    "frames": 1927,
+    "duration": 64.235
+  },
+  "actual_source_ingestion_files": 187,
+  "source_zip_sha256": "5b0c19a475497f4f5698c09b0d3eb208b6cb01af4694bdda63a14fd2647546bf",
+  "source_hash": "7ac6af5c22cdd4e33ac4d3b15a82a95707a2c36edcf31298f9d0cd14c031e1a2",
+  "voice": "Edge zh-CN-YunxiNeural",
+  "measured_timing": "native word boundaries; not Whisper",
+  "audio_measurement": {
+    "integrated_lufs": -17.41,
+    "true_peak_dbtp": -4.46,
+    "loudness_range_lu": 6.9
+  },
+  "measured_audio_seconds": 57.858669,
+  "native_model_inference": false,
+  "isolated_generated_source_execution": false,
+  "fixed_authored_project": true,
+  "full_human_listening_review": false,
+  "preview_frames": 21,
+  "continuous_clips": 7,
+  "black_detection": {
+    "minimum_seconds": 0.2,
+    "pixel_threshold": 0.1,
+    "full_black_segments_detected": 0
+  },
+  "video_sha256": "a653f92648a15eceac620c0c48c3e91a0f597fed787bfa3c274542dbaa49a2d3",
+  "backend_tests_passed": 95,
+  "browser_tests_passed": 6,
+  "ci_verified_code_commit": "a36532f1ba94bcd735bd5052bd3330bec41c08de",
+  "ci_verified_run": "https://github.com/zhongyoubo/Engineering_Video_Agent/actions/runs/43916631812",
+  "human_review_scope": "Assistant inspected 21 keyframes and selected sampled motion strips, not full human playback/listening"
+}

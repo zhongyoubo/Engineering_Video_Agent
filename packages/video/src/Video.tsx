@@ -523,7 +523,15 @@ export function Video(props: VideoProps) {
     return finish;
   }, [handle, props.fontSrc]);
   return (
-    <AbsoluteFill style={{ fontFamily: 'ExplainerNoto, system-ui, sans-serif' }}>
+    <AbsoluteFill
+      style={{
+        fontFamily: 'ExplainerNoto, system-ui, sans-serif',
+        width: 1920,
+        height: 1080,
+        transform: `scale(${(props.width || 1920) / 1920})`,
+        transformOrigin: 'top left',
+      }}
+    >
       {props.scenes.map((scene, index) => (
         <Sequence key={scene.id} from={scene.start_frame} durationInFrames={scene.frames}>
           <SceneView

@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import shutil
+import importlib.util
 from fontTools.ttLib import TTFont
 
 from ...db import encode
@@ -35,7 +36,15 @@ def professional_preflight(brief, settings):
         or (brief.voice == "qwen" and not settings.tts_key)
         or (brief.voice == "ming" and not settings.ming_url)
     ):
-        raise EngineeringError("正式成片需要已配置的 Qwen-TTS / Edge 云端 / Ming 本地旁白服务，不回退到开发音色。")
+        raise EngineeringError(
+            "正式成片需要已配置的 Qwen-TTS / Edge 云端 / Ming 本地旁白服务，不回退到开发音色。"
+        )
+    if brief.voice == "edge":
+        if importlib.util.find_spec("edge_tts") is None:
+            raise EngineeringError("Edge 旁白需要安装 apps/api[edge]；不会回退到其他音色。")
+        # Timeline still validates measured spans and rejects missing native timing.
+        if settings.alignment_engine != "stable-ts":
+            return
     if not settings.alignment_python or not Path(settings.alignment_model).is_file():
         raise EngineeringError("正式成片需要真实语音对齐，请配置语音环境与本地对齐模型。")
 
@@ -67,10 +76,16 @@ def build_engineering_video(pipeline, board, content, manifest, props, public, p
                 review_hash=None,
                 review=None,
                 frames=[],
+                clips=[],
+                motion_frames=[],
                 finished=False,
                 journal=[],
             )
-        for frame in w.state.get("frames", []):
+        for frame in [
+            *w.state.get("frames", []),
+            *w.state.get("motion_frames", []),
+            *w.state.get("clips", []),
+        ]:
             _, materialized = p.store.get(p.tenant, frame["asset_id"])
             destination = w.root / frame["name"]
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -82,9 +97,17 @@ def build_engineering_video(pipeline, board, content, manifest, props, public, p
 
     def persist(workspace):
         p.guard()
-        for frame in workspace.state["frames"]:
+        for frame in [
+            *workspace.state["frames"],
+            *workspace.state.get("motion_frames", []),
+            *workspace.state.get("clips", []),
+        ]:
             if not frame.get("asset_id"):
-                frame["asset_id"] = p.asset(workspace.root / frame["name"], "engineering-frame", "image/png")
+                frame["asset_id"] = p.asset(
+                    workspace.root / frame["name"],
+                    "engineering-preview",
+                    "video/mp4" if frame["name"].endswith(".mp4") else "image/png",
+                )
         state = p.store.put(
             p.tenant,
             encode(workspace.state).encode(),
@@ -105,6 +128,15 @@ def build_engineering_video(pipeline, board, content, manifest, props, public, p
                 "engineering_preview": workspace.state["frames"][0]["asset_id"],
                 "keyframes": keyframe_index["id"],
             }
+            if workspace.state.get("clips"):
+                preview_assets["motion_preview"] = workspace.state["clips"][0]["asset_id"]
+                preview_assets["motion_previews"] = p.store.put(
+                    p.tenant,
+                    encode(workspace.state["clips"]).encode(),
+                    "report",
+                    "motion-previews.json",
+                    "application/json",
+                )["id"]
         with p.db.transaction() as connection:
             p.db.lock_job(connection, p.job["id"])
             row = connection.execute(
@@ -130,7 +162,7 @@ def build_engineering_video(pipeline, board, content, manifest, props, public, p
                     )
             else:
                 connection.execute(
-                    "DELETE FROM outputs WHERE revision_id=? AND role IN ('engineering_preview','keyframes')",
+                    "DELETE FROM outputs WHERE revision_id=? AND role IN ('engineering_preview','keyframes','motion_preview','motion_previews')",
                     (p.revision["id"],),
                 )
             connection.execute(

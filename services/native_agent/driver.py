@@ -100,7 +100,7 @@ def task_prompt(request):
         "install dependencies, read credentials, or claim runtime verification. "
         "Design a coherent explanation and timed animation diagram. Return a single JSON "
         "object matching the supplied schema. Use the provided claim/evidence IDs only. "
-        "Use 1-16 scenes, short visual labels, complete fluent narration in the requested language. "
+        "Use 1-32 scenes, short visual labels, complete fluent narration in the requested language. "
         "For diagrams use a 1720x590 canvas, nodes 240x100, no overlaps. "
         "reveal is a fraction of scene duration. diagram=null is allowed. "
         "The platform handles narration, source execution, frame budgets and rendering. "

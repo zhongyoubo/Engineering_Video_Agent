@@ -1,0 +1,61 @@
+{
+  "media": {
+    "decode": "passed",
+    "width": 3840,
+    "height": 2160,
+    "fps": 30.0,
+    "frames": 2137,
+    "duration": 71.233333
+  },
+  "source_hash": "2f1bfbde279cf9a5082ea978bec3977a2cde6b710c5841429d962373641fac59",
+  "video_sha256": "f8e4e6d29808518b818079af00949e1dc950fdd0f134bd8ba76d4fa50ed809ae",
+  "body_video_sha256": "a653f92648a15eceac620c0c48c3e91a0f597fed787bfa3c274542dbaa49a2d3",
+  "freshly_rendered_bookend_frames": 210,
+  "reused_body_frames": 1927,
+  "sampled_frames": [
+    0,
+    45,
+    89,
+    140,
+    1076,
+    1857,
+    2016,
+    2017,
+    2077,
+    2136
+  ],
+  "body_pixel_checks": [
+    {
+      "master_frame": 140,
+      "source_frame": 50,
+      "rgb_rms": 0.0
+    },
+    {
+      "master_frame": 1076,
+      "source_frame": 986,
+      "rgb_rms": 0.0
+    },
+    {
+      "master_frame": 1857,
+      "source_frame": 1767,
+      "rgb_rms": 0.0
+    },
+    {
+      "master_frame": 2016,
+      "source_frame": 1926,
+      "rgb_rms": 0.0
+    }
+  ],
+  "voice": "Edge zh-CN-YunxiNeural (retained)",
+  "new_tts_inference": false,
+  "ming_inference": false,
+  "full_human_listening_review": false,
+  "audio": {
+    "integrated_lufs": -17.37,
+    "true_peak_dbtp": -4.41
+  },
+  "assembly": "Fresh Remotion bookends + hash-verified existing video body; no video re-encoding of the body",
+  "backend_tests_passed": 105,
+  "browser_tests_passed": 6,
+  "ming_verification": "HTTP protocol fixture only; no available endpoint/weights and no real listening comparison."
+}

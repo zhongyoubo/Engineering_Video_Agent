@@ -1,5 +1,53 @@
 import { test, expect } from '@playwright/test';
 
+test('4K design settings and editable motion survive a revision fork', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('输出分辨率').selectOption('4k');
+  await page.getByLabel('设计体系').selectOption('editorial_warm');
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  await page.getByRole('button', { name: '开始创作' }).click();
+  await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText(/SEC · 4K/)).toBeVisible();
+  const previewTitle = page
+    .locator('.preview-panel')
+    .getByText('解释一个概念', { exact: true })
+    .and(page.locator('div'));
+  await expect(previewTitle).toBeVisible();
+  await expect
+    .poll(() =>
+      previewTitle.evaluate((element) => {
+        let opacity = 1;
+        for (let node: Element | null = element; node; node = node.parentElement) {
+          opacity *= Number(getComputedStyle(node).opacity);
+        }
+        return opacity;
+      }),
+    )
+    .toBeGreaterThan(0.9);
+  await page.getByRole('button', { name: '音画时间轴', exact: true }).click();
+  await page.getByLabel('视觉表达', { exact: true }).selectOption('queue');
+  await expect(page.getByLabel('镜头讲解目标')).toBeVisible();
+  await page.getByRole('button', { name: '添加旁白同步事件' }).click();
+  await expect(page.getByText('input · progress', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  await expect(page.getByRole('heading', { name: '与上一版本比较' })).toBeVisible({
+    timeout: 30000,
+  });
+  await expect(page.getByLabel('视觉表达', { exact: true })).toHaveValue('queue');
+  await page.getByLabel('视觉表达', { exact: true }).selectOption('overview');
+  await page.getByLabel('总览布局').selectOption('fan');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  await expect(page.getByLabel('总览布局')).toHaveValue('fan', { timeout: 30000 });
+});
+
 test('prompt → storyboard → edit → independent revision', async ({ page, context }) => {
   await context.request.post('/api/session', {
     data: { token: 'e2e-only-not-a-production-key-123456' },
@@ -25,6 +73,9 @@ test('prompt → storyboard → edit → independent revision', async ({ page, c
   await page.getByRole('button', { name: '环境与能力', exact: true }).click();
   await expect(page.getByText('已注册适配器')).toBeVisible();
   await expect(page.getByText('source.static', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '自有素材库', exact: true })).toBeVisible();
+  await expect(page.getByText(/独立品牌封面 · v1.0/)).toBeVisible();
+  await expect(page.getByText(/关系网络 · v1.0 · 未验证/)).toBeVisible();
 });
 
 test('upload source → evidence-backed storyboard', async ({ page, context }) => {

@@ -1,0 +1,82 @@
+{
+  "$defs": {
+    "CueAnchor": {
+      "additionalProperties": false,
+      "properties": {
+        "phrase": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Phrase",
+          "type": "string"
+        },
+        "occurrence": {
+          "default": 1,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "edge": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "title": "Edge",
+          "type": "string"
+        },
+        "offset_ms": {
+          "default": 0,
+          "maximum": 2000,
+          "minimum": -2000,
+          "title": "Offset Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "CueAnchor",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "target": {
+      "title": "Target",
+      "type": "string"
+    },
+    "action": {
+      "enum": [
+        "reveal",
+        "highlight",
+        "progress"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "anchor": {
+      "$ref": "#/$defs/CueAnchor"
+    },
+    "duration_ms": {
+      "default": 700,
+      "maximum": 5000,
+      "minimum": 100,
+      "title": "Duration Ms",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "target",
+    "action",
+    "anchor"
+  ],
+  "title": "MotionEvent",
+  "type": "object"
+}

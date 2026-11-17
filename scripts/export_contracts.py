@@ -12,9 +12,27 @@ from explainer.services.engineering.contracts import (
 )
 from explainer.adapters.native_contract import strict_schema
 from explainer.domain import Brief, ContentIR, Scene, StoryboardIR, Finding
+from explainer.specs import (
+    RenderProfile,
+    VoiceSpec,
+    SceneSpec,
+    MotionEvent,
+    CompiledEvent,
+)
 
 directory = ROOT / "packages/contracts"
-for model in [Brief, ContentIR, Scene, StoryboardIR, Finding]:
+for model in [
+    Brief,
+    ContentIR,
+    Scene,
+    StoryboardIR,
+    Finding,
+    RenderProfile,
+    VoiceSpec,
+    SceneSpec,
+    MotionEvent,
+    CompiledEvent,
+]:
     (directory / (model.__name__ + ".schema.json")).write_text(
         json.dumps(model.model_json_schema(), ensure_ascii=False, indent=2) + "\n"
     )

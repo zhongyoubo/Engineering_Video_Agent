@@ -25,7 +25,12 @@ const Root = () => (
     width={1920}
     height={1080}
     defaultProps={defaults}
-    calculateMetadata={({ props }) => ({ durationInFrames: props.total_frames })}
+    calculateMetadata={({ props }) => ({
+      durationInFrames: props.total_frames,
+      width: props.width,
+      height: props.height,
+      fps: props.fps,
+    })}
   />
 );
 registerRoot(Root);

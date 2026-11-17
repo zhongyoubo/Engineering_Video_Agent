@@ -1,5 +1,4 @@
 import json
-import hashlib
 import shutil
 import threading
 import time
@@ -9,7 +8,7 @@ from pathlib import Path
 from ..adapters.runtime import execute_runtime
 from ..adapters.native_agent import native_plan, NativeAgentError
 from .engineering.workspace import EngineeringError
-from ..adapters.voice import estimated_cues, probe, synthesize
+from ..adapters.voice import estimated_cues, probe, synthesize, voice_cache_key
 from ..config import ROOT
 from ..db import encode
 from ..domain import Brief, ContentIR, Cue, Scene, StoryboardIR
@@ -233,6 +232,8 @@ class Pipeline:
                     "application/json",
                 )["id"]
             self.brief.agent_change = None
+            board.width, board.height = self.brief.render_profile.width, self.brief.render_profile.height
+            board.design_pack = self.brief.design_pack
             return {
                 "board": board.model_dump(),
                 "production_plan": production_plan,
@@ -284,6 +285,20 @@ class Pipeline:
             # Rebuild from immutable planning checkpoint so recovery does not duplicate runtime scenes.
             board.scenes = [s for s in board.scenes if s.id != "observed_run"]
             board.scenes.insert(max(1, len(board.scenes) - 1), observed)
+            # The runtime scene is real evidence, not an unplanned exception to the contract.
+            if self.brief.video_mode == "engineering":
+                planned["production_plan"]["shots"] = [
+                    shot for shot in planned["production_plan"]["shots"] if shot["scene_id"] != observed.id
+                ] + [
+                    {
+                        "scene_id": observed.id,
+                        "visual": "Present the actual isolated runtime recording with its evidence label",
+                        "movement": "Preserve capture aspect ratio and hold the verified operation result",
+                        "assets": [observed.media_id] if observed.media_id else [],
+                    }
+                ]
+        # Revalidate after runtime insertion, before paying for narration.
+        board = StoryboardIR.model_validate(board.model_dump())
 
         def voice():
             if self.brief.video_mode == "engineering":
@@ -296,26 +311,15 @@ class Pipeline:
             for scene in board.scenes:
                 self.guard()
                 result = None
-                cache_key = hashlib.sha256(
-                    encode(
-                        [
-                            scene.narration,
-                            board.language,
-                            self.brief.voice,
-                            self.settings.tts_engine,
-                            self.settings.tts_url,
-                            self.settings.tts_revision,
-                            bool(shutil.which("espeak-ng")),
-                            "normalizer-v2-native",
-                        ]
-                    ).encode()
-                ).hexdigest()
+                cache_key = voice_cache_key(
+                    scene.narration, board.language, self.brief.voice, self.settings, self.brief.voice_spec
+                )
                 cached = self.db.one(
                     "SELECT * FROM voice_cache WHERE tenant=? AND key=?", (self.tenant, cache_key)
                 )
                 if cached and not scene.audio_id:
                     scene.audio_id = cached["asset_id"]
-                if scene.audio_id:
+                if scene.audio_id and cached and scene.audio_id == cached["asset_id"]:
                     _, existing = self.store.get(self.tenant, scene.audio_id)
                     result = {
                         "path": str(existing),
@@ -323,6 +327,8 @@ class Pipeline:
                         "engine": "reused",
                         "source_engine": cached["engine"] if cached else "unknown",
                     }
+                else:
+                    scene.audio_id = None
                 if (
                     self.brief.video_mode == "engineering"
                     and self.brief.quality_profile == "professional"
@@ -342,10 +348,21 @@ class Pipeline:
                         result["alignment_method"] = timing["method"]
                 if result is None:
                     result = synthesize(
-                        scene, board.language, self.brief.voice, self.settings, directory, self.runner
+                        scene,
+                        board.language,
+                        self.brief.voice,
+                        self.settings,
+                        directory,
+                        self.runner,
+                        self.brief.voice_spec,
                     )
                 result["scene_id"] = scene.id
                 if result.get("path"):
+                    from .audio_analysis import waveform
+
+                    result["measurement"] = waveform(result["path"])
+                    if result["measurement"]["silent"] and self.brief.quality_profile == "professional":
+                        raise EngineeringError("旁白音轨为静音，不能作为正式配音交付")
                     result["audio_id"] = self.asset(result["path"], "audio", "audio/wav", scene.id + ".wav")
                     self.db.execute(
                         "INSERT INTO voice_cache VALUES(?,?,?,?,?) ON CONFLICT(tenant,key) DO UPDATE SET asset_id=excluded.asset_id,duration=excluded.duration,engine=excluded.engine",
@@ -447,6 +464,15 @@ class Pipeline:
                 methods.append(method)
                 alignment_report[scene.id] = {"method": method, "words": words, "audio_id": a.get("audio_id")}
             board = allocate(board, list(audio_index.values()), self.brief)
+            from .motion import compile_motion
+
+            for scene in board.scenes:
+                compile_motion(
+                    scene,
+                    alignment_report[scene.id]["words"],
+                    board.fps,
+                    allow_estimated=self.brief.quality_profile == "draft",
+                )
             for scene in board.scenes:
                 if not scene.audio_id:
                     scene.cues = [
@@ -454,12 +480,26 @@ class Pipeline:
                     ]
             board.audio_alignment = methods[0] if len(set(methods)) == 1 else "mixed"
             board = StoryboardIR.model_validate(board.model_dump())
+            if self.brief.video_mode == "engineering":
+                from ..adapters.native_contract import DesignedScene
+                from .engineering.contracts import ProductionPlan
+
+                effective = dict(planned["production_plan"])
+                effective["storyboard"] = {
+                    "protocol": "1.0",
+                    "scenes": [
+                        {key: scene.model_dump()[key] for key in DesignedScene.model_fields}
+                        for scene in board.scenes
+                    ],
+                }
+                planned["production_plan"] = ProductionPlan.model_validate(effective).model_dump()
             asset = self.store.put(
                 self.tenant, encode(alignment_report).encode(), "report", "alignment.json", "application/json"
             )
             return {
                 "board": board.model_dump(),
                 "fitted_audio": list(audio_index.values()),
+                "production_plan": planned.get("production_plan"),
                 "revision_fields": {"storyboard": board.model_dump()},
                 "outputs": {"alignment": asset["id"]},
             }
@@ -467,6 +507,7 @@ class Pipeline:
         compiled = self.stage("timeline", 0.48, compile_timeline)
         board = StoryboardIR.model_validate(compiled["board"])
         audio = compiled.get("fitted_audio", audio)
+        planned["production_plan"] = compiled.get("production_plan", planned.get("production_plan"))
         self.db.event(self.job, "preview.ready", {"mode": "compiled", "frames": board.total_frames})
 
         def rendering():
@@ -474,6 +515,8 @@ class Pipeline:
             public = directory / "public"
             public.mkdir(parents=True, exist_ok=True)
             props = board.model_dump()
+            props["motion_review_required"] = self.brief.video_mode == "engineering"
+            props["voice_spec"] = self.brief.voice_spec.model_dump()
             for scene in props["scenes"]:
                 for field, target in [("audio_id", "audio_src"), ("media_id", "media_src")]:
                     if scene.get(field):
@@ -498,7 +541,16 @@ class Pipeline:
                 video, extra_outputs = build_engineering_video(
                     self, board, content, manifest, props, public, planned["production_plan"]
                 )
-                metadata = inspect_video(video, self.runner, board.total_frames)
+                extra_outputs["production_plan"] = self.store.put(
+                    self.tenant,
+                    encode(planned["production_plan"]).encode(),
+                    "report",
+                    "production-plan.json",
+                    "application/json",
+                )["id"]
+                metadata = inspect_video(
+                    video, self.runner, board.total_frames, board.width, board.height, board.fps
+                )
                 return {
                     "metadata": metadata,
                     "outputs": {
@@ -518,7 +570,9 @@ class Pipeline:
                 env=env,
             )
             video = directory / "video.mp4"
-            metadata = inspect_video(video, self.runner, board.total_frames)
+            metadata = inspect_video(
+                video, self.runner, board.total_frames, board.width, board.height, board.fps
+            )
             outputs = {"video": self.asset(video, "video", "video/mp4", "explainer.mp4")}
             cover = directory / "cover.png"
             if cover.exists():
@@ -565,6 +619,7 @@ class Pipeline:
             )["id"]
             package = self.directory / "project.zip"
             narration_id = None
+            audio_analysis_id = None
             if any(scene.audio_id for scene in board.scenes):
                 # Mix at absolute scene positions, preserving deliberate visual holds.
                 args = ["ffmpeg", "-v", "error", "-y"]
@@ -599,6 +654,16 @@ class Pipeline:
                     timeout=120,
                 )
                 narration_id = self.asset(narration_path, "audio", "audio/wav", "narration.wav")
+                from .audio_analysis import waveform
+
+                measured = waveform(narration_path)
+                audio_analysis_id = self.store.put(
+                    self.tenant,
+                    encode(measured).encode(),
+                    "report",
+                    "audio-analysis.json",
+                    "application/json",
+                )["id"]
             with zipfile.ZipFile(package, "w", zipfile.ZIP_DEFLATED) as z:
                 z.writestr("project.json", encode(board.model_dump()))
                 z.writestr("content.json", encode(content.model_dump()))
@@ -649,6 +714,8 @@ class Pipeline:
             outputs = {"script": script_id, "subtitles": caption_id, "package": package_id}
             if narration_id:
                 outputs["narration"] = narration_id
+            if audio_analysis_id:
+                outputs["audio_analysis"] = audio_analysis_id
             return {"outputs": outputs}
 
         self.stage("export", 0.98, export)

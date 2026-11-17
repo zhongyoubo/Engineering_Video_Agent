@@ -43,7 +43,7 @@ def inspect(board, content, runtime, audio, requested_seconds):
             )
     if cursor != board.total_frames:
         findings.append(Finding(code="FRAME_TOTAL", severity="error", message="总帧数不一致"))
-    if abs(cursor / 30 - requested_seconds) > max(10, requested_seconds * 0.25):
+    if abs(cursor / board.fps - requested_seconds) > max(10, requested_seconds * 0.25):
         findings.append(
             Finding(
                 code="DURATION_TARGET", severity="warning", message="实际时长与目标不同；优先保留完整旁白"
@@ -72,9 +72,11 @@ def inspect(board, content, runtime, audio, requested_seconds):
         "checks": ["timeline", "evidence_refs", "runtime_truth", "audio_presence", "readability"],
         "findings": [f.model_dump() for f in findings],
         "runtime": {k: v for k, v in runtime.items() if not k.endswith("_path")},
-        "duration": cursor / 30,
+        "duration": cursor / board.fps,
         "source_kind": content.kind,
         "alignment": board.audio_alignment,
+        "audio_measurements": {a["scene_id"]: a.get("measurement") for a in audio},
+        "human_visual_and_listening_review": "not_recorded",
         "limitations": [
             "静态结构不是运行调用图。",
             "语义真实性和听感仍需人工审阅。",
@@ -83,18 +85,23 @@ def inspect(board, content, runtime, audio, requested_seconds):
     }
 
 
-def inspect_video(path, runner, frames):
+def inspect_video(path, runner, frames, width=1920, height=1080, fps=30):
     metadata = json.loads(
         runner.run(["ffprobe", "-v", "error", "-show_streams", "-show_format", "-of", "json", path])
     )
     stream = next(s for s in metadata["streams"] if s["codec_type"] == "video")
-    if (stream["width"], stream["height"], int(stream.get("nb_frames", 0))) != (1920, 1080, frames):
+    rate = stream.get("avg_frame_rate", f"{fps}/1").split("/")
+    actual_fps = int(rate[0]) / int(rate[1])
+    if (stream["width"], stream["height"], int(stream.get("nb_frames", 0))) != (width, height, frames) or abs(
+        actual_fps - fps
+    ) > 0.01:
         raise ValueError("Rendered media metadata mismatch")
     runner.run(["ffmpeg", "-v", "error", "-i", path, "-f", "null", "-"], timeout=300)
     return {
         "decode": "passed",
-        "width": 1920,
-        "height": 1080,
+        "width": width,
+        "height": height,
+        "fps": actual_fps,
         "frames": frames,
         "duration": float(metadata["format"]["duration"]),
     }

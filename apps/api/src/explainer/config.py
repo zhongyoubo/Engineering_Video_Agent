@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     git_allowed_hosts: str = "github.com,gitlab.com"
     engineering_render_image: str = "explainer-engineering-render:3.0.0"
     engineering_max_steps: int = Field(18, ge=5, le=40)
-    engineering_tool_timeout: int = Field(300, ge=30, le=1200)
+    engineering_tool_timeout: int = Field(900, ge=30, le=7200)
     native_agent_providers: str = ""
     codex_api_key: str = ""
     claude_api_key: str = ""
@@ -61,10 +61,14 @@ class Settings(BaseSettings):
     tts_url: str = "http://127.0.0.1:7861"
     tts_key: str = ""
     tts_revision: str = "1"
+    tts_proxy: str = ""
     edge_voice: str = "zh-CN-YunxiNeural"
     ming_url: str = ""
     ming_key: str = ""
-    ming_model: str = "Ming-3.0-tts"
+    ming_model: str = "inclusionAI/Ming-3.0-tts-0.5b"
+    ming_ref_audio: str = ""
+    ming_ref_text: str = ""
+    ming_seed: int = 123
     chrome_executable: str = ""
     render_concurrency: int = Field(2, ge=1, le=8)
     render_timeout: int = 1200

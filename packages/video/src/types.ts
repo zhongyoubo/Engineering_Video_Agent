@@ -30,6 +30,29 @@ export type Scene = {
   media_src?: string;
   media_kind: 'image' | 'video';
   locked: boolean;
+  motion?: {
+    schema_version: '4.0';
+    purpose: string;
+    layout?: 'grid' | 'fan';
+    chapter: string;
+    pattern: 'overview' | 'code_scan' | 'compare' | 'graph' | 'capacity' | 'queue' | 'depth';
+    elements: { id: string; label: string }[];
+    events: {
+      id: string;
+      target: string;
+      action: 'reveal' | 'highlight' | 'progress';
+      anchor: { phrase: string; occurrence: number; edge: 'start' | 'end'; offset_ms: number };
+      duration_ms: number;
+    }[];
+  } | null;
+  compiled_events?: {
+    id: string;
+    target: string;
+    action: 'reveal' | 'highlight' | 'progress';
+    start_frame: number;
+    end_frame: number;
+    timing_source: string;
+  }[];
   diagram?: Diagram | null;
   cues: { start: number; end: number; text: string }[];
 };
@@ -41,8 +64,10 @@ export type Storyboard = {
   audience: string;
   scenes: Scene[];
   fps: 30;
-  width: 1920;
-  height: 1080;
+  width: 1920 | 3840;
+  height: 1080 | 2160;
+  design_pack?: 'editorial_warm' | 'workspace_tech';
+  motion_review_required?: boolean;
   total_frames: number;
   notices: string[];
   audio_alignment: 'estimated_sentence' | 'native_words' | 'forced_words' | 'mixed' | 'none';

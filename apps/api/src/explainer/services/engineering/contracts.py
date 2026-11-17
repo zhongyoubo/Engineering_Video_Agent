@@ -18,7 +18,7 @@ class ProductionPlan(StrictModel):
     story_arc: list[str] = Field(min_length=2, max_length=12)
     art_direction: str = Field(min_length=10, max_length=2000)
     voice_direction: str = Field(min_length=10, max_length=1000)
-    shots: list[MotionShot] = Field(min_length=1, max_length=16)
+    shots: list[MotionShot] = Field(min_length=1, max_length=32)
     storyboard: AgentDesign
 
     @model_validator(mode="after")
@@ -30,7 +30,7 @@ class ProductionPlan(StrictModel):
 
 
 class SourceEdit(StrictModel):
-    path: str = Field(min_length=1, max_length=160)
+    path: str = Field(min_length=1, max_length=320)
     content: str = Field(max_length=50000)
 
 
@@ -40,7 +40,9 @@ class VisualReview(StrictModel):
     visual_explanation: int = Field(ge=0, le=5)
     timing: int = Field(ge=0, le=5)
     issues: list[str] = Field(max_length=30)
-    inspected_frames: list[str] = Field(min_length=1, max_length=48)
+    inspected_frames: list[str] = Field(min_length=1, max_length=96)
+    motion_continuity: int = Field(default=0, ge=0, le=5)
+    inspected_motion_frames: list[str] = Field(default_factory=list, max_length=32)
 
 
 class EngineeringAction(StrictModel):

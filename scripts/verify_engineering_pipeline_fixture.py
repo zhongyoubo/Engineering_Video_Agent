@@ -106,6 +106,10 @@ def authored_decide(self, w, p):
             "timing": 5,
             "issues": [],
             "inspected_frames": [f["name"] for f in w.state["frames"]],
+            "inspected_motion_frames": [
+                f["name"] for f in w.state.get("motion_frames", [])
+            ],
+            "motion_continuity": 5,
         }
         if kind == "review"
         else None
@@ -140,10 +144,11 @@ def trusted_tool(self, w, kind):
         pass
     result = json.loads((target / "result.json").read_text())
     if kind == "preview" and result["ok"]:
-        result["frames"] = [
-            {**f, "name": str((target / f["name"]).relative_to(w.root))}
-            for f in result["frames"]
-        ]
+        for role in ["frames", "motion_frames", "clips"]:
+            result[role] = [
+                {**f, "name": str((target / f["name"]).relative_to(w.root))}
+                for f in result.get(role, [])
+            ]
     if kind == "final" and result["ok"]:
         result["video"] = str(target / "video.mp4")
     return result
@@ -177,6 +182,8 @@ assert {
     "engineering_state",
     "engineering_preview",
     "keyframes",
+    "motion_preview",
+    "motion_previews",
     "package",
 } <= set(roles)
 store = Storage(settings, db)
