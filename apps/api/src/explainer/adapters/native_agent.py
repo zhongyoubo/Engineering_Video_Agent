@@ -7,6 +7,7 @@ import shutil
 import subprocess
 
 from ..db import uid
+from ..content_taxonomy import planning_guidance
 from ..services.process import ProcessError
 from .native_contract import strict_schema, validate_design
 
@@ -67,6 +68,7 @@ def native_plan(
         "provider": provider,
         "brief": brief.model_dump(),
         "content": content.model_dump(),
+        "content_guidance": planning_guidance(brief),
         "model": settings.codex_agent_model if provider == "codex" else settings.claude_agent_model,
         "budget_usd": settings.native_agent_budget_usd,
         "max_turns": settings.native_agent_max_turns,

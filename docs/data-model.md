@@ -32,3 +32,14 @@ Schema 初始化在 `apps/api/src/explainer/db.py`，版本 1，SQLite WAL。当
 
 对于多节点部署，替换为共享事务数据库与对象存储；先抽取数据库仓储契约，再重写领取、fence、唯一键、检查点提交与输出事务，不进行未经验证的 SQL 字符串翻译。
 
+
+## Editorial request and resolved strategy
+
+`Brief.editorial` and `StoryboardIR.editorial_request` preserve requested purpose,
+auxiliary purposes, subject, audience description/depth, presentation forms, core message
+and viewer takeaway. `EditorialPlan.strategy` optionally records the resolved four dimensions,
+reasoning summary (rationale, not hidden chain-of-thought), success criteria and an ordered
+NarrativeBeat outline referencing actual scene IDs. New native engineering creator plans
+require this strategy; old plans remain readable without it. Changed requests trigger new
+planning; source/props hashes bind the subsequent preview/review. The catalog is versioned
+as 1.0 and exported to packages/contracts/content-taxonomy.json.

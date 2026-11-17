@@ -106,6 +106,7 @@ class EngineeringController:
                 )
             props = json.loads((w.project / "props.json").read_text())
             publication_required = props.get("presentation_profile") == "creator" and bool(props.get("cover"))
+            strategy_required = publication_required and bool((props.get("editorial") or {}).get("strategy"))
             if publication_required and not any(f.get("kind") == "thumbnail" for f in w.state["frames"]):
                 raise EngineeringError("Publication review requires an independently rendered thumbnail")
             accepted = (
@@ -113,6 +114,7 @@ class EngineeringController:
                 and not review["issues"]
                 and min(review["legibility"], review["visual_explanation"], review["timing"]) >= 4
                 and (not motion_required or review["motion_continuity"] >= 4)
+                and (not strategy_required or review["purpose_fulfillment"] >= 4)
                 and (
                     not publication_required
                     or min(

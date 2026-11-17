@@ -25,3 +25,13 @@ editing/download, pre-TTS publication policy and current-hash content/cover revi
 Compatibility drafts are explicitly limited to supplied content. Verified by 115 backend tests, 7 browser flows, TypeScript/build and fixed authored media checks; see verification-creator.json.
 No new Ming video, native model quality, real TTS or isolated deployment acceptance is claimed.
 Vertical/square composition, platform presets and advanced thumbnail art direction remain planned.
+
+
+## Content positioning and taxonomy · 2026-11-18
+
+Implemented independent purpose/subject/audience/forms, six primary audience tasks, optional
+secondary purposes, exact legacy knowledge migration, resolved narrative strategy and typed
+scene coverage, purpose-specific review, Studio creation/target editing and shared API catalog.
+Verified by 143 backend tests, 8 browser flows, typecheck/build, six authored strategy samples
+and the fixed creator renderer. Structural validation is separate from real native quality.
+Real generated samples across all six purposes remain deployment acceptance.

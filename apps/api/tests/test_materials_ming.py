@@ -58,6 +58,29 @@ def production_plan():
     design["scenes"] = [opening, *design["scenes"], closing]
     return ProductionPlan(
         editorial={
+            "strategy": {
+                "intent": "explanation",
+                "secondary_intents": [],
+                "subject_kind": "concept",
+                "audience_description": "People learning request/response",
+                "audience_level": "introductory",
+                "presentation_forms": ["diagram"],
+                "rationale": "Explain the request/response relationship",
+                "success_criteria": ["Explain how the request connects systems"],
+                "outline": [
+                    {
+                        "function": "orientation",
+                        "purpose": "Ask the audience question",
+                        "scene_ids": ["opening"],
+                    },
+                    {"function": "mechanism", "purpose": "Follow the request", "scene_ids": ["explain"]},
+                    {
+                        "function": "conclusion",
+                        "purpose": "Retain the relationship",
+                        "scene_ids": ["closing"],
+                    },
+                ],
+            },
             "audience_question": "How does a request travel?",
             "core_message": "Requests connect software systems",
             "viewer_takeaway": "Follow input and response",

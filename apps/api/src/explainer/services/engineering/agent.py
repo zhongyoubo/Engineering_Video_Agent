@@ -3,6 +3,7 @@
 from ...adapters.native_agent import native_plan
 from ...adapters.native_contract import validate_design
 from ...config import ROOT
+from ...content_taxonomy import planning_guidance
 from ...specs import PATTERN_ELEMENT_LIMITS, PATTERN_LABEL_LIMITS
 from ..materials import material_library, validate_material_references
 from ..editorial import EDITORIAL_INSTRUCTION, prepare_presentation, require_publishable, EditorialError
@@ -37,6 +38,7 @@ class NativeEngineeringAgent:
             ProductionPlan,
             {
                 "phase": "production-planning",
+                "content_guidance": planning_guidance(self.brief),
                 "material_library": library,
                 "material_usage": "Choose materials by explanatory purpose; record selected entries as library:<id>@<version> in shot.assets. Custom TSX remains allowed. Unverified assets need actual rendering/review. Reference footage is not reusable material.",
                 "visual_constraints": {
@@ -54,6 +56,8 @@ class NativeEngineeringAgent:
         board = validate_design(plan.storyboard.model_dump(), self.content, self.brief)
         if self.brief.presentation_profile == "creator" and plan.editorial is None:
             raise EditorialError("创作者制作方案缺少内容主张与观众收益，请补充 editorial 策划。")
+        if self.brief.presentation_profile == "creator" and plan.editorial.strategy is None:
+            raise EditorialError("新创作者策划必须解析表达目的、讲述对象、观众与表现形式，并给出叙事结构。")
         prepare_presentation(board, self.brief, plan.editorial)
         require_publishable(board, self.content)
         return plan, board, report
@@ -86,6 +90,8 @@ class NativeEngineeringAgent:
                 "motion_frame_names": [f["name"] for f in workspace.state.get("motion_frames", [])],
                 "motion_review_scope": "Contact sheets sample motion; do not claim full playback or listening",
                 "publication_contract": EDITORIAL_INSTRUCTION,
+                "content_guidance": planning_guidance(self.brief),
+                "purpose_review": "Score purpose_fulfillment >=4/5 from the actual editorial.strategy outline, success_criteria, script and visuals. A filled structure is not proof of coherent argument, useful advice, understood mechanism or a usable tutorial. Include any unmet purpose-specific criteria in review.issues.",
                 "editorial_review": "When props.presentation_profile is creator, score content_focus, cover_promise, opening_closing and viewer_presentation from actual script/props and rendered images. All must be at least 4, including the separate thumbnail and frame zero. No claim of full playback/listening from sampled frames.",
             },
             files,

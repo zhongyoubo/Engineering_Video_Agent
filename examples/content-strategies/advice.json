@@ -1,0 +1,150 @@
+{
+  "fixture": "authored editorial example; no model inference, runtime demo or TTS",
+  "brief": {
+    "title": "如何选择接口调用方式",
+    "prompt": "根据交互时限和任务特征选择调用方式",
+    "mode": "storyboard",
+    "editorial": {
+      "intent": "advice",
+      "subject_kind": "method",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "core_message": "根据交互时限和任务特征选择调用方式",
+      "viewer_takeaway": "知道下一步应核对哪些条件"
+    }
+  },
+  "editorial": {
+    "audience_question": "在什么条件下，应该怎样选择或行动？",
+    "core_message": "根据交互时限和任务特征选择调用方式",
+    "viewer_takeaway": "知道下一步应核对哪些条件",
+    "hook": "如何选择接口调用方式？",
+    "supports": [
+      {
+        "message": "根据交互时限和任务特征选择调用方式",
+        "claim_ids": [
+          "c_prompt"
+        ],
+        "evidence_ids": []
+      }
+    ],
+    "closing": "知道下一步应核对哪些条件",
+    "cover": {
+      "headline": "如何选择接口调用方式",
+      "subtitle": "知道下一步应核对哪些条件"
+    },
+    "strategy": {
+      "intent": "advice",
+      "secondary_intents": [],
+      "subject_kind": "method",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "rationale": "围绕观众收益选择建议决策，资料作为依据，画面服务于理解。",
+      "success_criteria": [
+        "建议与具体需求、条件相连",
+        "观众知道下一步可以做什么"
+      ],
+      "outline": [
+        {
+          "function": "orientation",
+          "purpose": "先明确交互时限与任务特征",
+          "scene_ids": [
+            "advice_1"
+          ]
+        },
+        {
+          "function": "evidence",
+          "purpose": "根据已提供的调用约束展开",
+          "scene_ids": [
+            "advice_2"
+          ]
+        },
+        {
+          "function": "decision",
+          "purpose": "将交互时限与方案选择联系起来",
+          "scene_ids": [
+            "advice_3"
+          ]
+        },
+        {
+          "function": "application",
+          "purpose": "从自己的任务中列出约束再选择",
+          "scene_ids": [
+            "advice_4"
+          ]
+        },
+        {
+          "function": "conclusion",
+          "purpose": "明确下一步核对条件的行动",
+          "scene_ids": [
+            "advice_5"
+          ]
+        }
+      ]
+    }
+  },
+  "scenes": [
+    {
+      "id": "advice_1",
+      "type": "title",
+      "role": "opening",
+      "title": "先明确交互时限与任务特征",
+      "narration": "先明确交互时限与任务特征。",
+      "message": "先明确交互时限与任务特征",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "advice_2",
+      "type": "cards",
+      "role": "content",
+      "title": "根据已提供的调用约束展开",
+      "narration": "根据已提供的调用约束展开。",
+      "message": "根据已提供的调用约束展开",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "advice_3",
+      "type": "cards",
+      "role": "content",
+      "title": "将交互时限与方案选择联系起来",
+      "narration": "将交互时限与方案选择联系起来。",
+      "message": "将交互时限与方案选择联系起来",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "advice_4",
+      "type": "cards",
+      "role": "content",
+      "title": "从自己的任务中列出约束再选择",
+      "narration": "从自己的任务中列出约束再选择。",
+      "message": "从自己的任务中列出约束再选择",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "advice_5",
+      "type": "summary",
+      "role": "closing",
+      "title": "明确下一步核对条件的行动",
+      "narration": "明确下一步核对条件的行动。",
+      "message": "明确下一步核对条件的行动",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    }
+  ]
+}

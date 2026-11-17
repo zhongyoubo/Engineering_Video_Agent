@@ -75,3 +75,10 @@ Creator presentation removes permanent tool/verification banners. Protected book
 topic-driven; preview adds the separate thumbnail and opening/final boundary samples.
 Existing motion review and project-hash invalidation are preserved. See creator-production
 implementation and fixed-render evidence; these samples do not establish full listening.
+
+## 2026-11-18 content-purpose follow-up
+
+Expanded creator/editor contracts without changing protected visual execution behavior.
+The fixed creator fixture was recompiled and rendered for both paths, including separate
+4K thumbnail and first/closing samples. New purpose metadata does not become an on-screen
+badge. Structural six-genre samples remain distinct from native inference quality.

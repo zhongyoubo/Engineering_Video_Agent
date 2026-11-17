@@ -16,7 +16,7 @@ import {
 } from 'remotion';
 import type { Scene, VideoProps } from './types';
 import { Bookend, ViewerDisclosures } from '../../engineering-template/src/presentation';
-export type { Scene, Storyboard, VideoProps } from './types';
+export type { Scene, Storyboard, VideoProps, EditorialRequest, ContentStrategy } from './types';
 
 const colors = { blue: '#3869ef', violet: '#7953df', teal: '#087f83', amber: '#bc7620' };
 const source = (path: string) =>

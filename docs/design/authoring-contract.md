@@ -13,3 +13,11 @@ Start by writing a real implementation. Different scenes need different explanat
 Decide exactly one next action: write_files (full contents for affected paths), build, render_preview, review or finish. Return files=[] for actions other than write_files; review=null except a review action. Compiler/renderer diagnostics are real observations; fix the source rather than claiming success. After every source edit build again, render new keyframes, then inspect all supplied images and return explicit review scores/issues with exact frame_names. If anything is clipped, unreadable, visually misleading or poorly synchronized, request source edits and another build/preview. Finish only after all gates match the current project hash. The platform performs final render after acceptance.
 
 Preview also generates continuous 720p scene clips and sampled motion contact sheets. Review.inspected_frames names all ordinary frame_names. Review.inspected_motion_frames names all motion_frame_names and motion_continuity scores sampled continuity. Inspect the sheet left-to-right then top-to-bottom. These samples do not establish full playback or listening review: never claim to have watched/heard an MP4 that was not supplied in a supported modality. Human playback/listening remains a separate verification result.
+
+Content purpose: read props.editorial_request and props.editorial.strategy. Six primary
+purposes are introduction, explanation, analysis, viewpoint, advice and tutorial. Subject,
+audience and presentation form are independent. Follow the ordered outline while retaining
+freedom in visual implementation; use actual scene IDs/timing after runtime insertion.
+Judge purpose_fulfillment from the actual script/images and strategy.success_criteria, not
+merely the existence of an outline. Score at least 4/5 and include unmet criteria in issues.
+No taxonomy/debug classification labels are required in the viewer-facing video.

@@ -1,5 +1,154 @@
 {
   "$defs": {
+    "ContentStrategy": {
+      "additionalProperties": false,
+      "properties": {
+        "taxonomy_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Taxonomy Version",
+          "type": "string"
+        },
+        "intent": {
+          "enum": [
+            "introduction",
+            "explanation",
+            "analysis",
+            "viewpoint",
+            "advice",
+            "tutorial"
+          ],
+          "title": "Intent",
+          "type": "string"
+        },
+        "secondary_intents": {
+          "items": {
+            "enum": [
+              "introduction",
+              "explanation",
+              "analysis",
+              "viewpoint",
+              "advice",
+              "tutorial"
+            ],
+            "type": "string"
+          },
+          "maxItems": 2,
+          "title": "Secondary Intents",
+          "type": "array"
+        },
+        "subject_kind": {
+          "enum": [
+            "project",
+            "product",
+            "technology",
+            "knowledge",
+            "concept",
+            "mechanism",
+            "method",
+            "workflow",
+            "problem",
+            "phenomenon"
+          ],
+          "title": "Subject Kind",
+          "type": "string"
+        },
+        "audience_description": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Audience Description",
+          "type": "string"
+        },
+        "audience_level": {
+          "enum": [
+            "introductory",
+            "intermediate",
+            "advanced"
+          ],
+          "title": "Audience Level",
+          "type": "string"
+        },
+        "presentation_forms": {
+          "items": {
+            "enum": [
+              "diagram",
+              "case_study",
+              "comparison",
+              "demonstration",
+              "code_walkthrough",
+              "data_visualization",
+              "story"
+            ],
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 1,
+          "title": "Presentation Forms",
+          "type": "array"
+        },
+        "rationale": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "success_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Success Criteria",
+          "type": "array"
+        },
+        "outline": {
+          "items": {
+            "$ref": "#/$defs/NarrativeBeat"
+          },
+          "maxItems": 12,
+          "minItems": 2,
+          "title": "Outline",
+          "type": "array"
+        }
+      },
+      "required": [
+        "taxonomy_version",
+        "intent",
+        "secondary_intents",
+        "subject_kind",
+        "audience_description",
+        "audience_level",
+        "presentation_forms",
+        "rationale",
+        "success_criteria",
+        "outline"
+      ],
+      "title": "ContentStrategy",
+      "type": "object"
+    },
+    "CoverSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "headline": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Headline",
+          "type": "string"
+        },
+        "subtitle": {
+          "default": "",
+          "maxLength": 160,
+          "title": "Subtitle",
+          "type": "string"
+        }
+      },
+      "required": [
+        "headline",
+        "subtitle"
+      ],
+      "title": "CoverSpec",
+      "type": "object"
+    },
     "CueAnchor": {
       "additionalProperties": false,
       "properties": {
@@ -304,6 +453,76 @@
       "title": "DiagramNode",
       "type": "object"
     },
+    "EditorialPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "audience_question": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Audience Question",
+          "type": "string"
+        },
+        "core_message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Core Message",
+          "type": "string"
+        },
+        "viewer_takeaway": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Viewer Takeaway",
+          "type": "string"
+        },
+        "hook": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Hook",
+          "type": "string"
+        },
+        "supports": {
+          "items": {
+            "$ref": "#/$defs/SupportPoint"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Supports",
+          "type": "array"
+        },
+        "closing": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Closing",
+          "type": "string"
+        },
+        "cover": {
+          "$ref": "#/$defs/CoverSpec"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContentStrategy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "audience_question",
+        "core_message",
+        "viewer_takeaway",
+        "hook",
+        "supports",
+        "closing",
+        "cover",
+        "strategy"
+      ],
+      "title": "EditorialPlan",
+      "type": "object"
+    },
     "MotionEvent": {
       "additionalProperties": false,
       "properties": {
@@ -344,6 +563,52 @@
         "duration_ms"
       ],
       "title": "MotionEvent",
+      "type": "object"
+    },
+    "NarrativeBeat": {
+      "additionalProperties": false,
+      "properties": {
+        "function": {
+          "enum": [
+            "orientation",
+            "definition",
+            "mechanism",
+            "evidence",
+            "comparison",
+            "counterargument",
+            "limitations",
+            "decision",
+            "steps",
+            "example",
+            "application",
+            "check",
+            "conclusion"
+          ],
+          "title": "Function",
+          "type": "string"
+        },
+        "purpose": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Purpose",
+          "type": "string"
+        },
+        "scene_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Scene Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "function",
+        "purpose",
+        "scene_ids"
+      ],
+      "title": "NarrativeBeat",
       "type": "object"
     },
     "SceneSpec": {
@@ -433,6 +698,40 @@
       "title": "SceneType",
       "type": "string"
     },
+    "SupportPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Claim Ids",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "message",
+        "claim_ids",
+        "evidence_ids"
+      ],
+      "title": "SupportPoint",
+      "type": "object"
+    },
     "ViewerDisclosure": {
       "additionalProperties": false,
       "properties": {
@@ -503,11 +802,23 @@
       "minItems": 1,
       "title": "Scenes",
       "type": "array"
+    },
+    "editorial": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EditorialPlan"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [
     "protocol",
-    "scenes"
+    "scenes",
+    "editorial"
   ],
   "title": "AgentDesign",
   "type": "object"

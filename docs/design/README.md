@@ -13,3 +13,5 @@
 原始设计蓝图保留于 ../design-baseline.md；不代表所有远期目标已经实现。
 
 - creator-production.md：内容主张、观众收益、独立封面、开场/结尾、局部说明和发布审查契约。
+- ../product/positioning-and-content-taxonomy.md：产品定位、四维分类、六类内容目的、示例与质量标准。
+- content-strategy.md：请求与解析策略、叙事结构、校验、原生审查、兼容迁移与版本失效。

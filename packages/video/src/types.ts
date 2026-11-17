@@ -1,3 +1,43 @@
+export type ContentIntent =
+  | 'introduction'
+  | 'explanation'
+  | 'analysis'
+  | 'viewpoint'
+  | 'advice'
+  | 'tutorial';
+export type EditorialRequest = {
+  intent: ContentIntent | 'auto';
+  secondary_intents: ContentIntent[];
+  subject_kind:
+    | 'auto'
+    | 'project'
+    | 'product'
+    | 'technology'
+    | 'knowledge'
+    | 'concept'
+    | 'mechanism'
+    | 'method'
+    | 'workflow'
+    | 'problem'
+    | 'phenomenon';
+  audience_description: string;
+  audience_level: 'auto' | 'introductory' | 'intermediate' | 'advanced';
+  presentation_forms: string[];
+  core_message: string;
+  viewer_takeaway: string;
+};
+export type ContentStrategy = {
+  taxonomy_version: '1.0';
+  intent: ContentIntent;
+  secondary_intents: ContentIntent[];
+  subject_kind: Exclude<EditorialRequest['subject_kind'], 'auto'>;
+  audience_description: string;
+  audience_level: Exclude<EditorialRequest['audience_level'], 'auto'>;
+  presentation_forms: string[];
+  rationale: string;
+  success_criteria: string[];
+  outline: { function: string; purpose: string; scene_ids: string[] }[];
+};
 export type Diagram = {
   nodes: {
     id: string;
@@ -77,10 +117,12 @@ export type Storyboard = {
   language: 'zh-CN' | 'en-US';
   accent: 'blue' | 'violet' | 'teal' | 'amber';
   audience: string;
+  editorial_request?: EditorialRequest;
   presentation_profile?: 'creator' | 'internal_demo' | 'engineering_report';
   creator_brand?: string;
   cover?: { headline: string; subtitle: string } | null;
   editorial?: {
+    strategy?: ContentStrategy | null;
     audience_question: string;
     core_message: string;
     viewer_takeaway: string;

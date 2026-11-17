@@ -17,7 +17,13 @@ from .ingestion import analyze
 from .planning import plan
 from .process import Runner
 from .quality import inspect, inspect_video
-from .editorial import prepare_presentation, require_publishable, publication_findings, EditorialError
+from .editorial import (
+    prepare_presentation,
+    require_publishable,
+    publication_findings,
+    EditorialError,
+    register_runtime_scene,
+)
 from .timeline import allocate, required_tempo, word_cues, TimelineConflict
 from ..adapters.alignment import forced_align, validate_words
 
@@ -289,6 +295,7 @@ class Pipeline:
             # Rebuild from immutable planning checkpoint so recovery does not duplicate runtime scenes.
             board.scenes = [s for s in board.scenes if s.id != "observed_run"]
             board.scenes.insert(max(1, len(board.scenes) - 1), observed)
+            register_runtime_scene(board, observed.id)
             # The runtime scene is real evidence, not an unplanned exception to the contract.
             if self.brief.video_mode == "engineering":
                 planned["production_plan"]["shots"] = [
@@ -491,6 +498,7 @@ class Pipeline:
                 from .engineering.contracts import ProductionPlan
 
                 effective = dict(planned["production_plan"])
+                effective["editorial"] = board.editorial.model_dump() if board.editorial else None
                 effective["storyboard"] = {
                     "protocol": "1.0",
                     "scenes": [

@@ -50,6 +50,7 @@ class VisualReview(StrictModel):
     cover_promise: int = Field(default=0, ge=0, le=5)
     opening_closing: int = Field(default=0, ge=0, le=5)
     viewer_presentation: int = Field(default=0, ge=0, le=5)
+    purpose_fulfillment: int = Field(default=0, ge=0, le=5)
 
 
 class EngineeringAction(StrictModel):

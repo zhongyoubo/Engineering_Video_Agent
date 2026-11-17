@@ -1,0 +1,128 @@
+{
+  "taxonomy_version": "1.0",
+  "fixture_kind": "fixed authored editorial examples, not model responses",
+  "results": [
+    {
+      "intent": "introduction",
+      "title": "认识 API",
+      "subject_kind": "concept",
+      "functions": [
+        "orientation",
+        "evidence",
+        "application",
+        "conclusion"
+      ],
+      "findings": [],
+      "fixture_sha256": "e82dab5204d930cfbd226d70be24868299eb249b20a45d1670c7b7c5fd7418b7",
+      "contract": "passed"
+    },
+    {
+      "intent": "explanation",
+      "title": "API 怎样完成一次请求",
+      "subject_kind": "mechanism",
+      "functions": [
+        "orientation",
+        "definition",
+        "mechanism",
+        "example",
+        "conclusion"
+      ],
+      "findings": [
+        {
+          "code": "CARD_HEAVY",
+          "severity": "warning",
+          "message": "要点卡片较多，建议用案例、关系和变化辅助表达",
+          "scene_id": null
+        }
+      ],
+      "fixture_sha256": "0b137c80d6231602b045447431d8d1afa856b22ac27380acd9cb7b4a3b1e1692",
+      "contract": "passed"
+    },
+    {
+      "intent": "analysis",
+      "title": "分析一个接口设计",
+      "subject_kind": "project",
+      "functions": [
+        "orientation",
+        "evidence",
+        "comparison",
+        "limitations",
+        "conclusion"
+      ],
+      "findings": [
+        {
+          "code": "CARD_HEAVY",
+          "severity": "warning",
+          "message": "要点卡片较多，建议用案例、关系和变化辅助表达",
+          "scene_id": null
+        }
+      ],
+      "fixture_sha256": "eab57cf73d8b497b2239cec2c77bb275375b64fd732a589d8b8b75384de3f573",
+      "contract": "passed"
+    },
+    {
+      "intent": "viewpoint",
+      "title": "接口为何需要明确错误返回",
+      "subject_kind": "technology",
+      "functions": [
+        "orientation",
+        "evidence",
+        "counterargument",
+        "conclusion"
+      ],
+      "findings": [],
+      "fixture_sha256": "a5b4e692bce503d13a06139a658eddc951e6a3cb41674eab7a1be5e6016badff",
+      "contract": "passed"
+    },
+    {
+      "intent": "advice",
+      "title": "如何选择接口调用方式",
+      "subject_kind": "method",
+      "functions": [
+        "orientation",
+        "evidence",
+        "decision",
+        "application",
+        "conclusion"
+      ],
+      "findings": [
+        {
+          "code": "CARD_HEAVY",
+          "severity": "warning",
+          "message": "要点卡片较多，建议用案例、关系和变化辅助表达",
+          "scene_id": null
+        }
+      ],
+      "fixture_sha256": "6e4e45d0d40aaec33e582fd5de3734013d7bfbf1501c55b00c3d71f6282db091",
+      "contract": "passed"
+    },
+    {
+      "intent": "tutorial",
+      "title": "完成一次接口请求",
+      "subject_kind": "workflow",
+      "functions": [
+        "orientation",
+        "steps",
+        "example",
+        "check",
+        "conclusion"
+      ],
+      "findings": [
+        {
+          "code": "CARD_HEAVY",
+          "severity": "warning",
+          "message": "要点卡片较多，建议用案例、关系和变化辅助表达",
+          "scene_id": null
+        }
+      ],
+      "fixture_sha256": "6cf6310e7ee74d91dec14b4d884fcc4d4eb7e78584a41061b6f4d2a7debbc739",
+      "contract": "passed"
+    }
+  ],
+  "native_inference": false,
+  "tts_or_full_listening": false,
+  "limits": [
+    "Structural coverage is not semantic quality certification.",
+    "Real native outputs for all six purposes require deployment acceptance."
+  ]
+}

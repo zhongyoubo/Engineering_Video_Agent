@@ -20,12 +20,15 @@ from explainer.specs import (
     CompiledEvent,
 )
 
-from explainer.editorial import EditorialBrief, EditorialPlan, CoverSpec, ViewerDisclosure
+from explainer.editorial import EditorialBrief, EditorialPlan, CoverSpec, ViewerDisclosure, ContentStrategy, NarrativeBeat
+from explainer.content_taxonomy import taxonomy_options
 
 directory = ROOT / "packages/contracts"
 for model in [
     Brief,
     EditorialBrief,
+    ContentStrategy,
+    NarrativeBeat,
     EditorialPlan,
     CoverSpec,
     ViewerDisclosure,
@@ -52,4 +55,5 @@ for model in [ProductionPlan, EngineeringAction]:
     (directory / (model.__name__ + ".schema.json")).write_text(
         json.dumps(schema(model), ensure_ascii=False, indent=2) + "\n"
     )
+(directory / "content-taxonomy.json").write_text(json.dumps(taxonomy_options(), ensure_ascii=False, indent=2) + "\n")
 print("Contracts exported")
