@@ -29,6 +29,8 @@ class ProductionPlan(StrictModel):
         ids = [scene.id for scene in self.storyboard.scenes]
         if sorted(shot.scene_id for shot in self.shots) != sorted(ids):
             raise ValueError("Every scene requires exactly one visual and motion design")
+        if self.storyboard.editorial is not None and self.storyboard.editorial != self.editorial:
+            raise ValueError("Storyboard editorial must be null or match the production-plan editorial")
         return self
 
 
@@ -50,6 +52,7 @@ class VisualReview(StrictModel):
     cover_promise: int = Field(default=0, ge=0, le=5)
     opening_closing: int = Field(default=0, ge=0, le=5)
     viewer_presentation: int = Field(default=0, ge=0, le=5)
+    purpose_fulfillment: int = Field(default=0, ge=0, le=5)
 
 
 class EngineeringAction(StrictModel):

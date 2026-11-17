@@ -28,3 +28,13 @@ This workspace has no Docker daemon or native-provider credentials. Real compila
 ## Interface references
 
 Official native integration references checked 2026-10-30: https://developers.openai.com/codex/noninteractive/ and https://code.claude.com/docs/en/headless . Remotion tool API reference: https://www.remotion.dev/docs/renderer/render-still . CLI versions remain explicitly pinned in infra/native-agent/Dockerfile.
+
+## Audience-purpose production contract
+
+The product serves knowledge/technical creators through introduction, explanation,
+analysis, viewpoint, advice and tutorial tasks. Subject, audience depth and visual form
+are independent. New native creator planning resolves EditorialPlan.strategy from the
+full context and records rationale, ordered scene coverage and success criteria. The
+publication review additionally scores purpose_fulfillment against actual content.
+See product/positioning-and-content-taxonomy.md (under docs) and content-strategy.md.
+The engineering execution loop and isolation/evidence boundaries remain unchanged.

@@ -164,6 +164,22 @@
         }
       }
     },
+    "/api/v1/content-taxonomy": {
+      "get": {
+        "summary": "Get Content Taxonomy",
+        "operationId": "get_content_taxonomy_api_v1_content_taxonomy_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/projects": {
       "get": {
         "summary": "Projects",
@@ -1270,6 +1286,130 @@
         ],
         "title": "CompiledEvent"
       },
+      "ContentStrategy": {
+        "properties": {
+          "taxonomy_version": {
+            "type": "string",
+            "const": "1.0",
+            "title": "Taxonomy Version",
+            "default": "1.0"
+          },
+          "intent": {
+            "type": "string",
+            "enum": [
+              "introduction",
+              "explanation",
+              "analysis",
+              "viewpoint",
+              "advice",
+              "tutorial"
+            ],
+            "title": "Intent"
+          },
+          "secondary_intents": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "introduction",
+                "explanation",
+                "analysis",
+                "viewpoint",
+                "advice",
+                "tutorial"
+              ]
+            },
+            "type": "array",
+            "maxItems": 2,
+            "title": "Secondary Intents"
+          },
+          "subject_kind": {
+            "type": "string",
+            "enum": [
+              "project",
+              "product",
+              "technology",
+              "knowledge",
+              "concept",
+              "mechanism",
+              "method",
+              "workflow",
+              "problem",
+              "phenomenon"
+            ],
+            "title": "Subject Kind"
+          },
+          "audience_description": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Audience Description"
+          },
+          "audience_level": {
+            "type": "string",
+            "enum": [
+              "introductory",
+              "intermediate",
+              "advanced"
+            ],
+            "title": "Audience Level"
+          },
+          "presentation_forms": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "diagram",
+                "case_study",
+                "comparison",
+                "demonstration",
+                "code_walkthrough",
+                "data_visualization",
+                "story"
+              ]
+            },
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Presentation Forms"
+          },
+          "rationale": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Rationale"
+          },
+          "success_criteria": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Success Criteria"
+          },
+          "outline": {
+            "items": {
+              "$ref": "#/components/schemas/NarrativeBeat"
+            },
+            "type": "array",
+            "maxItems": 12,
+            "minItems": 2,
+            "title": "Outline"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "intent",
+          "subject_kind",
+          "audience_description",
+          "audience_level",
+          "presentation_forms",
+          "rationale",
+          "success_criteria",
+          "outline"
+        ],
+        "title": "ContentStrategy"
+      },
       "CoverSpec": {
         "properties": {
           "headline": {
@@ -1533,27 +1673,83 @@
             "type": "string",
             "enum": [
               "auto",
+              "introduction",
+              "explanation",
+              "analysis",
               "viewpoint",
               "advice",
-              "analysis",
-              "knowledge",
-              "explanation"
+              "tutorial"
             ],
             "title": "Intent",
             "default": "auto"
+          },
+          "secondary_intents": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "introduction",
+                "explanation",
+                "analysis",
+                "viewpoint",
+                "advice",
+                "tutorial"
+              ]
+            },
+            "type": "array",
+            "maxItems": 2,
+            "title": "Secondary Intents"
           },
           "subject_kind": {
             "type": "string",
             "enum": [
               "auto",
               "project",
+              "product",
+              "technology",
               "knowledge",
               "concept",
               "mechanism",
-              "workflow"
+              "method",
+              "workflow",
+              "problem",
+              "phenomenon"
             ],
             "title": "Subject Kind",
             "default": "auto"
+          },
+          "audience_description": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Audience Description",
+            "default": ""
+          },
+          "audience_level": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "introductory",
+              "intermediate",
+              "advanced"
+            ],
+            "title": "Audience Level",
+            "default": "auto"
+          },
+          "presentation_forms": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "diagram",
+                "case_study",
+                "comparison",
+                "demonstration",
+                "code_walkthrough",
+                "data_visualization",
+                "story"
+              ]
+            },
+            "type": "array",
+            "maxItems": 4,
+            "title": "Presentation Forms"
           },
           "core_message": {
             "type": "string",
@@ -1615,6 +1811,16 @@
           },
           "cover": {
             "$ref": "#/components/schemas/CoverSpec"
+          },
+          "strategy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ContentStrategy"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,
@@ -1982,6 +2188,52 @@
           "anchor"
         ],
         "title": "MotionEvent"
+      },
+      "NarrativeBeat": {
+        "properties": {
+          "function": {
+            "type": "string",
+            "enum": [
+              "orientation",
+              "definition",
+              "mechanism",
+              "evidence",
+              "comparison",
+              "counterargument",
+              "limitations",
+              "decision",
+              "steps",
+              "example",
+              "application",
+              "check",
+              "conclusion"
+            ],
+            "title": "Function"
+          },
+          "purpose": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Purpose"
+          },
+          "scene_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 32,
+            "minItems": 1,
+            "title": "Scene Ids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "function",
+          "purpose",
+          "scene_ids"
+        ],
+        "title": "NarrativeBeat"
       },
       "RenderProfile": {
         "properties": {
@@ -2408,6 +2660,9 @@
                 "type": "null"
               }
             ]
+          },
+          "editorial_request": {
+            "$ref": "#/components/schemas/EditorialBrief"
           },
           "total_frames": {
             "type": "integer",

@@ -5,27 +5,83 @@
       "default": "auto",
       "enum": [
         "auto",
+        "introduction",
+        "explanation",
+        "analysis",
         "viewpoint",
         "advice",
-        "analysis",
-        "knowledge",
-        "explanation"
+        "tutorial"
       ],
       "title": "Intent",
       "type": "string"
+    },
+    "secondary_intents": {
+      "items": {
+        "enum": [
+          "introduction",
+          "explanation",
+          "analysis",
+          "viewpoint",
+          "advice",
+          "tutorial"
+        ],
+        "type": "string"
+      },
+      "maxItems": 2,
+      "title": "Secondary Intents",
+      "type": "array"
     },
     "subject_kind": {
       "default": "auto",
       "enum": [
         "auto",
         "project",
+        "product",
+        "technology",
         "knowledge",
         "concept",
         "mechanism",
-        "workflow"
+        "method",
+        "workflow",
+        "problem",
+        "phenomenon"
       ],
       "title": "Subject Kind",
       "type": "string"
+    },
+    "audience_description": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Audience Description",
+      "type": "string"
+    },
+    "audience_level": {
+      "default": "auto",
+      "enum": [
+        "auto",
+        "introductory",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Audience Level",
+      "type": "string"
+    },
+    "presentation_forms": {
+      "items": {
+        "enum": [
+          "diagram",
+          "case_study",
+          "comparison",
+          "demonstration",
+          "code_walkthrough",
+          "data_visualization",
+          "story"
+        ],
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Presentation Forms",
+      "type": "array"
     },
     "core_message": {
       "default": "",

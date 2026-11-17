@@ -3,6 +3,8 @@
 ## Product contract
 Build an Agent that authors, builds, renders, observes, repairs and delivers a real Remotion project. A JSON storyboard alone is not the final product. Preserve the existing template API as explicitly labelled compatibility mode.
 
+Read docs/product/positioning-and-content-taxonomy.md and docs/design/content-strategy.md for content changes. Six primary purposes are introduction, explanation, analysis, viewpoint, advice and tutorial. Keep subject, audience and visual form independent. Auto is semantic model resolution, never keyword routing; compatibility drafts must not fabricate resolution or quality acceptance.
+
 ## Working rules
 - Read README.md, Roadmap.md and docs/design/engineering-agent.md before changing the execution model.
 - Keep provider authentication outside generated-code build/render containers. Never execute uploaded or generated code on the application host as a fallback.

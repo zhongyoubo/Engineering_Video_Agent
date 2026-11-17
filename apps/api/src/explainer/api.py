@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 
 from .adapters.base import MANIFESTS
 from .adapters.native_agent import capability as native_capability
+from .content_taxonomy import taxonomy_options
 from .config import ROOT, get_settings
 from .db import Database, encode, uid
 from .domain import CreateProject, CreateVideo, ForkRevision, CreateEngineeringVideo
@@ -193,6 +194,7 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
     return {
         "adapters": [m.model_dump() for m in MANIFESTS],
         "material_library": material_library(),
+        "content_taxonomy": taxonomy_options(),
         "model": bool(settings.model_url and settings.model_name and settings.allow_external_model),
         "model_name": settings.model_name if settings.allow_external_model else "local-template",
         "voice": {
@@ -224,6 +226,11 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
 @app.get("/api/v1/material-library")
 def get_material_library(tenant_id=Depends(tenant)):
     return material_library()
+
+
+@app.get("/api/v1/content-taxonomy")
+def get_content_taxonomy(tenant_id=Depends(tenant)):
+    return taxonomy_options()
 
 
 @app.get("/api/v1/projects")
@@ -534,12 +541,18 @@ async def fork_revision(
         if source["project_id"] != original["project_id"]:
             raise HTTPException(422, "输入不属于当前项目")
     content = original["content"]
-    if brief.input_id != old_brief.input_id or brief.prompt != old_brief.prompt:
+    if (
+        brief.input_id != old_brief.input_id
+        or brief.prompt != old_brief.prompt
+        or brief.title != old_brief.title
+    ):
         content, board = None, None
     if (
         brief.editorial != old_brief.editorial
         or brief.presentation_profile != old_brief.presentation_profile
         or brief.audience != old_brief.audience
+        or brief.language != old_brief.language
+        or brief.video_mode != old_brief.video_mode
     ):
         board = None
     if board:

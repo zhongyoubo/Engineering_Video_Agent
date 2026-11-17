@@ -1,0 +1,150 @@
+{
+  "fixture": "authored editorial example; no model inference, runtime demo or TTS",
+  "brief": {
+    "title": "完成一次接口请求",
+    "prompt": "先查约定，再填写参数并检查返回",
+    "mode": "storyboard",
+    "editorial": {
+      "intent": "tutorial",
+      "subject_kind": "workflow",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "core_message": "先查约定，再填写参数并检查返回",
+      "viewer_takeaway": "能按步骤准备请求并判断结果"
+    }
+  },
+  "editorial": {
+    "audience_question": "需要什么，怎样完成，如何判断是否成功？",
+    "core_message": "先查约定，再填写参数并检查返回",
+    "viewer_takeaway": "能按步骤准备请求并判断结果",
+    "hook": "完成一次接口请求？",
+    "supports": [
+      {
+        "message": "先查约定，再填写参数并检查返回",
+        "claim_ids": [
+          "c_prompt"
+        ],
+        "evidence_ids": []
+      }
+    ],
+    "closing": "能按步骤准备请求并判断结果",
+    "cover": {
+      "headline": "完成一次接口请求",
+      "subtitle": "能按步骤准备请求并判断结果"
+    },
+    "strategy": {
+      "intent": "tutorial",
+      "secondary_intents": [],
+      "subject_kind": "workflow",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "rationale": "围绕观众收益选择教学操作，资料作为依据，画面服务于理解。",
+      "success_criteria": [
+        "前提、关键步骤与预期结果清楚",
+        "提供完成判断方法，示意与实际操作明确区分"
+      ],
+      "outline": [
+        {
+          "function": "orientation",
+          "purpose": "确认文档和访问条件",
+          "scene_ids": [
+            "tutorial_1"
+          ]
+        },
+        {
+          "function": "steps",
+          "purpose": "依据文档准备请求参数",
+          "scene_ids": [
+            "tutorial_2"
+          ]
+        },
+        {
+          "function": "example",
+          "purpose": "用示意请求说明各项填写位置",
+          "scene_ids": [
+            "tutorial_3"
+          ]
+        },
+        {
+          "function": "check",
+          "purpose": "核对状态与返回结构以判断结果",
+          "scene_ids": [
+            "tutorial_4"
+          ]
+        },
+        {
+          "function": "conclusion",
+          "purpose": "回顾操作方法与完成判断",
+          "scene_ids": [
+            "tutorial_5"
+          ]
+        }
+      ]
+    }
+  },
+  "scenes": [
+    {
+      "id": "tutorial_1",
+      "type": "title",
+      "role": "opening",
+      "title": "确认文档和访问条件",
+      "narration": "确认文档和访问条件。",
+      "message": "确认文档和访问条件",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "tutorial_2",
+      "type": "cards",
+      "role": "content",
+      "title": "依据文档准备请求参数",
+      "narration": "依据文档准备请求参数。",
+      "message": "依据文档准备请求参数",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "tutorial_3",
+      "type": "cards",
+      "role": "content",
+      "title": "用示意请求说明各项填写位置",
+      "narration": "用示意请求说明各项填写位置。",
+      "message": "用示意请求说明各项填写位置",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "tutorial_4",
+      "type": "cards",
+      "role": "content",
+      "title": "核对状态与返回结构以判断结果",
+      "narration": "核对状态与返回结构以判断结果。",
+      "message": "核对状态与返回结构以判断结果",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "tutorial_5",
+      "type": "summary",
+      "role": "closing",
+      "title": "回顾操作方法与完成判断",
+      "narration": "回顾操作方法与完成判断。",
+      "message": "回顾操作方法与完成判断",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    }
+  ]
+}

@@ -191,6 +191,7 @@ class StoryboardIR(StrictModel):
     creator_brand: str = Field(default="", max_length=80)
     cover: CoverSpec | None = None
     editorial: EditorialPlan | None = None
+    editorial_request: EditorialBrief = Field(default_factory=EditorialBrief)
     total_frames: int = Field(default=2700, ge=1)
     notices: list[str] = Field(default_factory=list)
     audio_alignment: Literal["estimated_sentence", "native_words", "forced_words", "mixed", "none"] = "none"

@@ -37,6 +37,12 @@ import {
 import { media, post, request, type Project, type Job } from './api';
 import './style.css';
 import { ProductionInspector } from './ProductionInspector';
+import {
+  ContentBriefEditor,
+  ContentBriefSummary,
+  defaultEditorialRequest,
+  editorialRequestChanged,
+} from './ContentBriefEditor';
 
 const finalStates = ['SUCCEEDED', 'PARTIAL', 'FAILED', 'CANCELED'];
 const stateLabels: Record<string, string> = {
@@ -111,10 +117,8 @@ function App() {
   const [videoMode, setVideoMode] = useState('engineering'),
     [qualityProfile, setQualityProfile] = useState('professional');
   const [presentationProfile, setPresentationProfile] = useState('creator');
-  const [contentIntent, setContentIntent] = useState('auto');
-  const [coreMessage, setCoreMessage] = useState(''),
-    [viewerTakeaway, setViewerTakeaway] = useState(''),
-    [creatorBrand, setCreatorBrand] = useState('');
+  const [editorialInput, setEditorialInput] = useState(defaultEditorialRequest);
+  const [creatorBrand, setCreatorBrand] = useState('');
   const [agentEvents, setAgentEvents] = useState<any[]>([]);
   const [durationMode, setDurationMode] = useState('target'),
     [requireAlignment, setRequireAlignment] = useState(false);
@@ -291,12 +295,7 @@ function App() {
           quality_profile: qualityProfile,
           presentation_profile: presentationProfile,
           creator_brand: creatorBrand,
-          editorial: {
-            intent: contentIntent,
-            subject_kind: 'auto',
-            core_message: coreMessage,
-            viewer_takeaway: viewerTakeaway,
-          },
+          editorial: editorialInput,
           render_profile: { resolution, fps: 30 },
           design_pack: designPack,
           voice_spec: { voice_id: voiceId, speed: voiceSpeed, model: '', revision: '1' },
@@ -378,6 +377,10 @@ function App() {
       const result = await post('/v1/revisions/' + revision.id + '/fork', {
         expected_version: revision.version,
         storyboard: board,
+        brief: {
+          ...revision.brief,
+          editorial: board.editorial_request || revision.brief.editorial,
+        },
         auto_render: render,
       });
       await refresh();
@@ -762,34 +765,10 @@ function App() {
                     </select>
                   </div>
                 </div>
-                <label>内容目的</label>
-                <select
-                  aria-label="内容目的"
-                  value={contentIntent}
-                  onChange={(e) => setContentIntent(e.target.value)}
-                >
-                  <option value="auto">根据主题策划</option>
-                  <option value="viewpoint">表达观点</option>
-                  <option value="advice">给出建议</option>
-                  <option value="analysis">分析项目</option>
-                  <option value="knowledge">分享知识</option>
-                  <option value="explanation">解释概念与原理</option>
-                </select>
-                <label>核心主张（可选）</label>
-                <input
-                  aria-label="核心主张"
-                  maxLength={500}
-                  value={coreMessage}
-                  onChange={(e) => setCoreMessage(e.target.value)}
-                  placeholder="希望观众记住的一句话"
-                />
-                <label>观众收益（可选）</label>
-                <input
-                  aria-label="观众收益"
-                  maxLength={500}
-                  value={viewerTakeaway}
-                  onChange={(e) => setViewerTakeaway(e.target.value)}
-                  placeholder="看完能够理解、判断或行动什么"
+                <ContentBriefEditor
+                  value={editorialInput}
+                  onChange={setEditorialInput}
+                  taxonomy={caps?.content_taxonomy}
                 />
                 <label>发布用途</label>
                 <select
@@ -1219,6 +1198,29 @@ function App() {
                 {board?.cover && (
                   <div className="publication-panel" style={{ padding: 20 }}>
                     <h3>封面与内容主线</h3>
+                    <ContentBriefSummary
+                      request={board.editorial_request || revision?.brief.editorial}
+                      strategy={board.editorial?.strategy}
+                      taxonomy={caps?.content_taxonomy}
+                      pending={editorialRequestChanged(
+                        board.editorial_request || revision?.brief.editorial,
+                        revision?.brief.editorial,
+                      )}
+                    />
+                    <details>
+                      <summary>调整内容目标</summary>
+                      <ContentBriefEditor
+                        value={
+                          board.editorial_request ||
+                          revision?.brief.editorial ||
+                          defaultEditorialRequest
+                        }
+                        onChange={(value) => setBoard({ ...board, editorial_request: value })}
+                        taxonomy={caps?.content_taxonomy}
+                        prefix="版本"
+                      />
+                      <p>修改内容目标后，另存版本会重新策划正文与分镜。</p>
+                    </details>
                     <label>封面标题</label>
                     <input
                       aria-label="封面标题"

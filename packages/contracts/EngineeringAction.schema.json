@@ -106,6 +106,13 @@
           "minimum": 0,
           "title": "Viewer Presentation",
           "type": "integer"
+        },
+        "purpose_fulfillment": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Purpose Fulfillment",
+          "type": "integer"
         }
       },
       "required": [
@@ -120,7 +127,8 @@
         "content_focus",
         "cover_promise",
         "opening_closing",
-        "viewer_presentation"
+        "viewer_presentation",
+        "purpose_fulfillment"
       ],
       "title": "VisualReview",
       "type": "object"

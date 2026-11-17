@@ -1,0 +1,150 @@
+{
+  "fixture": "authored editorial example; no model inference, runtime demo or TTS",
+  "brief": {
+    "title": "分析一个接口设计",
+    "prompt": "从输入约束、错误返回和兼容演进评估设计",
+    "mode": "storyboard",
+    "editorial": {
+      "intent": "analysis",
+      "subject_kind": "project",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "core_message": "从输入约束、错误返回和兼容演进评估设计",
+      "viewer_takeaway": "能按明确维度评估接口设计"
+    }
+  },
+  "editorial": {
+    "audience_question": "设计怎样，价值与取舍是什么，适合什么条件？",
+    "core_message": "从输入约束、错误返回和兼容演进评估设计",
+    "viewer_takeaway": "能按明确维度评估接口设计",
+    "hook": "分析一个接口设计？",
+    "supports": [
+      {
+        "message": "从输入约束、错误返回和兼容演进评估设计",
+        "claim_ids": [
+          "c_prompt"
+        ],
+        "evidence_ids": []
+      }
+    ],
+    "closing": "能按明确维度评估接口设计",
+    "cover": {
+      "headline": "分析一个接口设计",
+      "subtitle": "能按明确维度评估接口设计"
+    },
+    "strategy": {
+      "intent": "analysis",
+      "secondary_intents": [],
+      "subject_kind": "project",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "rationale": "围绕观众收益选择分析评估，资料作为依据，画面服务于理解。",
+      "success_criteria": [
+        "有明确的分析维度与依据",
+        "结论说明价值、取舍与适用边界"
+      ],
+      "outline": [
+        {
+          "function": "orientation",
+          "purpose": "明确接口评估要解决的问题",
+          "scene_ids": [
+            "analysis_1"
+          ]
+        },
+        {
+          "function": "evidence",
+          "purpose": "检查文档和参数约定作为依据",
+          "scene_ids": [
+            "analysis_2"
+          ]
+        },
+        {
+          "function": "comparison",
+          "purpose": "比较不同错误返回约定的取舍",
+          "scene_ids": [
+            "analysis_3"
+          ]
+        },
+        {
+          "function": "limitations",
+          "purpose": "说明本分析尚未包含运行表现",
+          "scene_ids": [
+            "analysis_4"
+          ]
+        },
+        {
+          "function": "conclusion",
+          "purpose": "总结适用条件与待验证问题",
+          "scene_ids": [
+            "analysis_5"
+          ]
+        }
+      ]
+    }
+  },
+  "scenes": [
+    {
+      "id": "analysis_1",
+      "type": "title",
+      "role": "opening",
+      "title": "明确接口评估要解决的问题",
+      "narration": "明确接口评估要解决的问题。",
+      "message": "明确接口评估要解决的问题",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "analysis_2",
+      "type": "cards",
+      "role": "content",
+      "title": "检查文档和参数约定作为依据",
+      "narration": "检查文档和参数约定作为依据。",
+      "message": "检查文档和参数约定作为依据",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "analysis_3",
+      "type": "cards",
+      "role": "content",
+      "title": "比较不同错误返回约定的取舍",
+      "narration": "比较不同错误返回约定的取舍。",
+      "message": "比较不同错误返回约定的取舍",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "analysis_4",
+      "type": "cards",
+      "role": "content",
+      "title": "说明本分析尚未包含运行表现",
+      "narration": "说明本分析尚未包含运行表现。",
+      "message": "说明本分析尚未包含运行表现",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "analysis_5",
+      "type": "summary",
+      "role": "closing",
+      "title": "总结适用条件与待验证问题",
+      "narration": "总结适用条件与待验证问题。",
+      "message": "总结适用条件与待验证问题",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    }
+  ]
+}

@@ -61,3 +61,11 @@ deployment checks. This change does not regenerate the old Ming video.
 
 Only 16:9 1080p/4K remains supported. Vertical/square layouts, platform-specific
 safe areas, advanced cover art direction and publishing integrations remain planned.
+
+## Content taxonomy follow-up · 2026-11-18
+
+The current primary purposes are introduction, explanation, analysis, viewpoint, advice
+and tutorial. Subject/audience/form are independent. New native engineering creator plans
+resolve EditorialPlan.strategy and require purpose_fulfillment >=4/5 in addition to the
+existing publication scores. See content-strategy.md for exact contracts, legacy knowledge
+migration, ordered scene coverage and scope. Older nullable strategies remain readable.

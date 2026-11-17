@@ -70,3 +70,51 @@ SUCCEEDED 表示当前模式完成，例如 storyboard 模式只要求分镜，�
 
 本版不提供任意用户 URL 抓取、Git 凭证导入、Webhook 或外部生产写入 API。模型/TTS 地址是部署者配置，不由提示词指定。
 
+
+## Content taxonomy (2026-11-18)
+
+Authenticated GET `/api/v1/content-taxonomy` returns version 1.0; the same catalog is
+available as `capabilities.content_taxonomy`. Canonical intent values are introduction,
+explanation, analysis, viewpoint, advice and tutorial, plus auto in creative requests.
+Subject_kind, audience_description, audience_level and presentation_forms are independent.
+Secondary_intents allows at most two distinct purposes, excluding the primary; forms allows
+at most four unique selections. Core_message and viewer_takeaway remain supported.
+
+`StoryboardIR.editorial_request` preserves the requested dimensions. A resolved
+`EditorialPlan.strategy` records rationale, success_criteria and an outline mapping narrative
+functions to actual ordered scene_ids. New native engineering creator plans require it;
+legacy IR/plan loading remains supported. Exact legacy intent=knowledge migrates to auto
+and subject_kind=knowledge only when no explicit subject was supplied.
+
+Forking a revision with changed Brief.editorial triggers replanning. Reuse of unchanged
+narration remains governed by the existing cache/voice rules. See generated JSON Schema and
+`docs/design/content-strategy.md` for precise constraints.
+
+Example request (a configured native Worker is required; project_id must belong to the caller):
+
+```json
+{
+  "project_id": "your-project-id",
+  "brief": {
+    "title": "如何评估一个配音项目",
+    "prompt": "围绕创作者的配音需求组织选型建议，引用已提供资料，不虚构试听结果。",
+    "video_mode": "engineering",
+    "agent_engine": "codex",
+    "mode": "storyboard",
+    "audience": "beginner",
+    "editorial": {
+      "intent": "advice",
+      "secondary_intents": ["analysis"],
+      "subject_kind": "project",
+      "audience_description": "准备为中文视频选择配音方案的创作者",
+      "audience_level": "introductory",
+      "presentation_forms": ["diagram", "case_study"],
+      "core_message": "用自己的文稿试听，再决定是否接入",
+      "viewer_takeaway": "知道试听时应检查哪些条件"
+    }
+  }
+}
+```
+
+`mode=storyboard` requests planning only; switch to automatic after configuring the
+selected narration/alignment/render services to produce final media.

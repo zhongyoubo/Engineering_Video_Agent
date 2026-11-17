@@ -1,0 +1,132 @@
+{
+  "fixture": "authored editorial example; no model inference, runtime demo or TTS",
+  "brief": {
+    "title": "认识 API",
+    "prompt": "API 是系统间约定的交互接口",
+    "mode": "storyboard",
+    "editorial": {
+      "intent": "introduction",
+      "subject_kind": "concept",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "core_message": "API 是系统间约定的交互接口",
+      "viewer_takeaway": "能说明 API 的用途"
+    }
+  },
+  "editorial": {
+    "audience_question": "它是什么，有哪些值得知道的信息？",
+    "core_message": "API 是系统间约定的交互接口",
+    "viewer_takeaway": "能说明 API 的用途",
+    "hook": "认识 API？",
+    "supports": [
+      {
+        "message": "API 是系统间约定的交互接口",
+        "claim_ids": [
+          "c_prompt"
+        ],
+        "evidence_ids": []
+      }
+    ],
+    "closing": "能说明 API 的用途",
+    "cover": {
+      "headline": "认识 API",
+      "subtitle": "能说明 API 的用途"
+    },
+    "strategy": {
+      "intent": "introduction",
+      "secondary_intents": [],
+      "subject_kind": "concept",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "rationale": "围绕观众收益选择介绍告知，资料作为依据，画面服务于理解。",
+      "success_criteria": [
+        "观众能说清对象与核心信息",
+        "事实有来源，重点有取舍"
+      ],
+      "outline": [
+        {
+          "function": "orientation",
+          "purpose": "从天气查询认识接口",
+          "scene_ids": [
+            "introduction_1"
+          ]
+        },
+        {
+          "function": "evidence",
+          "purpose": "接口文档约定请求参数与响应格式",
+          "scene_ids": [
+            "introduction_2"
+          ]
+        },
+        {
+          "function": "application",
+          "purpose": "用一个天气查询情境联系用途",
+          "scene_ids": [
+            "introduction_3"
+          ]
+        },
+        {
+          "function": "conclusion",
+          "purpose": "记住接口约定了怎样交互",
+          "scene_ids": [
+            "introduction_4"
+          ]
+        }
+      ]
+    }
+  },
+  "scenes": [
+    {
+      "id": "introduction_1",
+      "type": "title",
+      "role": "opening",
+      "title": "从天气查询认识接口",
+      "narration": "从天气查询认识接口。",
+      "message": "从天气查询认识接口",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "introduction_2",
+      "type": "cards",
+      "role": "content",
+      "title": "接口文档约定请求参数与响应格式",
+      "narration": "接口文档约定请求参数与响应格式。",
+      "message": "接口文档约定请求参数与响应格式",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "introduction_3",
+      "type": "cards",
+      "role": "content",
+      "title": "用一个天气查询情境联系用途",
+      "narration": "用一个天气查询情境联系用途。",
+      "message": "用一个天气查询情境联系用途",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "introduction_4",
+      "type": "summary",
+      "role": "closing",
+      "title": "记住接口约定了怎样交互",
+      "narration": "记住接口约定了怎样交互。",
+      "message": "记住接口约定了怎样交互",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    }
+  ]
+}

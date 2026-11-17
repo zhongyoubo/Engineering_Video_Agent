@@ -49,3 +49,16 @@ Added audience/intent editorial contracts, independently rendered publication th
 readable first-frame opening, topic-driven closing and hash-bound content review. Both
 render paths and editable exports updated. Evidence is in goals/2026-11-17-creator-production.md
 and docs/verification-creator.json; real native/TTS/isolation acceptance remains separate.
+
+## 2026-11-18 content strategy follow-up
+
+Added four independent editorial dimensions and six purposes; new native creator plans
+resolve a scene-linked strategy and receive purpose-specific review. Existing execution,
+evidence, voice and hash gates remain. See goals/2026-11-18-content-taxonomy.md and
+verification-taxonomy.json for the exact implementation and measured checks.
+
+### Review follow-up · 2026-11-18
+Moved complete engineering plan and typed-action validation into bounded native retries;
+rejected conflicting editorial duplicates and prevented stale title/language/mode boards.
+159 backend / 9 browser flows, TypeScript/build and six authored strategy checks passed.
+See goals/2026-11-18-content-taxonomy.md for scope, safe feedback and deployment limits.

@@ -7,12 +7,17 @@ import shutil
 import subprocess
 
 from ..db import uid
+from ..content_taxonomy import planning_guidance
 from ..services.process import ProcessError
 from .native_contract import strict_schema, validate_design
 
 
 class NativeAgentError(RuntimeError):
     pass
+
+
+class NativeOutputError(ValueError):
+    """Trusted platform feedback, safe to return to the isolated planning call."""
 
 
 def capability(settings, provider):
@@ -46,6 +51,7 @@ def native_plan(
     emit,
     existing_board=None,
     engineering_contract=None,
+    validate_result=None,
 ):
     provider = brief.agent_engine
     if not capability(settings, provider)["ready"]:
@@ -67,6 +73,7 @@ def native_plan(
         "provider": provider,
         "brief": brief.model_dump(),
         "content": content.model_dump(),
+        "content_guidance": planning_guidance(brief),
         "model": settings.codex_agent_model if provider == "codex" else settings.claude_agent_model,
         "budget_usd": settings.native_agent_budget_usd,
         "max_turns": settings.native_agent_max_turns,
@@ -97,11 +104,12 @@ def native_plan(
     last_error = None
     for attempt in range(settings.native_agent_repairs + 1):
         runner.guard()
-        request["repair"] = (
-            "The previous output failed platform validation. Follow the schema and evidence IDs exactly."
-            if attempt
-            else ""
-        )
+        request["repair"] = ""
+        if attempt:
+            request["repair"] = (
+                "The previous output failed platform validation. Follow the schema and evidence IDs exactly. "
+                + (str(last_error) if isinstance(last_error, NativeOutputError) else "")
+            )
         (directory / "request.json").write_text(json.dumps(request, ensure_ascii=False))
         name = uid("native")
         image = settings.codex_agent_image if provider == "codex" else settings.claude_agent_image
@@ -189,7 +197,10 @@ def native_plan(
             if len(final) != 1 or final[0].get("ok") is not True:
                 raise NativeAgentError("Native CLI did not return a successful structured result")
             if engineering_contract:
-                return final[0].get("design"), {
+                value = final[0].get("design")
+                if validate_result:
+                    value = validate_result(value)
+                return value, {
                     "provider": provider,
                     "attempts": attempt + 1,
                     "transport": "isolated-native-cli",
@@ -230,4 +241,5 @@ def native_plan(
                 stderr=subprocess.DEVNULL,
                 timeout=20,
             )
-    raise NativeAgentError("原生 Agent 执行或产物校验失败，修复次数已用尽；没有回退到模板。") from last_error
+    # Worker exception logging must not print chained validation inputs or CLI output.
+    raise NativeAgentError("原生 Agent 执行或产物校验失败，修复次数已用尽；没有回退到模板。") from None

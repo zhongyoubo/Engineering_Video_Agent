@@ -1,0 +1,132 @@
+{
+  "fixture": "authored editorial example; no model inference, runtime demo or TTS",
+  "brief": {
+    "title": "接口为何需要明确错误返回",
+    "prompt": "明确错误返回有助于调用方处理失败",
+    "mode": "storyboard",
+    "editorial": {
+      "intent": "viewpoint",
+      "subject_kind": "technology",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "core_message": "明确错误返回有助于调用方处理失败",
+      "viewer_takeaway": "理解判断的依据和适用边界"
+    }
+  },
+  "editorial": {
+    "audience_question": "我的判断是什么，为什么值得相信？",
+    "core_message": "明确错误返回有助于调用方处理失败",
+    "viewer_takeaway": "理解判断的依据和适用边界",
+    "hook": "接口为何需要明确错误返回？",
+    "supports": [
+      {
+        "message": "明确错误返回有助于调用方处理失败",
+        "claim_ids": [
+          "c_prompt"
+        ],
+        "evidence_ids": []
+      }
+    ],
+    "closing": "理解判断的依据和适用边界",
+    "cover": {
+      "headline": "接口为何需要明确错误返回",
+      "subtitle": "理解判断的依据和适用边界"
+    },
+    "strategy": {
+      "intent": "viewpoint",
+      "secondary_intents": [],
+      "subject_kind": "technology",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "rationale": "围绕观众收益选择观点论证，资料作为依据，画面服务于理解。",
+      "success_criteria": [
+        "中心判断明确，理由与证据支持它",
+        "回应其他解释或适用边界，避免只有立场"
+      ],
+      "outline": [
+        {
+          "function": "orientation",
+          "purpose": "提出应明确错误返回的判断",
+          "scene_ids": [
+            "viewpoint_1"
+          ]
+        },
+        {
+          "function": "evidence",
+          "purpose": "用调用方处理失败的例子支持判断",
+          "scene_ids": [
+            "viewpoint_2"
+          ]
+        },
+        {
+          "function": "counterargument",
+          "purpose": "讨论简单内部接口的不同取舍",
+          "scene_ids": [
+            "viewpoint_3"
+          ]
+        },
+        {
+          "function": "conclusion",
+          "purpose": "回到有条件的设计判断",
+          "scene_ids": [
+            "viewpoint_4"
+          ]
+        }
+      ]
+    }
+  },
+  "scenes": [
+    {
+      "id": "viewpoint_1",
+      "type": "title",
+      "role": "opening",
+      "title": "提出应明确错误返回的判断",
+      "narration": "提出应明确错误返回的判断。",
+      "message": "提出应明确错误返回的判断",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "viewpoint_2",
+      "type": "cards",
+      "role": "content",
+      "title": "用调用方处理失败的例子支持判断",
+      "narration": "用调用方处理失败的例子支持判断。",
+      "message": "用调用方处理失败的例子支持判断",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "viewpoint_3",
+      "type": "cards",
+      "role": "content",
+      "title": "讨论简单内部接口的不同取舍",
+      "narration": "讨论简单内部接口的不同取舍。",
+      "message": "讨论简单内部接口的不同取舍",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "viewpoint_4",
+      "type": "summary",
+      "role": "closing",
+      "title": "回到有条件的设计判断",
+      "narration": "回到有条件的设计判断。",
+      "message": "回到有条件的设计判断",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    }
+  ]
+}

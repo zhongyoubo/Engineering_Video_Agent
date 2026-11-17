@@ -1,0 +1,150 @@
+{
+  "fixture": "authored editorial example; no model inference, runtime demo or TTS",
+  "brief": {
+    "title": "API 怎样完成一次请求",
+    "prompt": "请求通过约定的接口获得服务处理结果",
+    "mode": "storyboard",
+    "editorial": {
+      "intent": "explanation",
+      "subject_kind": "mechanism",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "core_message": "请求通过约定的接口获得服务处理结果",
+      "viewer_takeaway": "能用例子说明请求与响应的关系"
+    }
+  },
+  "editorial": {
+    "audience_question": "这是什么，为什么会这样，如何运作？",
+    "core_message": "请求通过约定的接口获得服务处理结果",
+    "viewer_takeaway": "能用例子说明请求与响应的关系",
+    "hook": "API 怎样完成一次请求？",
+    "supports": [
+      {
+        "message": "请求通过约定的接口获得服务处理结果",
+        "claim_ids": [
+          "c_prompt"
+        ],
+        "evidence_ids": []
+      }
+    ],
+    "closing": "能用例子说明请求与响应的关系",
+    "cover": {
+      "headline": "API 怎样完成一次请求",
+      "subtitle": "能用例子说明请求与响应的关系"
+    },
+    "strategy": {
+      "intent": "explanation",
+      "secondary_intents": [],
+      "subject_kind": "mechanism",
+      "audience_description": "希望理解和应用接口知识的初学者",
+      "audience_level": "introductory",
+      "presentation_forms": [
+        "diagram",
+        "case_study"
+      ],
+      "rationale": "围绕观众收益选择解释理解，资料作为依据，画面服务于理解。",
+      "success_criteria": [
+        "观众能解释核心对象、关系或变化",
+        "至少一个具体情境帮助理解，类比说明适用边界"
+      ],
+      "outline": [
+        {
+          "function": "orientation",
+          "purpose": "天气查询为什么能返回结果",
+          "scene_ids": [
+            "explanation_1"
+          ]
+        },
+        {
+          "function": "definition",
+          "purpose": "认识请求、接口、服务与响应",
+          "scene_ids": [
+            "explanation_2"
+          ]
+        },
+        {
+          "function": "mechanism",
+          "purpose": "跟随请求进入服务并返回响应",
+          "scene_ids": [
+            "explanation_3"
+          ]
+        },
+        {
+          "function": "example",
+          "purpose": "用天气查询串起这些对象",
+          "scene_ids": [
+            "explanation_4"
+          ]
+        },
+        {
+          "function": "conclusion",
+          "purpose": "复述请求与响应之间的关系",
+          "scene_ids": [
+            "explanation_5"
+          ]
+        }
+      ]
+    }
+  },
+  "scenes": [
+    {
+      "id": "explanation_1",
+      "type": "title",
+      "role": "opening",
+      "title": "天气查询为什么能返回结果",
+      "narration": "天气查询为什么能返回结果。",
+      "message": "天气查询为什么能返回结果",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "explanation_2",
+      "type": "cards",
+      "role": "content",
+      "title": "认识请求、接口、服务与响应",
+      "narration": "认识请求、接口、服务与响应。",
+      "message": "认识请求、接口、服务与响应",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "explanation_3",
+      "type": "cards",
+      "role": "content",
+      "title": "跟随请求进入服务并返回响应",
+      "narration": "跟随请求进入服务并返回响应。",
+      "message": "跟随请求进入服务并返回响应",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "explanation_4",
+      "type": "cards",
+      "role": "content",
+      "title": "用天气查询串起这些对象",
+      "narration": "用天气查询串起这些对象。",
+      "message": "用天气查询串起这些对象",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    },
+    {
+      "id": "explanation_5",
+      "type": "summary",
+      "role": "closing",
+      "title": "复述请求与响应之间的关系",
+      "narration": "复述请求与响应之间的关系。",
+      "message": "复述请求与响应之间的关系",
+      "claim_ids": [
+        "c_prompt"
+      ]
+    }
+  ]
+}
