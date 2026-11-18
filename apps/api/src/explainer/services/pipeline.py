@@ -550,6 +550,9 @@ class Pipeline:
 
             check_font(board, font)
             shutil.copyfile(font, public / "noto.otf")
+            from .visuals import prepare_visual_assets
+
+            prepare_visual_assets(board, public)
             (directory / "props.json").write_text(encode(props))
             if self.brief.video_mode == "engineering":
                 from .engineering.integration import build_engineering_video
@@ -614,6 +617,12 @@ class Pipeline:
             report["voice_engine_requested"] = self.brief.voice
             report["voice_engines_actual"] = sorted({a.get("source_engine", a["engine"]) for a in audio})
             report["engineering_source"] = bool(rendered.get("engineering"))
+            report["object_scenes"] = {
+                "scenes": [s.id for s in board.scenes if s.visual_scene],
+                "events": sum(len(s.compiled_object_events) for s in board.scenes),
+                "sound_enabled": any(s.visual_scene and s.visual_scene.sound_enabled for s in board.scenes),
+                "semantics": "illustrative objects/signals/Foley; not hardware, FPS, HDR or acoustic measurements",
+            }
             aid = self.store.put(
                 self.tenant, encode(report).encode(), "report", "quality.json", "application/json"
             )["id"]
@@ -728,6 +737,8 @@ class Pipeline:
                     "Alignment method is recorded in quality.json. See alignment report in the application. Media paths are in manifest.json.\n",
                 )
                 manifest_out = {}
+                for sound in sorted((self.directory / "render" / "public").glob("scene-sfx-*.wav")):
+                    z.write(sound, "media/" + sound.name)
                 for scene in board.scenes:
                     for aid in [scene.audio_id, scene.media_id]:
                         if aid and aid not in manifest_out:

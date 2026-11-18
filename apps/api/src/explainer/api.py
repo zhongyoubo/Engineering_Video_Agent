@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 from .adapters.base import MANIFESTS
 from .adapters.native_agent import capability as native_capability
 from .content_taxonomy import taxonomy_options
+from .visual_scene import visual_scene_guidance
 from .config import ROOT, get_settings
 from .db import Database, encode, uid
 from .domain import CreateProject, CreateVideo, ForkRevision, CreateEngineeringVideo
@@ -195,6 +196,7 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
         "adapters": [m.model_dump() for m in MANIFESTS],
         "material_library": material_library(),
         "content_taxonomy": taxonomy_options(),
+        "visual_scene_toolkit": visual_scene_guidance(),
         "model": bool(settings.model_url and settings.model_name and settings.allow_external_model),
         "model_name": settings.model_name if settings.allow_external_model else "local-template",
         "voice": {
@@ -579,6 +581,7 @@ async def fork_revision(
             ):
                 scene.audio_id, scene.cues = None, []
                 scene.compiled_events = []
+                scene.compiled_object_events = []
     brief.mode = "automatic" if body.auto_render else "storyboard"
     return await schedule(
         settings,

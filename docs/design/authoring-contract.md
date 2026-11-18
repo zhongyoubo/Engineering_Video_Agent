@@ -21,3 +21,21 @@ freedom in visual implementation; use actual scene IDs/timing after runtime inse
 Judge purpose_fulfillment from the actual script/images and strategy.success_criteria, not
 merely the existence of an outline. Score at least 4/5 and include unmet criteria in issues.
 No taxonomy/debug classification labels are required in the viewer-facing video.
+
+Concrete objects and actions: the trusted `src/scene-objects.tsx` exports `ObjectScene`
+and is protected from Agent edits. For `scene.visual_scene`, render `<ObjectScene
+scene={scene}/>` in the appropriate scene-local Sequence. It owns a full 1920x1080 logical
+canvas; Root applies final resolution. Root supplies ObjectSceneSounds; do not double-mix
+Foley. Root skips generic bookend overlays for object scenes, and the thumbnail renders
+an object scene pose. Use recognizable shapes, real named ports, initial device state,
+connect/play/power/sound/control actions and actual compiled_object_events. Actual audio,
+picture and control channels must remain distinguishable. Wireless control is dashed;
+it is not a physical HDMI cable. Built-ins are composable prototypes, not a noun-to-template
+router. For unsupported objects author suitable SVG/TSX in your own modules; do not label
+a TV as an unrelated machine or replace everything with generic graph boxes. Use ordinary
+diagrams where relationships are the appropriate explanation.
+
+Object scenes additionally require object_fidelity and causal_motion >=4/5. Inspect actual
+before/after states and continuous samples. VRR/HDR animation and decorative waves are
+illustrations, not frame-rate, luminance, electrical or acoustic measurements. Original
+optional connect/click/notify cues are quiet interaction Foley, not actual HDMI sound.

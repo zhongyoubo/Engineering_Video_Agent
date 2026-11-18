@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from .specs import RenderProfile, VoiceSpec, SceneSpec, CompiledEvent
+from .visual_scene import VisualScene, CompiledObjectEvent
 from .editorial import (
     EditorialBrief,
     EditorialPlan,
@@ -170,10 +171,35 @@ class Scene(StrictModel):
     diagram: Diagram | None = None
     motion: SceneSpec | None = None
     compiled_events: list[CompiledEvent] = Field(default_factory=list, max_length=24)
+    visual_scene: VisualScene | None = None
+    compiled_object_events: list[CompiledObjectEvent] = Field(default_factory=list, max_length=32)
     role: SceneRole = "content"
     message: str = Field(default="", max_length=500)
     viewer_question: str = Field(default="", max_length=500)
     disclosures: list[ViewerDisclosure] = Field(default_factory=list, max_length=4)
+
+    @model_validator(mode="after")
+    def validate_object_scene(self):
+        if self.visual_scene:
+            import re
+
+            if self.motion or self.diagram:
+                raise ValueError("Choose a visual scene or a diagram/motion layout, not both")
+
+            def clean(t):
+                return re.sub(r"[\W_]+", "", t).lower()
+
+            text = clean(self.narration)
+            for event in self.visual_scene.events:
+                phrase = clean(event.anchor.phrase)
+                position = -1
+                if not phrase:
+                    raise ValueError("Object action anchors must contain spoken characters")
+                for _ in range(event.anchor.occurrence):
+                    position = text.find(phrase, position + 1)
+                    if position < 0:
+                        raise ValueError("Object action anchor phrase is missing from narration")
+        return self
 
 
 class StoryboardIR(StrictModel):

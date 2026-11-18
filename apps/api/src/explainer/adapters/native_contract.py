@@ -4,6 +4,7 @@ from pydantic import Field
 from ..domain import StrictModel, Scene, SceneType, StoryboardIR, Diagram
 from ..specs import SceneSpec
 from ..editorial import SceneRole, ViewerDisclosure, EditorialPlan
+from ..visual_scene import VisualScene
 
 
 class DesignedScene(StrictModel):
@@ -19,6 +20,7 @@ class DesignedScene(StrictModel):
     duration: float = Field(ge=2, le=180)
     diagram: Diagram | None
     motion: SceneSpec | None = None
+    visual_scene: VisualScene | None = None
     role: SceneRole = "content"
     message: str = Field(default="", max_length=500)
     viewer_question: str = Field(default="", max_length=500)

@@ -1,3 +1,82 @@
+export type SceneObjectKind =
+  | 'tv'
+  | 'monitor'
+  | 'laptop'
+  | 'console'
+  | 'player'
+  | 'soundbar'
+  | 'speaker'
+  | 'remote'
+  | 'phone'
+  | 'server'
+  | 'router';
+export type ObjectAction =
+  | 'reveal'
+  | 'connect'
+  | 'signal'
+  | 'power_on'
+  | 'power_off'
+  | 'play'
+  | 'sound'
+  | 'press'
+  | 'volume'
+  | 'highlight';
+export type ObjectEvent = {
+  id: string;
+  target: string;
+  action: ObjectAction;
+  anchor: { phrase: string; occurrence: number; edge: 'start' | 'end'; offset_ms: number };
+  duration_ms: number;
+  channel: 'video' | 'audio' | 'control' | 'data';
+  reverse: boolean;
+  value: number;
+  depends_on: string[];
+  sound: 'connect' | 'click' | 'notify' | null;
+};
+export type VisualScene = {
+  schema_version: '1.0';
+  purpose: string;
+  setting: 'studio' | 'living_room' | 'desktop';
+  objects: {
+    id: string;
+    kind: SceneObjectKind;
+    label: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+    powered: boolean;
+    screen: 'landscape' | 'game' | 'stream' | 'pixels' | 'black';
+    playback: 'smooth' | 'stepped';
+    hdr: boolean;
+    ports: {
+      id: string;
+      side: 'left' | 'right' | 'top' | 'bottom';
+      kind: 'hdmi' | 'network' | 'wireless' | 'generic';
+      position: number;
+      label: string;
+    }[];
+  }[];
+  connections: {
+    id: string;
+    source: string;
+    source_port: string;
+    target: string;
+    target_port: string;
+    label: string;
+    kind: 'cable' | 'wireless';
+    connected: boolean;
+  }[];
+  events: ObjectEvent[];
+  sound_enabled: boolean;
+  sound_volume: number;
+};
+export type CompiledObjectEvent = Omit<ObjectEvent, 'anchor' | 'duration_ms' | 'depends_on'> & {
+  start_frame: number;
+  end_frame: number;
+  timing_source: 'measured_words' | 'estimated_draft';
+};
 export type ContentIntent =
   | 'introduction'
   | 'explanation'
@@ -108,6 +187,8 @@ export type Scene = {
     end_frame: number;
     timing_source: string;
   }[];
+  visual_scene?: VisualScene | null;
+  compiled_object_events?: CompiledObjectEvent[];
   diagram?: Diagram | null;
   cues: { start: number; end: number; text: string }[];
 };

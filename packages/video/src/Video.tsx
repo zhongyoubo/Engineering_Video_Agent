@@ -16,6 +16,7 @@ import {
 } from 'remotion';
 import type { Scene, VideoProps } from './types';
 import { Bookend, ViewerDisclosures } from '../../engineering-template/src/presentation';
+import { ObjectScene, ObjectSceneSounds } from '../../engineering-template/src/scene-objects';
 export type { Scene, Storyboard, VideoProps, EditorialRequest, ContentStrategy } from './types';
 
 const colors = { blue: '#3869ef', violet: '#7953df', teal: '#087f83', amber: '#bc7620' };
@@ -389,6 +390,7 @@ function SceneView({
   const f = useCurrentFrame(),
     { fps } = useVideoConfig();
   const progress = Math.min(1, f / Math.max(scene.frames - 1, 1));
+  const objectScene = Boolean(scene.visual_scene);
   const bookend =
     (props.presentation_profile || 'creator') === 'creator' &&
     (scene.role === 'opening' || scene.role === 'closing');
@@ -420,6 +422,7 @@ function SceneView({
           borderRadius: '50%',
         }}
       />
+      {objectScene && <ObjectScene scene={scene} />}
       {(props.presentation_profile || 'creator') !== 'creator' && (
         <div
           style={{
@@ -438,7 +441,7 @@ function SceneView({
           <Badge text={labels[scene.verification]} color={accent} />
         </div>
       )}
-      {!bookend && scene.type !== 'title' && scene.type !== 'summary' && (
+      {!objectScene && !bookend && scene.type !== 'title' && scene.type !== 'summary' && (
         <div
           style={{
             position: 'absolute',
@@ -465,9 +468,10 @@ function SceneView({
           opacity,
         }}
       >
-        {!bookend && <Content scene={scene} color={accent} />}
+        {!objectScene && !bookend && <Content scene={scene} color={accent} />}
       </div>
-      {(props.presentation_profile || 'creator') === 'creator' &&
+      {!objectScene &&
+        (props.presentation_profile || 'creator') === 'creator' &&
         (scene.role === 'opening' || scene.role === 'closing') && (
           <Bookend scene={scene} props={props} />
         )}
@@ -513,6 +517,7 @@ function SceneView({
         ))}
       </div>
       {scene.audio_src && <Audio src={source(scene.audio_src)} />}
+      <ObjectSceneSounds scene={scene} fps={fps} preview={props.preview} />
     </AbsoluteFill>
   );
 }

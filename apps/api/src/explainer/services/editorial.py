@@ -15,6 +15,7 @@ EDITORIAL_INSTRUCTION = (
     "Resolve one of introduction/explanation/analysis/viewpoint/advice/tutorial in editorial.strategy; "
     "knowledge is a subject, not a primary purpose. Resolve auto from semantic context with rationale, "
     "never keyword matching. Map an ordered narrative outline to every actual scene exactly once; "
+    "For concrete devices, objects or situations, plan recognizable objects, ports, initial state, action and visible result using visual_scene or appropriate custom SVG/TSX. Distinguish video, audio and control movement. Do not replace all objects with graph boxes containing their names. "
     "include purpose-specific success criteria and preserve the requested secondary purposes. Honor "
     "core_message and viewer_takeaway. Establish one central question/message, evidence-backed "
     "supporting points, a concrete example where useful, and a conclusion/advice serving the viewer. "
@@ -109,6 +110,13 @@ def publication_findings(board, content):
         if credits.search("\n".join(extra)):
             add("TOOL_SELF_CREDIT", "封面或内容主线包含无关的制作工具自宣传，请移入制作报告")
         for scene in board.scenes:
+            visual_text = []
+            if scene.visual_scene:
+                visual_text = (
+                    [o.label for o in scene.visual_scene.objects]
+                    + [p.label for o in scene.visual_scene.objects for p in o.ports]
+                    + [c.label for c in scene.visual_scene.connections]
+                )
             text = "\n".join(
                 [
                     scene.title,
@@ -117,6 +125,7 @@ def publication_findings(board, content):
                     scene.message,
                     *scene.bullets,
                     *(d.text for d in scene.disclosures),
+                    *visual_text,
                 ]
             )
             if credits.search(text):

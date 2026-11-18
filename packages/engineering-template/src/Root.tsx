@@ -13,6 +13,7 @@ import {
 } from 'remotion';
 import EngineeringVideo from './Video';
 import { Bookend, PublicationThumbnail, ViewerDisclosures } from './presentation';
+import { ObjectSceneSounds } from './scene-objects';
 import type { VideoProps, Scene } from './contracts';
 
 function Caption({ scene }: { scene: Scene }) {
@@ -75,12 +76,14 @@ function TrustedVideo(props: VideoProps) {
       <EngineeringVideo {...props} />
       {props.scenes.map((scene) => (
         <Sequence key={scene.id} from={scene.start_frame} durationInFrames={scene.frames}>
-          {(props.presentation_profile || 'creator') === 'creator' &&
+          {!scene.visual_scene &&
+            (props.presentation_profile || 'creator') === 'creator' &&
             (scene.role === 'opening' || scene.role === 'closing') && (
               <Bookend scene={scene} props={props} />
             )}
           <ViewerDisclosures scene={scene} fps={props.fps} />
           {scene.audio_src && <Audio src={staticFile(scene.audio_src)} />}
+          <ObjectSceneSounds scene={scene} fps={props.fps} />
           <Caption scene={scene} />
         </Sequence>
       ))}

@@ -22,3 +22,10 @@ Python domain/validation in apps/api/src/explainer; Agent orchestration in servi
 Run .venv/bin/python scripts/check.py and npm run test:ui with a configured Chrome. Record real results in goals/2026-10-30-engineering-agent.md. Update Roadmap.md and design documents with implementation and verification limits. Markdown uses UTF-8; canonical README.md and AGENTS.md avoid case-only duplicate filenames on Windows.
 
 V4 work also records evidence in goals/2026-11-16-visual-explainer-v4.md. Use docs/design/visual-explainer-v4.md for the implemented visual/motion, output-profile, preview and MCP contracts. Preview motion contact sheets are sampled evidence; they do not prove full playback/listening. Preserve frame/clip hash invalidation and the protected motion-kit.tsx. The fixed repository fixture may be rendered by its explicit verification script; this never enables host execution for user or model-generated code.
+
+Concrete visual work: read docs/design/object-scenes.md. Prefer recognizable objects, named
+ports, causal actions and visible results for concrete subjects. Select semantically; never
+turn every noun into a graph box or keyword-routed device template. scene-objects.tsx is
+platform-owned and protected like motion-kit.tsx. Unsupported subjects may use authored
+SVG/TSX under the existing isolation; do not fake an image-generation service or hardware
+measurements. Fixed platform fixtures alone may run through verify_object_scenes.py.

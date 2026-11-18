@@ -9,13 +9,12 @@ def normalize(text):
     return re.sub(r"[\W_]+", "", text).lower()
 
 
-def compile_motion(scene, words, fps, allow_estimated=False):
-    if not scene.motion:
-        scene.compiled_events = []
-        return
+def resolve_events(scene, events, words, fps, allow_estimated=False):
+    if not events:
+        return []
     text = normalize(scene.narration)
     measured = bool(words)
-    if scene.motion.events and not measured and not allow_estimated:
+    if events and not measured and not allow_estimated:
         raise TimelineConflict("Motion anchors require measured narration timing")
     if measured and normalize("".join(w["text"] for w in words)) != text:
         raise TimelineConflict("Motion alignment differs from narration")
@@ -26,7 +25,7 @@ def compile_motion(scene, words, fps, allow_estimated=False):
             spans.append((cursor, cursor + length, w["start"], w["end"]))
             cursor += length
     compiled = []
-    for event in scene.motion.events:
+    for event in events:
         phrase = normalize(event.anchor.phrase)
         if not phrase:
             raise TimelineConflict("Motion anchor must contain spoken characters")
@@ -45,14 +44,24 @@ def compile_motion(scene, words, fps, allow_estimated=False):
         last = first + max(1, round(event.duration_ms / 1000 * fps))
         if first < 0 or last > scene.frames:
             raise TimelineConflict(f"Motion event {event.id} exceeds scene frame budget")
-        compiled.append(
-            CompiledEvent(
-                id=event.id,
-                target=event.target,
-                action=event.action,
-                start_frame=first,
-                end_frame=last,
-                timing_source="measured_words" if measured else "estimated_draft",
-            )
+        compiled.append((event, first, last, "measured_words" if measured else "estimated_draft"))
+    return compiled
+
+
+def compile_motion(scene, words, fps, allow_estimated=False):
+    from .visuals import compile_visual_scene
+
+    compile_visual_scene(scene, words, fps, allow_estimated)
+    scene.compiled_events = [
+        CompiledEvent(
+            id=event.id,
+            target=event.target,
+            action=event.action,
+            start_frame=first,
+            end_frame=last,
+            timing_source=source,
         )
-    scene.compiled_events = compiled
+        for event, first, last, source in resolve_events(
+            scene, scene.motion.events if scene.motion else [], words, fps, allow_estimated
+        )
+    ]

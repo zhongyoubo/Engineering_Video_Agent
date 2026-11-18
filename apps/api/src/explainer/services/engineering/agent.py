@@ -5,6 +5,7 @@ from ...adapters.native_agent import native_plan, NativeOutputError
 from ...adapters.native_contract import validate_design
 from ...config import ROOT
 from ...content_taxonomy import planning_guidance
+from ...visual_scene import visual_scene_guidance
 from ...specs import PATTERN_ELEMENT_LIMITS, PATTERN_LABEL_LIMITS
 from ..materials import material_library, validate_material_references
 from ..editorial import EDITORIAL_INSTRUCTION, prepare_presentation, require_publishable, EditorialError
@@ -56,6 +57,7 @@ class NativeEngineeringAgent:
             {
                 "phase": "production-planning",
                 "content_guidance": planning_guidance(self.brief),
+                "visual_scene_toolkit": visual_scene_guidance(),
                 "material_library": library,
                 "material_usage": "Choose materials by explanatory purpose; record selected entries as library:<id>@<version> in shot.assets. Custom TSX remains allowed. Unverified assets need actual rendering/review. Reference footage is not reusable material.",
                 "visual_constraints": {
@@ -65,7 +67,7 @@ class NativeEngineeringAgent:
                     "overflow": "Split into multiple scenes or author custom TSX; never silently discard elements or text",
                 },
                 "instruction": EDITORIAL_INSTRUCTION
-                + " Create full fluent narration, art direction and per-scene visual/motion treatment. Anchor events to narration phrases. Choose patterns by explanatory relationship, not keyword matching. Custom TSX remains available. Use supplied real UI captures. All source assertions require supplied evidence IDs.",
+                + " Create full fluent narration, art direction and per-scene visual/motion treatment. Prefer recognizable objects and causal actions when explaining concrete devices, mechanisms or situations. Use visual_scene for supported objects; custom SVG/TSX remains available for unsupported subjects. Define initial state, action, visible result, real ports and distinct video/audio/control signals, not boxes containing object names. Choose varied treatments by explanatory need. Anchor events to narration phrases. Use supplied real UI captures. All source assertions require supplied evidence IDs.",
             },
             validate=lambda candidate: self.prepare_plan(candidate, library),
         )
@@ -128,6 +130,7 @@ class NativeEngineeringAgent:
                 "publication_contract": EDITORIAL_INSTRUCTION,
                 "content_guidance": planning_guidance(self.brief),
                 "purpose_review": "Score purpose_fulfillment >=4/5 from the actual editorial.strategy outline, success_criteria, script and visuals. A filled structure is not proof of coherent argument, useful advice, understood mechanism or a usable tutorial. Include any unmet purpose-specific criteria in review.issues.",
+                "object_scene_review": "For scenes with visual_scene, use ObjectScene from ./scene-objects inside your authored visual code. It renders on a 1920x1080 logical canvas; do not double-scale. Trusted Root supplies ObjectSceneSounds, narration and captions. Score object_fidelity and causal_motion >=4: actual TV/device silhouettes and ports, connected cable, differentiated picture/audio/control movement, visibly changing screen/power/volume states. Inspect continuous samples; do not accept graph boxes labeled TV as object fidelity. Unknown objects require your own appropriate SVG/TSX, not a mislabeled built-in. Decorative waves are illustrations, not hardware measurements.",
                 "editorial_review": "When props.presentation_profile is creator, score content_focus, cover_promise, opening_closing and viewer_presentation from actual script/props and rendered images. All must be at least 4, including the separate thumbnail and frame zero. No claim of full playback/listening from sampled frames.",
             },
             files,

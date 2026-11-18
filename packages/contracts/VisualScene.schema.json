@@ -1,0 +1,430 @@
+{
+  "$defs": {
+    "CueAnchor": {
+      "additionalProperties": false,
+      "properties": {
+        "phrase": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Phrase",
+          "type": "string"
+        },
+        "occurrence": {
+          "default": 1,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "edge": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "title": "Edge",
+          "type": "string"
+        },
+        "offset_ms": {
+          "default": 0,
+          "maximum": 2000,
+          "minimum": -2000,
+          "title": "Offset Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "CueAnchor",
+      "type": "object"
+    },
+    "ObjectEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 60,
+          "title": "Target",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "reveal",
+            "connect",
+            "signal",
+            "power_on",
+            "power_off",
+            "play",
+            "sound",
+            "press",
+            "volume",
+            "highlight"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "anchor": {
+          "$ref": "#/$defs/CueAnchor"
+        },
+        "duration_ms": {
+          "default": 900,
+          "maximum": 12000,
+          "minimum": 100,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "channel": {
+          "default": "video",
+          "enum": [
+            "video",
+            "audio",
+            "control",
+            "data"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "reverse": {
+          "default": false,
+          "title": "Reverse",
+          "type": "boolean"
+        },
+        "value": {
+          "default": 1,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Value",
+          "type": "number"
+        },
+        "depends_on": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Depends On",
+          "type": "array"
+        },
+        "sound": {
+          "anyOf": [
+            {
+              "enum": [
+                "connect",
+                "click",
+                "notify"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sound"
+        }
+      },
+      "required": [
+        "id",
+        "target",
+        "action",
+        "anchor"
+      ],
+      "title": "ObjectEvent",
+      "type": "object"
+    },
+    "ObjectPort": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,40}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "left",
+            "right",
+            "top",
+            "bottom"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "position": {
+          "default": 0.5,
+          "maximum": 0.9,
+          "minimum": 0.1,
+          "title": "Position",
+          "type": "number"
+        },
+        "label": {
+          "default": "",
+          "maxLength": 20,
+          "title": "Label",
+          "type": "string"
+        },
+        "kind": {
+          "default": "hdmi",
+          "enum": [
+            "hdmi",
+            "network",
+            "wireless",
+            "generic"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "side"
+      ],
+      "title": "ObjectPort",
+      "type": "object"
+    },
+    "SceneConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 60,
+          "title": "Source",
+          "type": "string"
+        },
+        "source_port": {
+          "maxLength": 40,
+          "title": "Source Port",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 60,
+          "title": "Target",
+          "type": "string"
+        },
+        "target_port": {
+          "maxLength": 40,
+          "title": "Target Port",
+          "type": "string"
+        },
+        "label": {
+          "default": "",
+          "maxLength": 40,
+          "title": "Label",
+          "type": "string"
+        },
+        "kind": {
+          "default": "cable",
+          "enum": [
+            "cable",
+            "wireless"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "connected": {
+          "default": true,
+          "title": "Connected",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "source_port",
+        "target",
+        "target_port"
+      ],
+      "title": "SceneConnection",
+      "type": "object"
+    },
+    "SceneObject": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "tv",
+            "monitor",
+            "laptop",
+            "console",
+            "player",
+            "soundbar",
+            "speaker",
+            "remote",
+            "phone",
+            "server",
+            "router"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "x": {
+          "maximum": 1650,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 530,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "width": {
+          "maximum": 1200,
+          "minimum": 70,
+          "title": "Width",
+          "type": "number"
+        },
+        "height": {
+          "maximum": 600,
+          "minimum": 70,
+          "title": "Height",
+          "type": "number"
+        },
+        "color": {
+          "default": "#173e42",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Color",
+          "type": "string"
+        },
+        "powered": {
+          "default": true,
+          "title": "Powered",
+          "type": "boolean"
+        },
+        "screen": {
+          "default": "landscape",
+          "enum": [
+            "landscape",
+            "game",
+            "stream",
+            "pixels",
+            "black"
+          ],
+          "title": "Screen",
+          "type": "string"
+        },
+        "playback": {
+          "default": "smooth",
+          "enum": [
+            "smooth",
+            "stepped"
+          ],
+          "title": "Playback",
+          "type": "string"
+        },
+        "hdr": {
+          "default": false,
+          "title": "Hdr",
+          "type": "boolean"
+        },
+        "ports": {
+          "items": {
+            "$ref": "#/$defs/ObjectPort"
+          },
+          "maxItems": 5,
+          "title": "Ports",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "label",
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "title": "SceneObject",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "purpose": {
+      "maxLength": 500,
+      "minLength": 5,
+      "title": "Purpose",
+      "type": "string"
+    },
+    "setting": {
+      "default": "studio",
+      "enum": [
+        "studio",
+        "living_room",
+        "desktop"
+      ],
+      "title": "Setting",
+      "type": "string"
+    },
+    "objects": {
+      "items": {
+        "$ref": "#/$defs/SceneObject"
+      },
+      "maxItems": 10,
+      "minItems": 1,
+      "title": "Objects",
+      "type": "array"
+    },
+    "connections": {
+      "items": {
+        "$ref": "#/$defs/SceneConnection"
+      },
+      "maxItems": 12,
+      "title": "Connections",
+      "type": "array"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/ObjectEvent"
+      },
+      "maxItems": 32,
+      "title": "Events",
+      "type": "array"
+    },
+    "sound_enabled": {
+      "default": false,
+      "title": "Sound Enabled",
+      "type": "boolean"
+    },
+    "sound_volume": {
+      "default": 0.18,
+      "maximum": 0.35,
+      "minimum": 0,
+      "title": "Sound Volume",
+      "type": "number"
+    }
+  },
+  "required": [
+    "purpose",
+    "objects"
+  ],
+  "title": "VisualScene",
+  "type": "object"
+}

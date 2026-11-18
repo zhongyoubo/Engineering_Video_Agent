@@ -102,7 +102,12 @@ try {
         motionFrames = [];
       if (props.motion_review_required) {
         for (const [index, scene] of props.scenes.entries()) {
-          const eventStart = scene.compiled_events?.[0]?.start_frame || 0;
+          const eventStart =
+            scene.compiled_object_events?.find((e) =>
+              ['play', 'sound', 'signal'].includes(e.action),
+            )?.start_frame ??
+            scene.compiled_events?.[0]?.start_frame ??
+            0;
           const start =
             scene.start_frame + Math.max(0, eventStart - Math.round(composition.fps / 2));
           const end = Math.min(
