@@ -34,16 +34,26 @@ export type SemanticEntity = {
   height: number;
   bind_to?: string | null;
   asset_key?: string | null;
+  image_style?: 'panel' | 'artwork';
+  image_fit?: 'contain' | 'cover';
+  opacity?: number;
+  scale?: number;
+  rotation?: number;
   provenance: 'illustrative' | 'observed';
   evidence_ids: string[];
 };
 export type SemanticEvent = {
   id: string;
   target: string;
-  action: 'transition' | 'replace' | 'append' | 'select' | 'highlight';
+  action: 'transition' | 'replace' | 'append' | 'select' | 'highlight' | 'transform';
   anchor: { phrase: string; occurrence: number; edge: 'start' | 'end'; offset_ms: number };
   duration_ms: number;
   depends_on: string[];
+  x?: number | null;
+  y?: number | null;
+  opacity?: number | null;
+  scale?: number | null;
+  rotation?: number | null;
   from_state?: SemanticState | null;
   to_state?: SemanticState | null;
   text?: string | null;
@@ -58,6 +68,10 @@ export type CompiledSemanticEvent = SemanticEvent & {
 export type SemanticScene = {
   schema_version: '1.0';
   viewer_question: string;
+  background_color?: string;
+  background_asset_key?: string | null;
+  title_color?: string;
+  show_heading?: boolean;
   entities: SemanticEntity[];
   events: SemanticEvent[];
   expectations: { id: string; event_id: string; visible_result: string }[];

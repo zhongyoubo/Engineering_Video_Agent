@@ -137,3 +137,12 @@ Verification: 224 backend tests, Ruff, three TypeScript projects, production bui
 11 configured browser flows, format and six editorial checks passed. Details and media
 evidence are in goals/2026-11-18-semantic-review.md. Docker is absent; structural image
 packaging verification is not an actual isolated image build/run or native inference test.
+
+## Project-owned illustrations and independent elements
+
+Mediated gateway/import providers, canonical raster receipts, shared full-frame backgrounds,
+unframed cutouts, per-shot colors and word-timed transform events are implemented. Existing
+causal frame/clip review and exact-source gates are preserved. Real fixed render: 70.9s,
+1080p, 8 imported images; 244 backend and 12 browser checks passed. This is imported media
+integration, not new image/native inference or human full-playback/listening acceptance.
+Details: goals/2026-11-18-production-assets.md; docs/verification-production-assets.json.

@@ -68,3 +68,19 @@ canonical asset-cache recovery and atomic validation, unchanged-request gate pre
 presentation/runtime dependency hashing, and bounded receipts with actual clip-range checks.
 224 backend tests and 11 browser flows passed; real isolated Docker deployment still needs
 the target Worker. See goals/2026-11-18-semantic-review.md for executed media verification.
+
+## Project-owned illustrated production · 2026-11-18
+
+- Implemented: mediated configurable eva-image-1 gateway; authenticated immutable project PNG
+  catalogs and Studio upload; actual catalog previews in native planning/authoring; bounded
+  decoding/metadata stripping/transparency checks; durable raster receipts/recovery; provider
+  revision/idempotency scope; protected full-frame backgrounds, unframed artwork, per-shot
+  colors and measured transforms with causal review. Existing SVG receipt keys stay compatible.
+- Verification: see goals/2026-11-18-production-assets.md and
+  docs/verification-production-assets.json for executed commands and media results.
+- Still requires deployment: actual native/image-provider inference and Docker/gVisor acceptance.
+  The gateway adapter is implemented; a service implementing its contract is not bundled or
+  configured here. The fixed rendered dinner fixture reuses imported artwork and existing real
+  Edge audio. It is not new provider inference or human watching/listening certification.
+- Remaining broader work: generated video/3D backends, arbitrary layer/camera graphs, reusable
+  render cache, advanced layout/OCR review and unseen-topic quality acceptance.

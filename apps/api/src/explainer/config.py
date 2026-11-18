@@ -57,6 +57,11 @@ class Settings(BaseSettings):
     model_name: str = ""
     model_key: str = ""
     allow_external_model: bool = False
+    image_service_url: str = ""
+    image_service_key: str = ""
+    image_service_model: str = ""
+    image_service_revision: str = "1"
+    image_service_timeout: int = Field(180, ge=5, le=600)
     tts_engine: str = "auto"
     tts_url: str = "http://127.0.0.1:7861"
     tts_key: str = ""

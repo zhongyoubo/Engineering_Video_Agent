@@ -154,6 +154,45 @@
           "default": null,
           "title": "Asset Key"
         },
+        "image_style": {
+          "default": "panel",
+          "enum": [
+            "panel",
+            "artwork"
+          ],
+          "title": "Image Style",
+          "type": "string"
+        },
+        "image_fit": {
+          "default": "contain",
+          "enum": [
+            "contain",
+            "cover"
+          ],
+          "title": "Image Fit",
+          "type": "string"
+        },
+        "opacity": {
+          "default": 1,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Opacity",
+          "type": "number"
+        },
+        "scale": {
+          "default": 1,
+          "maximum": 3,
+          "minimum": 0.2,
+          "title": "Scale",
+          "type": "number"
+        },
+        "rotation": {
+          "default": 0,
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Rotation",
+          "type": "number"
+        },
         "provenance": {
           "default": "illustrative",
           "enum": [
@@ -199,7 +238,8 @@
             "replace",
             "append",
             "select",
-            "highlight"
+            "highlight",
+            "transform"
           ],
           "title": "Action",
           "type": "string"
@@ -298,6 +338,76 @@
           ],
           "default": null,
           "title": "Selected"
+        },
+        "x": {
+          "anyOf": [
+            {
+              "maximum": 1520,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "X"
+        },
+        "y": {
+          "anyOf": [
+            {
+              "maximum": 530,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Y"
+        },
+        "opacity": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opacity"
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "maximum": 3,
+              "minimum": 0.2,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scale"
+        },
+        "rotation": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rotation"
         }
       },
       "required": [
@@ -377,6 +487,36 @@
       "minLength": 4,
       "title": "Viewer Question",
       "type": "string"
+    },
+    "background_color": {
+      "default": "#edf4f4",
+      "pattern": "^#[0-9a-fA-F]{6}$",
+      "title": "Background Color",
+      "type": "string"
+    },
+    "background_asset_key": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Background Asset Key"
+    },
+    "title_color": {
+      "default": "#173f43",
+      "pattern": "^#[0-9a-fA-F]{6}$",
+      "title": "Title Color",
+      "type": "string"
+    },
+    "show_heading": {
+      "default": true,
+      "title": "Show Heading",
+      "type": "boolean"
     },
     "entities": {
       "items": {

@@ -20,3 +20,4 @@
 
 - [Semantic scenes and mediated assets](semantic-production.md): typed information/state, screen bindings, asset actions and causal review.
 - [视觉生产 V5 目标方案（中文）](visual-production-v5-target-cn.md)：原始完整目标；实现范围以 semantic-production.md、Roadmap.md 和验证记录为准。
+- [Project-owned illustrated production](project-owned-visual-production.md): configured image gateway, authenticated PNG imports, retained receipts, measured element transforms and actual acceptance boundaries.

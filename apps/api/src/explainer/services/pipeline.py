@@ -180,6 +180,7 @@ class Pipeline:
                     self.directory / "production-planning",
                     lambda kind, payload: self.db.event(self.job, kind, payload),
                 )
+                agent.load_image_catalog(self.db, self.store, self.tenant, self.revision["project_id"])
                 plan_document, board, agent_report = agent.plan()
                 production_plan = plan_document.model_dump()
                 from .planning import distribute

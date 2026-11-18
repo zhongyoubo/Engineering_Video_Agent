@@ -149,3 +149,23 @@ Studio 可查看对象与动作、修改标注/旁白锚点及提示音开关；
 素材恢复先校验整批数据；画面发生变化才失效审核。镜头依赖同时覆盖主题/字体等全局设置，
 连续预览会核对实际帧数、帧率与声明范围。拉取本次更新后需重建工程渲染镜像；当前环境的
 本地渲染与镜像文件检查不等于 Docker 部署验收。
+
+## 项目内插画与独立元素制作
+
+现已把图片素材接入工程：原生 Agent 可通过受控 `request_assets` 调用管理员配置的图片网关，
+或复用本项目上传的 PNG。创建页支持参考图片/透明元素上传；策划与编排阶段会收到实际素材
+预览。素材有来源、哈希、尺寸、透明度和恢复记录，进入同一 Remotion 构建、预览、审查与导出。
+
+`semantic_scene.background_asset_key` 支持整幅场景插画；`AssetImage.image_style=artwork`
+支持无边框独立元素；`transform` 根据真实旁白时间戳实现移动、显隐、缩放和旋转。底色与标题
+颜色可按镜头设置。仍需原生 Agent 根据表达目的设计具体对象、场景与结果，不按主题关键词套模板。
+
+图片服务使用文档规定的 `eva-image-1` 网关协议，需要实际部署并配置 `.env.example` 中的
+`EXPLAINER_IMAGE_SERVICE_*`。它不是 ChatGPT 对话生图工具的直接接入，也不是内置图片模型；
+未配置时明确失败。已有素材走项目上传入口，报告记录为导入，不能算本次图片生成。
+详细协议、限制和复现见 [工程素材制作设计](docs/design/project-owned-visual-production.md)。
+
+固定晚餐案例检查：`scripts/verify_production_assets.py --media-directory <固定素材目录>`；
+真实原生 Agent＋图片模型＋隔离渲染验收：
+`scripts/verify_image_production_deployment.py --provider codex --voice edge`（需要已部署服务并消耗额度）。
+实际运行结果与未验收项见 `goals/2026-11-18-production-assets.md`。

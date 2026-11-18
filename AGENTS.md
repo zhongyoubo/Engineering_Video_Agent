@@ -36,3 +36,11 @@ and explicit causal results, selected semantically rather than by keywords. Fixe
 verify_semantic_scenes.py alone may host-render its fixed reviewed platform dispatcher;
 never substitute arbitrary uploaded/model TSX. Preserve native source authoring, isolation,
 voice truth, tenant checkpoints, asset provenance and complete source-hash review gates.
+
+Project-owned illustrated production: read docs/design/project-owned-visual-production.md.
+Image services run only through mediated Worker tools; project-image IDs require both tenant
+and project membership. Retain bounded canonical PNG receipts and preserve legacy SVG keys.
+The explicitly reviewed verify_production_assets.py may host-render only its fixed repository
+source/storyboard and hash-pinned media; it is not native/image inference or an arbitrary
+source runner. Real unseen-topic acceptance uses verify_image_production_deployment.py on
+configured isolated infrastructure. Record this work in goals/2026-11-18-production-assets.md.

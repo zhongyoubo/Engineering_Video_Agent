@@ -85,7 +85,8 @@
         "replace",
         "append",
         "select",
-        "highlight"
+        "highlight",
+        "transform"
       ],
       "title": "Action",
       "type": "string"
@@ -184,6 +185,76 @@
       ],
       "default": null,
       "title": "Selected"
+    },
+    "x": {
+      "anyOf": [
+        {
+          "maximum": 1520,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "X"
+    },
+    "y": {
+      "anyOf": [
+        {
+          "maximum": 530,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Y"
+    },
+    "opacity": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Opacity"
+    },
+    "scale": {
+      "anyOf": [
+        {
+          "maximum": 3,
+          "minimum": 0.2,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Scale"
+    },
+    "rotation": {
+      "anyOf": [
+        {
+          "maximum": 180,
+          "minimum": -180,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rotation"
     },
     "start_frame": {
       "minimum": 0,

@@ -142,6 +142,45 @@
       "default": null,
       "title": "Asset Key"
     },
+    "image_style": {
+      "default": "panel",
+      "enum": [
+        "panel",
+        "artwork"
+      ],
+      "title": "Image Style",
+      "type": "string"
+    },
+    "image_fit": {
+      "default": "contain",
+      "enum": [
+        "contain",
+        "cover"
+      ],
+      "title": "Image Fit",
+      "type": "string"
+    },
+    "opacity": {
+      "default": 1,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Opacity",
+      "type": "number"
+    },
+    "scale": {
+      "default": 1,
+      "maximum": 3,
+      "minimum": 0.2,
+      "title": "Scale",
+      "type": "number"
+    },
+    "rotation": {
+      "default": 0,
+      "maximum": 180,
+      "minimum": -180,
+      "title": "Rotation",
+      "type": "number"
+    },
     "provenance": {
       "default": "illustrative",
       "enum": [

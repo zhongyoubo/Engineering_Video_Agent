@@ -139,7 +139,7 @@ class Workspace:
                 "generated-assets.json",
                 json.dumps(
                     {
-                        k: {f: v for f, v in r.items() if f not in {"svg", "preview_png"}}
+                        k: {f: v for f, v in r.items() if f not in {"svg", "image_png", "preview_png"}}
                         for k, r in self.state.get("generated_assets", {}).items()
                     },
                     ensure_ascii=False,

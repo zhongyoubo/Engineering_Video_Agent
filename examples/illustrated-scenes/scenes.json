@@ -1,0 +1,402 @@
+{
+  "title": "Agent，到底是什么？",
+  "scenes": [
+    {
+      "id": "opening",
+      "type": "cards",
+      "title": "Agent，到底是什么？",
+      "narration": "什么是智能体？想象你下班回家，只说一句：帮我安排一顿简单晚饭。",
+      "start_frame": 0,
+      "frames": 206,
+      "duration": 6.866666666666666,
+      "semantic_scene": {
+        "viewer_question": "怎样把一句要求变成晚餐安排？",
+        "background_color": "#fff5e5",
+        "title_color": "#183d58",
+        "background_asset_key": "kitchen",
+        "entities": [
+          {
+            "id": "main",
+            "component": "PromptInput",
+            "title": "今晚吃什么？",
+            "state": "pending",
+            "x": 0,
+            "y": 80,
+            "width": 600,
+            "height": 280,
+            "items": [],
+            "text": "帮我安排一顿简单晚饭"
+          }
+        ],
+        "events": [],
+        "expectations": []
+      }
+    },
+    {
+      "id": "goal",
+      "type": "cards",
+      "title": "把一个目标，往前推进",
+      "narration": "如果只给几个菜名，你还得自己查。智能体会围绕这个目标，把接下来的事情一步步推进。",
+      "start_frame": 206,
+      "frames": 266,
+      "duration": 8.866666666666667,
+      "semantic_scene": {
+        "viewer_question": "怎样把一句要求变成晚餐安排？",
+        "background_color": "#fff5e5",
+        "title_color": "#183d58",
+        "background_asset_key": "kitchen",
+        "entities": [
+          {
+            "id": "main",
+            "component": "TaskState",
+            "title": "围绕目标推进",
+            "state": "pending",
+            "x": 0,
+            "y": 80,
+            "width": 600,
+            "height": 350,
+            "items": [
+              {
+                "text": "看看家里有什么"
+              },
+              {
+                "text": "挑选能做的晚餐"
+              },
+              {
+                "text": "整理缺少的食材"
+              }
+            ]
+          }
+        ],
+        "events": [],
+        "expectations": []
+      }
+    },
+    {
+      "id": "ingredients",
+      "type": "cards",
+      "title": "先看看，家里有什么",
+      "narration": "它先查冰箱：有鸡蛋和面条，缺番茄。于是找菜谱、列清单，准备做番茄鸡蛋面。",
+      "start_frame": 472,
+      "frames": 284,
+      "duration": 9.466666666666667,
+      "semantic_scene": {
+        "viewer_question": "怎样把一句要求变成晚餐安排？",
+        "background_color": "#fff5e5",
+        "title_color": "#183d58",
+        "background_asset_key": "ingredients",
+        "entities": [
+          {
+            "id": "main",
+            "component": "TaskState",
+            "title": "冰箱里已有",
+            "state": "pending",
+            "x": 0,
+            "y": 80,
+            "width": 600,
+            "height": 260,
+            "items": [
+              {
+                "text": "鸡蛋 + 面条",
+                "active": true
+              },
+              {
+                "text": "缺少：番茄"
+              }
+            ]
+          },
+          {
+            "id": "tomato",
+            "component": "AssetImage",
+            "title": "tomato",
+            "asset_key": "tomato",
+            "image_style": "artwork",
+            "x": 440,
+            "y": 340,
+            "width": 200,
+            "height": 200,
+            "opacity": 0
+          }
+        ],
+        "events": [
+          {
+            "id": "show_tomato",
+            "target": "tomato",
+            "action": "transform",
+            "anchor": {
+              "phrase": "缺番茄"
+            },
+            "duration_ms": 650,
+            "x": 800,
+            "y": 350,
+            "opacity": 1,
+            "rotation": 10
+          }
+        ],
+        "expectations": [
+          {
+            "id": "show_tomato_result",
+            "event_id": "show_tomato",
+            "visible_result": "番茄图像进入食材区域"
+          }
+        ]
+      }
+    },
+    {
+      "id": "tools",
+      "type": "cards",
+      "title": "查食材、找菜谱、看库存",
+      "narration": "查食材、找菜谱、看商店库存，这些动作就叫调用工具。工具返回信息，模型再决定下一步。",
+      "start_frame": 756,
+      "frames": 300,
+      "duration": 10.0,
+      "semantic_scene": {
+        "viewer_question": "怎样把一句要求变成晚餐安排？",
+        "background_color": "#fff5e5",
+        "title_color": "#183d58",
+        "background_asset_key": "recipe",
+        "entities": [
+          {
+            "id": "main",
+            "component": "ToolCall",
+            "title": "工具提供信息",
+            "state": "running",
+            "x": 0,
+            "y": 80,
+            "width": 600,
+            "height": 350,
+            "items": [
+              {
+                "text": "查询食材 / 菜谱 / 库存"
+              },
+              {
+                "text": "模型根据返回信息决定下一步"
+              }
+            ]
+          }
+        ],
+        "events": [],
+        "expectations": []
+      }
+    },
+    {
+      "id": "feedback",
+      "type": "cards",
+      "title": "番茄没货？换个办法",
+      "narration": "可商店说，番茄没货。它就根据反馈调整：换成青菜鸡蛋面，再核对食材和做法。",
+      "start_frame": 1056,
+      "frames": 262,
+      "duration": 8.733333333333333,
+      "semantic_scene": {
+        "viewer_question": "怎样把一句要求变成晚餐安排？",
+        "background_color": "#fff5e5",
+        "title_color": "#183d58",
+        "background_asset_key": "grocery",
+        "entities": [
+          {
+            "id": "main",
+            "component": "TaskState",
+            "title": "按反馈更新安排",
+            "state": "pending",
+            "x": 0,
+            "y": 80,
+            "width": 600,
+            "height": 300,
+            "items": [
+              {
+                "text": "番茄没货",
+                "detail": "原方案不可行"
+              },
+              {
+                "text": "换成青菜鸡蛋面",
+                "active": true
+              }
+            ]
+          },
+          {
+            "id": "tomato",
+            "component": "AssetImage",
+            "title": "tomato",
+            "asset_key": "tomato",
+            "image_style": "artwork",
+            "x": 800,
+            "y": 350,
+            "width": 200,
+            "height": 200,
+            "opacity": 1
+          },
+          {
+            "id": "greens",
+            "component": "AssetImage",
+            "title": "greens",
+            "asset_key": "greens",
+            "image_style": "artwork",
+            "x": 440,
+            "y": 340,
+            "width": 200,
+            "height": 200,
+            "opacity": 0
+          }
+        ],
+        "events": [
+          {
+            "id": "remove_tomato",
+            "target": "tomato",
+            "action": "transform",
+            "anchor": {
+              "phrase": "番茄没货"
+            },
+            "duration_ms": 650,
+            "x": 1100,
+            "opacity": 0,
+            "rotation": 35
+          },
+          {
+            "id": "show_greens",
+            "target": "greens",
+            "action": "transform",
+            "anchor": {
+              "phrase": "换成青菜鸡蛋面"
+            },
+            "duration_ms": 650,
+            "x": 800,
+            "y": 350,
+            "opacity": 1,
+            "rotation": -8
+          }
+        ],
+        "expectations": [
+          {
+            "id": "remove_tomato_result",
+            "event_id": "remove_tomato",
+            "visible_result": "番茄离开，表示原食材缺货"
+          },
+          {
+            "id": "show_greens_result",
+            "event_id": "show_greens",
+            "visible_result": "青菜进入食材区域，表示替代方案"
+          }
+        ]
+      }
+    },
+    {
+      "id": "approval",
+      "type": "cards",
+      "title": "需要花钱时，先问你",
+      "narration": "如果需要补买青菜，它会先整理购物车。涉及下单和付款，按规则交给你确认。没同意，就先停住。",
+      "start_frame": 1318,
+      "frames": 310,
+      "duration": 10.333333333333334,
+      "semantic_scene": {
+        "viewer_question": "怎样把一句要求变成晚餐安排？",
+        "background_color": "#fff5e5",
+        "title_color": "#183d58",
+        "background_asset_key": "phone",
+        "entities": [
+          {
+            "id": "main",
+            "component": "ApprovalGate",
+            "title": "先给你确认",
+            "state": "awaiting_confirmation",
+            "x": 0,
+            "y": 80,
+            "width": 600,
+            "height": 350,
+            "items": [
+              {
+                "text": "购物车：青菜"
+              },
+              {
+                "text": "未获同意，停在确认步骤"
+              }
+            ]
+          }
+        ],
+        "events": [],
+        "expectations": []
+      }
+    },
+    {
+      "id": "result",
+      "type": "cards",
+      "title": "交给你一份能执行的安排",
+      "narration": "最后，你拿到更新后的菜谱、购物清单和操作步骤，照着就能开始准备晚饭。",
+      "start_frame": 1628,
+      "frames": 230,
+      "duration": 7.666666666666667,
+      "semantic_scene": {
+        "viewer_question": "怎样把一句要求变成晚餐安排？",
+        "background_color": "#fff5e5",
+        "title_color": "#183d58",
+        "background_asset_key": "meal",
+        "entities": [
+          {
+            "id": "main",
+            "component": "TaskState",
+            "title": "一份可以照着做的安排",
+            "state": "succeeded",
+            "x": 0,
+            "y": 80,
+            "width": 600,
+            "height": 350,
+            "items": [
+              {
+                "text": "更新后的菜谱",
+                "active": true
+              },
+              {
+                "text": "需要补买的食材"
+              },
+              {
+                "text": "准备晚饭的步骤"
+              }
+            ]
+          }
+        ],
+        "events": [],
+        "expectations": []
+      }
+    },
+    {
+      "id": "closing",
+      "type": "cards",
+      "title": "有目标 · 能行动 · 会调整",
+      "narration": "所以，智能体的关键，是有目标、能行动、会根据反馈调整，把一句要求推进成具体结果。",
+      "start_frame": 1858,
+      "frames": 269,
+      "duration": 8.966666666666667,
+      "semantic_scene": {
+        "viewer_question": "怎样把一句要求变成晚餐安排？",
+        "background_color": "#fff5e5",
+        "title_color": "#183d58",
+        "background_asset_key": "meal",
+        "entities": [
+          {
+            "id": "main",
+            "component": "TaskState",
+            "title": "把要求推进成结果",
+            "state": "succeeded",
+            "x": 0,
+            "y": 80,
+            "width": 600,
+            "height": 350,
+            "items": [
+              {
+                "text": "有目标"
+              },
+              {
+                "text": "能行动"
+              },
+              {
+                "text": "会根据反馈调整",
+                "active": true
+              }
+            ]
+          }
+        ],
+        "events": [],
+        "expectations": []
+      }
+    }
+  ]
+}

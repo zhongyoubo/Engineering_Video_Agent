@@ -151,3 +151,14 @@ Tool receipts remain bounded at 128 KiB to accommodate the protocol's bounded fr
 multi-window lists. Each continuous clip must have integer scene-local bounds expressed in
 global frames; its probed resolution, fps, frame count and duration must agree with that
 range. Clip counts, frame counts, file-size limits and causal result coverage still apply.
+
+## Illustrated production extension
+
+The previous image_service-unavailable statement above describes the initial increment.
+A configurable eva-image-1 gateway is now implemented alongside project-scoped PNG imports;
+it remains unavailable until an actual gateway is deployed/configured. Assets now support
+raster bytes/real previews, retained recovery, 24 assets/64 MiB active bytes, and preserved
+legacy SVG request hashes. Full-frame registered backgrounds, unframed AssetImage artwork,
+per-shot colors and measured transform events reuse existing compiler/review/render gates.
+The automatic illustrative EvidenceStack footer was removed; provenance remains in reports.
+See project-owned-visual-production.md for the current contract and verification boundaries.

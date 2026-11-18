@@ -913,6 +913,88 @@
           }
         }
       }
+    },
+    "/api/v3/projects/{project_id}/images": {
+      "get": {
+        "summary": "Images",
+        "operationId": "images_api_v3_projects__project_id__images_get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Upload Image",
+        "operationId": "upload_image_api_v3_projects__project_id__images_post",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_image_api_v3_projects__project_id__images_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -980,6 +1062,27 @@
           "file"
         ],
         "title": "Body_upload_api_v1_projects__project_id__inputs_post"
+      },
+      "Body_upload_image_api_v3_projects__project_id__images_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file",
+          "title"
+        ],
+        "title": "Body_upload_image_api_v3_projects__project_id__images_post"
       },
       "Brief": {
         "properties": {
@@ -1402,7 +1505,8 @@
               "replace",
               "append",
               "select",
-              "highlight"
+              "highlight",
+              "transform"
             ],
             "title": "Action"
           },
@@ -1496,6 +1600,71 @@
               }
             ],
             "title": "Selected"
+          },
+          "x": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1520.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "X"
+          },
+          "y": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 530.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Y"
+          },
+          "opacity": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opacity"
+          },
+          "scale": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 3.0,
+                "minimum": 0.2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scale"
+          },
+          "rotation": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 180.0,
+                "minimum": -180.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rotation"
           },
           "start_frame": {
             "type": "integer",
@@ -3257,6 +3426,45 @@
             ],
             "title": "Asset Key"
           },
+          "image_style": {
+            "type": "string",
+            "enum": [
+              "panel",
+              "artwork"
+            ],
+            "title": "Image Style",
+            "default": "panel"
+          },
+          "image_fit": {
+            "type": "string",
+            "enum": [
+              "contain",
+              "cover"
+            ],
+            "title": "Image Fit",
+            "default": "contain"
+          },
+          "opacity": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Opacity",
+            "default": 1
+          },
+          "scale": {
+            "type": "number",
+            "maximum": 3.0,
+            "minimum": 0.2,
+            "title": "Scale",
+            "default": 1
+          },
+          "rotation": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Rotation",
+            "default": 0
+          },
           "provenance": {
             "type": "string",
             "enum": [
@@ -3303,7 +3511,8 @@
               "replace",
               "append",
               "select",
-              "highlight"
+              "highlight",
+              "transform"
             ],
             "title": "Action"
           },
@@ -3397,6 +3606,71 @@
               }
             ],
             "title": "Selected"
+          },
+          "x": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1520.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "X"
+          },
+          "y": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 530.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Y"
+          },
+          "opacity": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opacity"
+          },
+          "scale": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 3.0,
+                "minimum": 0.2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scale"
+          },
+          "rotation": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 180.0,
+                "minimum": -180.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rotation"
           }
         },
         "additionalProperties": false,
@@ -3476,6 +3750,35 @@
             "maxLength": 400,
             "minLength": 4,
             "title": "Viewer Question"
+          },
+          "background_color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "title": "Background Color",
+            "default": "#edf4f4"
+          },
+          "background_asset_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]{1,60}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Background Asset Key"
+          },
+          "title_color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "title": "Title Color",
+            "default": "#173f43"
+          },
+          "show_heading": {
+            "type": "boolean",
+            "title": "Show Heading",
+            "default": true
           },
           "entities": {
             "items": {

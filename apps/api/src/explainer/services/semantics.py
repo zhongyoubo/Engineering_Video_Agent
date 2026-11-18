@@ -21,6 +21,7 @@ def compile_semantics(scene, words, fps, allow_estimated=False):
         return
     resolved = resolve_events(scene, scene.semantic_scene.events, words, fps, allow_estimated)
     times = {e.id: (start, end) for e, start, end, _ in resolved}
+    entities = {e.id: e for e in scene.semantic_scene.entities}
     states = {e.id: e.state for e in scene.semantic_scene.entities}
     lengths = {e.id: len(e.items) for e in scene.semantic_scene.entities}
     texts = {e.id: len(e.text) for e in scene.semantic_scene.entities}
@@ -35,6 +36,14 @@ def compile_semantics(scene, words, fps, allow_estimated=False):
             last[e.target] = end
             if end >= scene.frames:
                 raise TimelineConflict("Visible result needs a held result frame")
+        if e.action == "transform":
+            entity = entities[e.target]
+            if entity.bind_to and any(v is not None for v in [e.x, e.y, e.scale, e.rotation]):
+                raise TimelineConflict("Screen-bound transforms must change opacity only")
+            if (e.x if e.x is not None else entity.x) + entity.width > 1720 or (
+                e.y if e.y is not None else entity.y
+            ) + entity.height > 650:
+                raise TimelineConflict("Transform destination exceeds semantic stage")
         if e.action == "transition":
             if states[e.target] != e.from_state or e.to_state not in ALLOWED[e.from_state]:
                 raise TimelineConflict("Invalid semantic state transition")

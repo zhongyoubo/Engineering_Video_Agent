@@ -488,3 +488,48 @@ test('semantic screen content follows a device and preserves editable state acro
   expect(capabilities.semantic_scene_toolkit.components).toContain('ToolCall');
   expect(capabilities.asset_factory.image_service).toBe(false);
 });
+
+test('engineering uploads project images before requesting native production', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  // A real small raster (not a forged content-type or a mocked upload response).
+  const encoded = await page.evaluate(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 96;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = '#eb4b37';
+    ctx.fillRect(0, 0, 128, 96);
+    return canvas.toDataURL('image/png').split(',')[1];
+  });
+  await page.getByLabel('项目图片素材').setInputFiles({
+    name: 'tomato.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(encoded, 'base64'),
+  });
+  const imageUploaded = page.waitForResponse(
+    (r) =>
+      r.url().includes('/api/v3/projects/') &&
+      r.url().endsWith('/images') &&
+      r.request().method() === 'POST',
+  );
+  const submitted = page.waitForRequest(
+    (r) => r.url().endsWith('/api/v3/videos') && r.method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const upload = await imageUploaded;
+  expect(upload.status()).toBe(201);
+  const material = await upload.json();
+  expect(material.provenance).toBe('user_import');
+  const request = (await submitted).postDataJSON();
+  const catalog = await context.request.get(`/api/v3/projects/${request.project_id}/images`);
+  expect((await catalog.json()).items.map((x: { id: string }) => x.id)).toContain(material.id);
+  await expect(page.getByText(/原生 Agent 未就绪/)).toBeVisible({ timeout: 30000 });
+});

@@ -82,3 +82,18 @@ Verification: 224 backend tests, Ruff, three TypeScript projects, production bui
 11 configured browser flows, format and six editorial checks passed. Details and media
 evidence are in goals/2026-11-18-semantic-review.md. Docker is absent; structural image
 packaging verification is not an actual isolated image build/run or native inference test.
+
+## Project-owned illustrated production
+
+Delivered configurable image gateway mediation, authenticated immutable project image catalogs
+and Studio uploads, actual image previews in native planning, durable canonical PNG receipts,
+recovery and legacy SVG-key compatibility, shared backgrounds/unframed artwork and measured
+transforms. Removed the automatic illustrative evidence footer. README, design, authoring,
+contracts, roadmap and dedicated acceptance scripts updated.
+
+Validation: 244 backend tests, 12 browser flows, TypeScript/Studio build and format passed.
+Real fixed Remotion verification: 70.9s / 2127 frames / 1080p, 8 registered imports, real reused
+Edge word timing, three causal transform changes, decoded video and editable project export.
+The fixed render is not native inference or image generation. Actual native/image/isolated
+acceptance is blocked by missing configured providers and Docker/gVisor; the deployment
+script exits explicitly. Evidence: docs/verification-production-assets.json.
