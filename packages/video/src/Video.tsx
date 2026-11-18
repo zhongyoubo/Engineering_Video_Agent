@@ -16,6 +16,7 @@ import {
 } from 'remotion';
 import type { Scene, VideoProps } from './types';
 import { Bookend, ViewerDisclosures } from '../../engineering-template/src/presentation';
+import { SceneRenderer } from '../../engineering-template/src/semantic-kit';
 import { ObjectScene, ObjectSceneSounds } from '../../engineering-template/src/scene-objects';
 export type { Scene, Storyboard, VideoProps, EditorialRequest, ContentStrategy } from './types';
 
@@ -390,7 +391,7 @@ function SceneView({
   const f = useCurrentFrame(),
     { fps } = useVideoConfig();
   const progress = Math.min(1, f / Math.max(scene.frames - 1, 1));
-  const objectScene = Boolean(scene.visual_scene);
+  const objectScene = Boolean(scene.visual_scene || scene.semantic_scene);
   const bookend =
     (props.presentation_profile || 'creator') === 'creator' &&
     (scene.role === 'opening' || scene.role === 'closing');
@@ -422,7 +423,12 @@ function SceneView({
           borderRadius: '50%',
         }}
       />
-      {objectScene && <ObjectScene scene={scene} />}
+      {objectScene &&
+        (scene.semantic_scene ? (
+          <SceneRenderer scene={scene} assets={props.generated_assets} />
+        ) : (
+          <ObjectScene scene={scene} />
+        ))}
       {(props.presentation_profile || 'creator') !== 'creator' && (
         <div
           style={{

@@ -29,3 +29,10 @@ turn every noun into a graph box or keyword-routed device template. scene-object
 platform-owned and protected like motion-kit.tsx. Unsupported subjects may use authored
 SVG/TSX under the existing isolation; do not fake an image-generation service or hardware
 measurements. Fixed platform fixtures alone may run through verify_object_scenes.py.
+
+Semantic production: read docs/design/semantic-production.md. semantic-kit.tsx and
+semantic-types.ts are protected platform code. Software concepts use semantic entities
+and explicit causal results, selected semantically rather than by keywords. Fixed
+verify_semantic_scenes.py alone may host-render its fixed reviewed platform dispatcher;
+never substitute arbitrary uploaded/model TSX. Preserve native source authoring, isolation,
+voice truth, tenant checkpoints, asset provenance and complete source-hash review gates.

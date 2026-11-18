@@ -43,3 +43,17 @@ video、script、subtitles、narration、quality、alignment 保持原有含义�
 `remotion-project.zip` 是独立完整源码工程，支持解压后 npm ci / npm run check / npm run preview / npm run render。应用原有“导入工程”读取 IR 工程包，不会把外部 Remotion 代码自动导入为受信执行状态；外部源码应作为新输入再走工程校验。应用内派生版本可以复用父版本源文件状态。
 
 场景锁定保护分镜字段与时间预算；本版尚未对共享 TSX 样式建立逐场景像素不变证明。修改共享组件后应重新审阅所有关键帧。
+
+## Semantic scenes and asset actions
+
+Optional semantic_scene and compiled_semantic_events preserve historic saved boards. Typed
+SemanticScene/Entity/Event/Expectation and VisualIntent specify data, references, state and
+observable outcomes. AssetRequirement supports only the advertised provider capabilities.
+EngineeringAction.request_assets creates materials through the controller; inspect_asset
+requires a registered workspace ID and verifies actual file bytes. AssetImage references
+props.generated_assets by ID, never an arbitrary URL. The registry owns that props mapping.
+
+VisualReview.semantic_expectations must exactly list all scene_id:expectation_id keys and
+semantic_accuracy must reach four for causal semantic scenes. Existing source/build/preview,
+continuous-motion and publication gates still apply. Exported contracts are in
+packages/contracts; see design/semantic-production.md for boundaries and fixed verification.

@@ -1,3 +1,4 @@
+import { reviewWindows, causalFrames } from './review-plan.mjs';
 import { bundle } from '@remotion/bundler';
 import { openBrowser, selectComposition, renderStill, renderMedia } from '@remotion/renderer';
 import { execFileSync } from 'node:child_process';
@@ -63,6 +64,10 @@ try {
       ]) {
         if (!frames.includes(frame)) frames.push(frame);
       }
+      for (const scene of props.scenes)
+        for (const frame of causalFrames(scene)) if (!frames.includes(frame)) frames.push(frame);
+      if (frames.length > 127)
+        throw Error('Causal frame review budget exceeded; simplify the video plan');
       frames.sort((a, b) => a - b);
       const files = [];
       for (const frame of frames) {
@@ -102,52 +107,43 @@ try {
         motionFrames = [];
       if (props.motion_review_required) {
         for (const [index, scene] of props.scenes.entries()) {
-          const eventStart =
-            scene.compiled_object_events?.find((e) =>
-              ['play', 'sound', 'signal'].includes(e.action),
-            )?.start_frame ??
-            scene.compiled_events?.[0]?.start_frame ??
-            0;
-          const start =
-            scene.start_frame + Math.max(0, eventStart - Math.round(composition.fps / 2));
-          const end = Math.min(
-            scene.start_frame + scene.frames - 1,
-            start + composition.fps * 4 - 1,
-          );
-          const name = `motion-${String(index).padStart(3, '0')}.mp4`;
-          await renderMedia({
-            serveUrl,
-            composition,
-            inputProps: props,
-            puppeteerInstance: browser,
-            browserExecutable,
-            codec: 'h264',
-            crf: 28,
-            pixelFormat: 'yuv420p',
-            scale: 1280 / composition.width,
-            frameRange: [start, end],
-            concurrency: 2,
-            outputLocation: resolve(output, name),
-          });
-          const strip = `motion-${String(index).padStart(3, '0')}.png`;
-          execFileSync(
-            'ffmpeg',
-            [
-              '-v',
-              'error',
-              '-y',
-              '-i',
-              resolve(output, name),
-              '-vf',
-              'fps=2,scale=320:180,tile=4x2',
-              '-frames:v',
-              '1',
-              resolve(output, strip),
-            ],
-            { timeout: 60000 },
-          );
-          clips.push({ name, scene_id: scene.id, start_frame: start, end_frame: end });
-          motionFrames.push({ name: strip, frame: start, kind: 'motion_strip' });
+          const windows = reviewWindows(scene, composition.fps);
+          for (const [part, { start, end }] of windows.entries()) {
+            const name = `motion-${String(index).padStart(3, '0')}-${part}.mp4`;
+            await renderMedia({
+              serveUrl,
+              composition,
+              inputProps: props,
+              puppeteerInstance: browser,
+              browserExecutable,
+              codec: 'h264',
+              crf: 28,
+              pixelFormat: 'yuv420p',
+              scale: 1280 / composition.width,
+              frameRange: [start, end],
+              concurrency: 2,
+              outputLocation: resolve(output, name),
+            });
+            const strip = `motion-${String(index).padStart(3, '0')}-${part}.png`;
+            execFileSync(
+              'ffmpeg',
+              [
+                '-v',
+                'error',
+                '-y',
+                '-i',
+                resolve(output, name),
+                '-vf',
+                'fps=2,scale=320:180,tile=4x2',
+                '-frames:v',
+                '1',
+                resolve(output, strip),
+              ],
+              { timeout: 60000 },
+            );
+            clips.push({ name, scene_id: scene.id, start_frame: start, end_frame: end });
+            motionFrames.push({ name: strip, frame: start, kind: 'motion_strip' });
+          }
         }
       }
       writeFileSync(

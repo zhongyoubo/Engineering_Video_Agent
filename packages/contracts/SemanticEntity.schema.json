@@ -1,0 +1,170 @@
+{
+  "$defs": {
+    "SemanticItem": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "maxLength": 180,
+          "title": "Detail",
+          "type": "string"
+        },
+        "active": {
+          "default": false,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "SemanticItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "component": {
+      "enum": [
+        "PromptInput",
+        "Conversation",
+        "TokenSequence",
+        "ContextWindow",
+        "DocumentChunks",
+        "RetrievalResults",
+        "ModelBoundary",
+        "ToolCall",
+        "TaskState",
+        "EvidenceStack",
+        "ApprovalGate",
+        "CodeWorkspace",
+        "AssetImage"
+      ],
+      "title": "Component",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 60,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "text": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Text",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/SemanticItem"
+      },
+      "maxItems": 12,
+      "title": "Items",
+      "type": "array"
+    },
+    "state": {
+      "default": "pending",
+      "enum": [
+        "pending",
+        "running",
+        "succeeded",
+        "failed",
+        "awaiting_confirmation",
+        "rejected",
+        "cancelled"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "x": {
+      "default": 0,
+      "maximum": 1520,
+      "minimum": 0,
+      "title": "X",
+      "type": "number"
+    },
+    "y": {
+      "default": 0,
+      "maximum": 530,
+      "minimum": 0,
+      "title": "Y",
+      "type": "number"
+    },
+    "width": {
+      "default": 520,
+      "maximum": 1720,
+      "minimum": 180,
+      "title": "Width",
+      "type": "number"
+    },
+    "height": {
+      "default": 400,
+      "maximum": 650,
+      "minimum": 120,
+      "title": "Height",
+      "type": "number"
+    },
+    "bind_to": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bind To"
+    },
+    "asset_key": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Asset Key"
+    },
+    "provenance": {
+      "default": "illustrative",
+      "enum": [
+        "illustrative",
+        "observed"
+      ],
+      "title": "Provenance",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Evidence Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "component",
+    "title"
+  ],
+  "title": "SemanticEntity",
+  "type": "object"
+}

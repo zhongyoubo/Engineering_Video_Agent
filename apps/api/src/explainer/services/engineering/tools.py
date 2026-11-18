@@ -142,7 +142,7 @@ class RenderTools:
                 ]
                 if props.get("motion_review_required"):
                     clips, strips = result.get("clips", []), result.get("motion_frames", [])
-                    if len(clips) != len(props["scenes"]) or len(strips) != len(clips):
+                    if len(clips) < len(props["scenes"]) or len(strips) != len(clips) or len(clips) > 96:
                         raise EngineeringError("Missing continuous scene previews")
                     for item in [*clips, *strips]:
                         file = output / item["name"]
@@ -173,8 +173,21 @@ class RenderTools:
                         video = next(s for s in metadata["streams"] if s["codec_type"] == "video")
                         if (video["width"], video["height"]) != (1280, 720) or not 0 < float(
                             metadata["format"]["duration"]
-                        ) <= 4.1:
+                        ) <= 5.1:
                             raise EngineeringError("Invalid motion preview dimensions/duration")
+                    if {c.get("scene_id") for c in clips} != {s["id"] for s in props["scenes"]}:
+                        raise EngineeringError("Continuous previews must cover every scene")
+                    for scene in props["scenes"]:
+                        relevant = [c for c in clips if c.get("scene_id") == scene["id"]]
+                        for event in scene.get("compiled_semantic_events", []):
+                            before = scene["start_frame"] + max(0, event["start_frame"] - 1)
+                            after = scene["start_frame"] + min(scene["frames"] - 1, event["end_frame"] + 1)
+                            if not any(
+                                c.get("start_frame", after + 1) <= before
+                                and c.get("end_frame", before - 1) >= after
+                                for c in relevant
+                            ):
+                                raise EngineeringError("Continuous preview misses a causal result")
                     for items in [clips, strips]:
                         for item in items:
                             item["name"] = str((output / item["name"]).relative_to(workspace.root))

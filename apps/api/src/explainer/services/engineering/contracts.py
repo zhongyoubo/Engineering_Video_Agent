@@ -5,6 +5,7 @@ from pydantic import Field, model_validator
 from ...domain import StrictModel
 from ...adapters.native_contract import AgentDesign
 from ...editorial import EditorialPlan
+from ...semantic_scene import VisualIntent, AssetRequirement
 
 
 class MotionShot(StrictModel):
@@ -12,6 +13,8 @@ class MotionShot(StrictModel):
     visual: str = Field(min_length=10, max_length=1500)
     movement: str = Field(min_length=10, max_length=1500)
     assets: list[str] = Field(max_length=20)
+    intent: VisualIntent | None = None
+    asset_requirements: list[AssetRequirement] = Field(default_factory=list, max_length=8)
 
 
 class ProductionPlan(StrictModel):
@@ -47,7 +50,9 @@ class VisualReview(StrictModel):
     issues: list[str] = Field(max_length=30)
     inspected_frames: list[str] = Field(min_length=1, max_length=128)
     motion_continuity: int = Field(default=0, ge=0, le=5)
-    inspected_motion_frames: list[str] = Field(default_factory=list, max_length=32)
+    semantic_expectations: list[str] = Field(default_factory=list, max_length=128)
+    semantic_accuracy: int = Field(default=0, ge=0, le=5)
+    inspected_motion_frames: list[str] = Field(default_factory=list, max_length=96)
     content_focus: int = Field(default=0, ge=0, le=5)
     cover_promise: int = Field(default=0, ge=0, le=5)
     opening_closing: int = Field(default=0, ge=0, le=5)
@@ -58,13 +63,23 @@ class VisualReview(StrictModel):
 
 
 class EngineeringAction(StrictModel):
-    action: Literal["write_files", "build", "render_preview", "review", "finish"]
+    action: Literal[
+        "write_files", "build", "render_preview", "review", "finish", "request_assets", "inspect_asset"
+    ]
     summary: str = Field(min_length=1, max_length=300)
     files: list[SourceEdit] = Field(max_length=30)
     review: VisualReview | None
+    asset_requests: list[AssetRequirement] = Field(default_factory=list, max_length=8)
+    asset_id: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
 
     @model_validator(mode="after")
     def coherent_action(self):
+        if (self.action == "request_assets") != bool(self.asset_requests):
+            raise ValueError("Asset requests belong only to request_assets actions")
+        if len({r.id for r in self.asset_requests}) != len(self.asset_requests):
+            raise ValueError("Asset request IDs must be unique")
+        if (self.action == "inspect_asset") != bool(self.asset_id):
+            raise ValueError("Asset inspection requires an ID")
         if self.action == "write_files" and not self.files:
             raise ValueError("write_files requires source edits")
         if self.action != "write_files" and self.files:

@@ -50,3 +50,15 @@ checks exercise both render paths and eleven prototype shapes; see verification-
 HDMI revision reuses actual Edge narration/timing. Real native automatic asset generation,
 unseen-object quality, text-to-image/video adapters, broad camera/3D systems and human full
 watching/listening remain separate acceptance work. See goals/2026-11-18-object-scenes.md.
+
+## Semantic visual production · 2026-11-18
+
+Implemented typed semantic entities/state events/expectations, twelve trusted AI components,
+device-screen bindings, structured shot intents, mediated original SVG/companion-PNG assets,
+receipts/recovery/byte checks, shared scene renderer, dependency manifests, causal preview
+coverage and Studio editing. Validation evidence is recorded in the semantic implementation
+goal and docs/verification-semantic-scenes.json after actual checks.
+
+Remaining V5 work: real native unseen-topic acceptance, external image/video/3D adapters,
+general layer graphs and FFmpeg media backend, rendered-scene cache, advanced layout/OCR
+review and human full playback/listening. Dependency keys are not a rendered-video cache.

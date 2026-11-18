@@ -1,0 +1,41 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "viewer_question": {
+      "maxLength": 400,
+      "minLength": 4,
+      "title": "Viewer Question",
+      "type": "string"
+    },
+    "representation": {
+      "enum": [
+        "semantic",
+        "physical",
+        "capture",
+        "mixed"
+      ],
+      "title": "Representation",
+      "type": "string"
+    },
+    "rationale": {
+      "maxLength": 600,
+      "minLength": 10,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "visible_result": {
+      "maxLength": 400,
+      "minLength": 4,
+      "title": "Visible Result",
+      "type": "string"
+    }
+  },
+  "required": [
+    "viewer_question",
+    "representation",
+    "rationale",
+    "visible_result"
+  ],
+  "title": "VisualIntent",
+  "type": "object"
+}

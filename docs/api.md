@@ -132,3 +132,11 @@ visual data requires new timing/review. Event references, geometry, phrase prese
 causal prerequisites and actual frame budget are validated. No asset URLs or executable
 content are accepted in this protocol. Object review adds object_fidelity/causal_motion.
 See docs/design/object-scenes.md for supported types and truthful limitations.
+
+## Semantic scene increment
+
+Capabilities exposes semantic_scene_toolkit and asset_factory (`component_svg=true`,
+`image_service=false`). Scene.semantic_scene / compiled_semantic_events are optional and
+backward compatible. Native MotionShot adds intent and asset_requirements; EngineeringAction
+adds request_assets / inspect_asset. These are mediated engineering actions, not arbitrary
+public filesystem endpoints. See generated schemas and semantic-production.md for bounds.

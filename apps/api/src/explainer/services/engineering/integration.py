@@ -28,6 +28,8 @@ def check_font(board, font):
         for s in board.scenes
         if s.visual_scene
     )
+    from ..semantics import semantic_text
+    text += "".join(semantic_text(scene) for scene in board.scenes)
     if "\ufffd" in text:
         raise EngineeringError("Text contains Unicode replacement characters")
     with TTFont(font) as face:

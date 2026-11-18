@@ -8,7 +8,7 @@ import {
   useCurrentFrame,
 } from 'remotion';
 import type { Scene, VideoProps } from './contracts';
-import { ObjectScene } from './scene-objects';
+import { SceneRenderer } from './semantic-kit';
 
 export function PublicationCard({
   headline,
@@ -175,9 +175,10 @@ export function PublicationThumbnail(props: VideoProps) {
         transformOrigin: 'top left',
       }}
     >
-      {props.scenes[0]?.visual_scene ? (
+      {props.scenes[0]?.visual_scene || props.scenes[0]?.semantic_scene ? (
         <>
-          <ObjectScene
+          <SceneRenderer
+            assets={props.generated_assets}
             scene={props.scenes[0]}
             frameOverride={Math.max(0, props.scenes[0].frames - 15)}
             titleOverride={props.cover?.headline || props.title}

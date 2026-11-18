@@ -54,7 +54,7 @@ export function ProductionInspector({
       live = false;
     };
   }, [revision.id, revision.outputs?.audio_analysis, revision.outputs?.motion_previews]);
-  const clip = clips.find((c) => c.scene_id === scene.id);
+  const sceneClips = clips.filter((c) => c.scene_id === scene.id);
   const update = (motion: NonNullable<Scene['motion']>) => onEdit({ motion, compiled_events: [] });
   const updateVisual = (patch: Partial<NonNullable<Scene['visual_scene']>>) =>
     onEdit({ visual_scene: { ...scene.visual_scene!, ...patch }, compiled_object_events: [] });
@@ -62,6 +62,70 @@ export function ProductionInspector({
     <div className="production-inspector">
       <h3>镜头与音画时间轴</h3>
       <p className="subtle">只展示实际产物。修改后请另存版本；共享组件变化仍需全片复审。</p>
+      {scene.semantic_scene && (
+        <div aria-label="语义场景时间轴">
+          <h4>信息、状态与可见结果</h4>
+          <p>{scene.semantic_scene.viewer_question}</p>
+          {scene.semantic_scene.entities.map((entity) => (
+            <label key={entity.id}>
+              {entity.component}
+              {entity.bind_to ? ' → ' + entity.bind_to + '.screen' : ''}
+              <input
+                aria-label={'语义标题：' + entity.id}
+                value={entity.title}
+                disabled={disabled}
+                maxLength={60}
+                onChange={(event) =>
+                  onEdit({
+                    semantic_scene: {
+                      ...scene.semantic_scene!,
+                      entities: scene.semantic_scene!.entities.map((e) =>
+                        e.id === entity.id ? { ...e, title: event.target.value } : e,
+                      ),
+                    },
+                    compiled_semantic_events: [],
+                  })
+                }
+              />
+            </label>
+          ))}
+          {scene.semantic_scene.events.map((e) => (
+            <label key={e.id}>
+              {e.action} · {e.target}
+              <input
+                aria-label={'语义旁白：' + e.id}
+                value={e.anchor.phrase}
+                disabled={disabled}
+                onChange={(event) =>
+                  onEdit({
+                    semantic_scene: {
+                      ...scene.semantic_scene!,
+                      events: scene.semantic_scene!.events.map((v) =>
+                        v.id === e.id
+                          ? { ...v, anchor: { ...v.anchor, phrase: event.target.value } }
+                          : v,
+                      ),
+                    },
+                    compiled_semantic_events: [],
+                  })
+                }
+              />
+            </label>
+          ))}
+          <ul>
+            {scene.semantic_scene.expectations.map((e) => (
+              <li key={e.id}>{e.visible_result}</li>
+            ))}
+          </ul>
+          <p>
+            {scene.compiled_semantic_events?.length
+              ? scene.compiled_semantic_events.every((e) => e.timing_source === 'measured_words')
+                ? '真实旁白时间戳'
+                : '草稿估计时间'
+              : '保存后编译语义动作'}
+          </p>
+        </div>
+      )}
       {scene.visual_scene && (
         <div aria-label="对象场景时间轴">
           <h4>对象、动作与结果</h4>
@@ -136,14 +200,20 @@ export function ProductionInspector({
         </div>
       )}
       {loadError && <p role="alert">{loadError}</p>}
-      {clip?.asset_id ? (
-        <video
-          key={clip.asset_id}
-          src={media(clip.asset_id)}
-          controls
-          preload="metadata"
-          style={{ width: '100%' }}
-        />
+      {sceneClips.length ? (
+        sceneClips.map((clip) => (
+          <div key={clip.asset_id}>
+            <p>
+              连续预览：{clip.start_frame}–{clip.end_frame} 帧
+            </p>
+            <video
+              src={media(clip.asset_id)}
+              controls
+              preload="metadata"
+              style={{ width: '100%' }}
+            />
+          </div>
+        ))
       ) : (
         <p>连续预览：未生成 / 未验证</p>
       )}
@@ -182,7 +252,7 @@ export function ProductionInspector({
         视觉表达
         <select
           aria-label="视觉表达"
-          disabled={disabled || Boolean(scene.visual_scene)}
+          disabled={disabled || Boolean(scene.visual_scene || scene.semantic_scene)}
           value={scene.visual_scene ? 'objects' : scene.motion?.pattern || ''}
           onChange={(e) => {
             if (!e.target.value) return;

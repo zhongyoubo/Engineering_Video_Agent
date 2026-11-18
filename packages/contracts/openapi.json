@@ -1383,6 +1383,152 @@
         ],
         "title": "CompiledObjectEvent"
       },
+      "CompiledSemanticEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+            "title": "Id"
+          },
+          "target": {
+            "type": "string",
+            "maxLength": 60,
+            "title": "Target"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "transition",
+              "replace",
+              "append",
+              "select",
+              "highlight"
+            ],
+            "title": "Action"
+          },
+          "anchor": {
+            "$ref": "#/components/schemas/CueAnchor"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "maximum": 4000.0,
+            "minimum": 100.0,
+            "title": "Duration Ms",
+            "default": 700
+          },
+          "depends_on": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "title": "Depends On"
+          },
+          "from_state": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "running",
+                  "succeeded",
+                  "failed",
+                  "awaiting_confirmation",
+                  "rejected",
+                  "cancelled"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From State"
+          },
+          "to_state": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "running",
+                  "succeeded",
+                  "failed",
+                  "awaiting_confirmation",
+                  "rejected",
+                  "cancelled"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To State"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 600
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SemanticItem"
+            },
+            "type": "array",
+            "maxItems": 12,
+            "title": "Items"
+          },
+          "selected": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 11.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected"
+          },
+          "start_frame": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Start Frame"
+          },
+          "end_frame": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "End Frame"
+          },
+          "timing_source": {
+            "type": "string",
+            "enum": [
+              "measured_words",
+              "estimated_draft"
+            ],
+            "title": "Timing Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "target",
+          "action",
+          "anchor",
+          "start_frame",
+          "end_frame",
+          "timing_source"
+        ],
+        "title": "CompiledSemanticEvent"
+      },
       "ContentStrategy": {
         "properties": {
           "taxonomy_version": {
@@ -2677,6 +2823,24 @@
             "maxItems": 32,
             "title": "Compiled Object Events"
           },
+          "semantic_scene": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SemanticScene"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "compiled_semantic_events": {
+            "items": {
+              "$ref": "#/components/schemas/CompiledSemanticEvent"
+            },
+            "type": "array",
+            "maxItems": 16,
+            "title": "Compiled Semantic Events"
+          },
           "role": {
             "type": "string",
             "enum": [
@@ -2980,6 +3144,372 @@
           "summary"
         ],
         "title": "SceneType"
+      },
+      "SemanticEntity": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+            "title": "Id"
+          },
+          "component": {
+            "type": "string",
+            "enum": [
+              "PromptInput",
+              "Conversation",
+              "TokenSequence",
+              "ContextWindow",
+              "DocumentChunks",
+              "RetrievalResults",
+              "ModelBoundary",
+              "ToolCall",
+              "TaskState",
+              "EvidenceStack",
+              "ApprovalGate",
+              "CodeWorkspace",
+              "AssetImage"
+            ],
+            "title": "Component"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 600,
+            "title": "Text",
+            "default": ""
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SemanticItem"
+            },
+            "type": "array",
+            "maxItems": 12,
+            "title": "Items"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "running",
+              "succeeded",
+              "failed",
+              "awaiting_confirmation",
+              "rejected",
+              "cancelled"
+            ],
+            "title": "State",
+            "default": "pending"
+          },
+          "x": {
+            "type": "number",
+            "maximum": 1520.0,
+            "minimum": 0.0,
+            "title": "X",
+            "default": 0
+          },
+          "y": {
+            "type": "number",
+            "maximum": 530.0,
+            "minimum": 0.0,
+            "title": "Y",
+            "default": 0
+          },
+          "width": {
+            "type": "number",
+            "maximum": 1720.0,
+            "minimum": 180.0,
+            "title": "Width",
+            "default": 520
+          },
+          "height": {
+            "type": "number",
+            "maximum": 650.0,
+            "minimum": 120.0,
+            "title": "Height",
+            "default": 400
+          },
+          "bind_to": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]{1,60}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bind To"
+          },
+          "asset_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]{1,60}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Key"
+          },
+          "provenance": {
+            "type": "string",
+            "enum": [
+              "illustrative",
+              "observed"
+            ],
+            "title": "Provenance",
+            "default": "illustrative"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 12,
+            "title": "Evidence Ids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "component",
+          "title"
+        ],
+        "title": "SemanticEntity"
+      },
+      "SemanticEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+            "title": "Id"
+          },
+          "target": {
+            "type": "string",
+            "maxLength": 60,
+            "title": "Target"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "transition",
+              "replace",
+              "append",
+              "select",
+              "highlight"
+            ],
+            "title": "Action"
+          },
+          "anchor": {
+            "$ref": "#/components/schemas/CueAnchor"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "maximum": 4000.0,
+            "minimum": 100.0,
+            "title": "Duration Ms",
+            "default": 700
+          },
+          "depends_on": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "title": "Depends On"
+          },
+          "from_state": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "running",
+                  "succeeded",
+                  "failed",
+                  "awaiting_confirmation",
+                  "rejected",
+                  "cancelled"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From State"
+          },
+          "to_state": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "running",
+                  "succeeded",
+                  "failed",
+                  "awaiting_confirmation",
+                  "rejected",
+                  "cancelled"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To State"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 600
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SemanticItem"
+            },
+            "type": "array",
+            "maxItems": 12,
+            "title": "Items"
+          },
+          "selected": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 11.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "target",
+          "action",
+          "anchor"
+        ],
+        "title": "SemanticEvent"
+      },
+      "SemanticExpectation": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+            "title": "Id"
+          },
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "visible_result": {
+            "type": "string",
+            "maxLength": 400,
+            "minLength": 4,
+            "title": "Visible Result"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "event_id",
+          "visible_result"
+        ],
+        "title": "SemanticExpectation"
+      },
+      "SemanticItem": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Text"
+          },
+          "detail": {
+            "type": "string",
+            "maxLength": 180,
+            "title": "Detail",
+            "default": ""
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "SemanticItem"
+      },
+      "SemanticScene": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "1.0",
+            "title": "Schema Version",
+            "default": "1.0"
+          },
+          "viewer_question": {
+            "type": "string",
+            "maxLength": 400,
+            "minLength": 4,
+            "title": "Viewer Question"
+          },
+          "entities": {
+            "items": {
+              "$ref": "#/components/schemas/SemanticEntity"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Entities"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/SemanticEvent"
+            },
+            "type": "array",
+            "maxItems": 16,
+            "title": "Events"
+          },
+          "expectations": {
+            "items": {
+              "$ref": "#/components/schemas/SemanticExpectation"
+            },
+            "type": "array",
+            "maxItems": 16,
+            "title": "Expectations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "viewer_question",
+          "entities"
+        ],
+        "title": "SemanticScene"
       },
       "StoryboardIR": {
         "properties": {
