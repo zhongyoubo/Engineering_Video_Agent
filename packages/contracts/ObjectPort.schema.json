@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,40}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "left",
+        "right",
+        "top",
+        "bottom"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "position": {
+      "default": 0.5,
+      "maximum": 0.9,
+      "minimum": 0.1,
+      "title": "Position",
+      "type": "number"
+    },
+    "label": {
+      "default": "",
+      "maxLength": 20,
+      "title": "Label",
+      "type": "string"
+    },
+    "kind": {
+      "default": "hdmi",
+      "enum": [
+        "hdmi",
+        "network",
+        "wireless",
+        "generic"
+      ],
+      "title": "Kind",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "side"
+  ],
+  "title": "ObjectPort",
+  "type": "object"
+}

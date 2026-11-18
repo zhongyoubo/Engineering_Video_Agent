@@ -1,0 +1,39 @@
+{
+  "compatibility": {
+    "decode": "passed",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0,
+    "frames": 270,
+    "duration": 9.003
+  },
+  "engineering": {
+    "decode": "passed",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0,
+    "frames": 270,
+    "duration": 9.003
+  },
+  "compatibility-change": {
+    "screen_mean_rgb_difference": [
+      89.95649711934156,
+      105.40736790123457,
+      96.52604444444444
+    ],
+    "foley_peak_dbfs": -26.66
+  },
+  "engineering-output-change": {
+    "screen_mean_rgb_difference": [
+      89.92668971193416,
+      105.41630288065844,
+      96.47862386831275
+    ],
+    "foley_peak_dbfs": -26.66
+  },
+  "fixture": "fixed platform-authored objects; estimated draft anchor timing; no TTS/native inference/hardware measurements",
+  "objects": 11,
+  "source_hash": "ca43cfc87f3f52214eec2f28afa87cc1009a118f9fc14de4b9671de533b036f8",
+  "renderer_sha256": "b4f0922648cba022de9d204b147eb3bd8f3c6a5de3b5bce649526a6646dffebf",
+  "human_full_playback_listening": false
+}

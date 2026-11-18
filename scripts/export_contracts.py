@@ -20,12 +20,20 @@ from explainer.specs import (
     CompiledEvent,
 )
 
+from explainer.visual_scene import VisualScene, SceneObject, ObjectPort, SceneConnection, ObjectEvent, CompiledObjectEvent
+
 from explainer.editorial import EditorialBrief, EditorialPlan, CoverSpec, ViewerDisclosure, ContentStrategy, NarrativeBeat
 from explainer.content_taxonomy import taxonomy_options
 
 directory = ROOT / "packages/contracts"
 for model in [
     Brief,
+    VisualScene,
+    SceneObject,
+    ObjectPort,
+    SceneConnection,
+    ObjectEvent,
+    CompiledObjectEvent,
     EditorialBrief,
     ContentStrategy,
     NarrativeBeat,

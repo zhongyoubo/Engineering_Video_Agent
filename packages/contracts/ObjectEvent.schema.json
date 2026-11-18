@@ -1,0 +1,138 @@
+{
+  "$defs": {
+    "CueAnchor": {
+      "additionalProperties": false,
+      "properties": {
+        "phrase": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Phrase",
+          "type": "string"
+        },
+        "occurrence": {
+          "default": 1,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "edge": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "title": "Edge",
+          "type": "string"
+        },
+        "offset_ms": {
+          "default": 0,
+          "maximum": 2000,
+          "minimum": -2000,
+          "title": "Offset Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "CueAnchor",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "target": {
+      "maxLength": 60,
+      "title": "Target",
+      "type": "string"
+    },
+    "action": {
+      "enum": [
+        "reveal",
+        "connect",
+        "signal",
+        "power_on",
+        "power_off",
+        "play",
+        "sound",
+        "press",
+        "volume",
+        "highlight"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "anchor": {
+      "$ref": "#/$defs/CueAnchor"
+    },
+    "duration_ms": {
+      "default": 900,
+      "maximum": 12000,
+      "minimum": 100,
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "channel": {
+      "default": "video",
+      "enum": [
+        "video",
+        "audio",
+        "control",
+        "data"
+      ],
+      "title": "Channel",
+      "type": "string"
+    },
+    "reverse": {
+      "default": false,
+      "title": "Reverse",
+      "type": "boolean"
+    },
+    "value": {
+      "default": 1,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Value",
+      "type": "number"
+    },
+    "depends_on": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Depends On",
+      "type": "array"
+    },
+    "sound": {
+      "anyOf": [
+        {
+          "enum": [
+            "connect",
+            "click",
+            "notify"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sound"
+    }
+  },
+  "required": [
+    "id",
+    "target",
+    "action",
+    "anchor"
+  ],
+  "title": "ObjectEvent",
+  "type": "object"
+}

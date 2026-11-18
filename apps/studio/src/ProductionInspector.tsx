@@ -56,10 +56,85 @@ export function ProductionInspector({
   }, [revision.id, revision.outputs?.audio_analysis, revision.outputs?.motion_previews]);
   const clip = clips.find((c) => c.scene_id === scene.id);
   const update = (motion: NonNullable<Scene['motion']>) => onEdit({ motion, compiled_events: [] });
+  const updateVisual = (patch: Partial<NonNullable<Scene['visual_scene']>>) =>
+    onEdit({ visual_scene: { ...scene.visual_scene!, ...patch }, compiled_object_events: [] });
   return (
     <div className="production-inspector">
       <h3>镜头与音画时间轴</h3>
       <p className="subtle">只展示实际产物。修改后请另存版本；共享组件变化仍需全片复审。</p>
+      {scene.visual_scene && (
+        <div aria-label="对象场景时间轴">
+          <h4>对象、动作与结果</h4>
+          <p>{scene.visual_scene.purpose}</p>
+          <p>
+            场景：{scene.visual_scene.setting}；对象：
+            {scene.visual_scene.objects.map((o) => o.label).join('、')}
+          </p>
+          <p>交互提示音：{scene.visual_scene.sound_enabled ? '开启，旁白优先' : '关闭'}</p>
+          <label className="checkbox">
+            <input
+              type="checkbox"
+              aria-label="启用交互提示音"
+              disabled={disabled}
+              checked={scene.visual_scene.sound_enabled}
+              onChange={(e) => updateVisual({ sound_enabled: e.target.checked })}
+            />
+            启用交互提示音
+          </label>
+          {scene.visual_scene.objects.map((o) => (
+            <label key={o.id}>
+              {o.label}
+              <input
+                aria-label={'对象标注：' + o.id}
+                value={o.label}
+                maxLength={40}
+                disabled={disabled}
+                onChange={(e) =>
+                  updateVisual({
+                    objects: scene.visual_scene!.objects.map((v) =>
+                      v.id === o.id ? { ...v, label: e.target.value } : v,
+                    ),
+                  })
+                }
+              />
+            </label>
+          ))}
+          {scene.visual_scene.events.map((e) => (
+            <label key={e.id}>
+              动作旁白：{e.action}
+              <input
+                aria-label={'动作旁白：' + e.id}
+                value={e.anchor.phrase}
+                maxLength={160}
+                disabled={disabled}
+                onChange={(event) =>
+                  updateVisual({
+                    events: scene.visual_scene!.events.map((v) =>
+                      v.id === e.id
+                        ? { ...v, anchor: { ...v.anchor, phrase: event.target.value } }
+                        : v,
+                    ),
+                  })
+                }
+              />
+            </label>
+          ))}
+          <ol>
+            {scene.visual_scene.events.map((e) => (
+              <li key={e.id}>
+                {e.target} · {e.action} · 旁白“{e.anchor.phrase}”
+              </li>
+            ))}
+          </ol>
+          <p>
+            {(scene.compiled_object_events || []).length
+              ? scene.compiled_object_events!.some((e) => e.timing_source !== 'measured_words')
+                ? '草稿估计时间，未验证实际配音'
+                : '已依据实际时间戳编排'
+              : '待配音对齐后编排'}
+          </p>
+        </div>
+      )}
       {loadError && <p role="alert">{loadError}</p>}
       {clip?.asset_id ? (
         <video
@@ -107,8 +182,8 @@ export function ProductionInspector({
         视觉表达
         <select
           aria-label="视觉表达"
-          disabled={disabled}
-          value={scene.motion?.pattern || ''}
+          disabled={disabled || Boolean(scene.visual_scene)}
+          value={scene.visual_scene ? 'objects' : scene.motion?.pattern || ''}
           onChange={(e) => {
             if (!e.target.value) return;
             update({
@@ -126,6 +201,7 @@ export function ProductionInspector({
             });
           }}
         >
+          {scene.visual_scene && <option value="objects">对象与交互场景</option>}
           <option value="">自由 TSX / 尚未指定</option>
           {Object.entries({
             overview: '卡片总览',

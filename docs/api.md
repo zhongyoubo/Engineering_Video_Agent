@@ -118,3 +118,17 @@ Example request (a configured native Worker is required; project_id must belong 
 
 `mode=storyboard` requests planning only; switch to automatic after configuring the
 selected narration/alignment/render services to produce final media.
+
+## Concrete object scenes
+
+Scene/DesignedScene optionally accept `visual_scene`; the same request cannot also choose
+`diagram` or `motion`. It contains objects with kind/position/size/state/ports, actual
+connections and narration-anchored events. `compiled_object_events` is recomputed by the
+pipeline after audio alignment. The shared catalog is in capabilities.visual_scene_toolkit
+and the exported VisualScene/ObjectEvent schemas. See examples/object-scenes/hdmi.json.
+
+Studio edits object labels, phrase anchors and quiet-Foley opt-in. Changing narration or
+visual data requires new timing/review. Event references, geometry, phrase presence,
+causal prerequisites and actual frame budget are validated. No asset URLs or executable
+content are accepted in this protocol. Object review adds object_fidelity/causal_motion.
+See docs/design/object-scenes.md for supported types and truthful limitations.

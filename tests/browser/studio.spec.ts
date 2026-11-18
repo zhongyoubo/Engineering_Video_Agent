@@ -310,3 +310,90 @@ test('edited goals hide an obsolete resolved strategy until replanning', async (
   await expect(summary).toContainText(fixture.editorial.strategy.rationale);
   await expect(summary).not.toContainText('待另存版本后重新策划');
 });
+
+test('a saved object scene renders devices and preserves editable actions across versions', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  const submitted = page.waitForResponse(
+    (r) => r.url().endsWith('/api/v1/videos') && r.request().method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const created = await (await submitted).json();
+  await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
+  const original = await (
+    await context.request.get('/api/v1/revisions/' + created.revision_id)
+  ).json();
+  original.storyboard.scenes[0].visual_scene = {
+    purpose: '用真实对象造型说明连接关系',
+    setting: 'studio',
+    objects: [
+      {
+        id: 'player',
+        kind: 'console',
+        label: '游戏机',
+        x: 100,
+        y: 180,
+        width: 210,
+        height: 300,
+        ports: [{ id: 'out', side: 'right' }],
+      },
+      {
+        id: 'screen',
+        kind: 'tv',
+        label: '电视',
+        x: 900,
+        y: 50,
+        width: 650,
+        height: 400,
+        ports: [{ id: 'in', side: 'left' }],
+      },
+    ],
+    connections: [
+      {
+        id: 'hdmi',
+        source: 'player',
+        source_port: 'out',
+        target: 'screen',
+        target_port: 'in',
+        label: 'HDMI',
+      },
+    ],
+    events: [],
+  };
+  original.storyboard.scenes[0].diagram = null;
+  original.storyboard.scenes[0].motion = null;
+  const response = await context.request.post('/api/v1/revisions/' + original.id + '/fork', {
+    data: {
+      expected_version: original.version,
+      storyboard: original.storyboard,
+      auto_render: false,
+    },
+  });
+  expect(response.status()).toBe(202);
+  const fork = await response.json();
+  await page.reload();
+  await page.getByRole('button', { name: '视频与版本' }).click();
+  await page.locator('.video-card').first().click();
+  await expect(page.locator('[data-object-kind="tv"]')).toBeVisible({ timeout: 30000 });
+  await expect(page.locator('[data-object-kind="console"]')).toBeVisible();
+  await page.getByRole('button', { name: '音画时间轴', exact: true }).click();
+  await expect(page.getByLabel('对象场景时间轴')).toContainText('游戏机');
+  await expect(page.getByLabel('视觉表达', { exact: true })).toBeDisabled();
+  await page.getByLabel('对象标注：screen').fill('客厅电视');
+  await page.getByLabel('启用交互提示音').check();
+  const saved = page.waitForRequest((r) => r.url().endsWith('/fork') && r.method() === 'POST');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  const payload = (await saved).postDataJSON();
+  expect(payload.storyboard.scenes[0].visual_scene.objects[1].label).toBe('客厅电视');
+  expect(payload.storyboard.scenes[0].visual_scene.sound_enabled).toBe(true);
+  await expect(page.getByLabel('对象标注：screen')).toHaveValue('客厅电视', { timeout: 30000 });
+  expect(fork.revision_id).toBeTruthy();
+});

@@ -113,6 +113,20 @@
           "minimum": 0,
           "title": "Purpose Fulfillment",
           "type": "integer"
+        },
+        "object_fidelity": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Object Fidelity",
+          "type": "integer"
+        },
+        "causal_motion": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Causal Motion",
+          "type": "integer"
         }
       },
       "required": [
@@ -128,7 +142,9 @@
         "cover_promise",
         "opening_closing",
         "viewer_presentation",
-        "purpose_fulfillment"
+        "purpose_fulfillment",
+        "object_fidelity",
+        "causal_motion"
       ],
       "title": "VisualReview",
       "type": "object"

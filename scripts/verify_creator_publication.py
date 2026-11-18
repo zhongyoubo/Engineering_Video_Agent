@@ -72,7 +72,7 @@ def main():
     # Independent, vector-scaled 4K thumbnail through the same registered composition.
     runner.run(['node', ROOT / 'scripts/verify_creator_thumbnail.mjs', compatibility], timeout=120, env=os.environ.copy())
     inspect_frame(compatibility / 'cover-4k.png', 3840, 2160)
-    compatibility_sources = [ROOT / 'packages/video/render.mjs', *sorted((ROOT / 'packages/video/src').glob('*')), ROOT / 'packages/engineering-template/src/presentation.tsx']
+    compatibility_sources = [ROOT / 'packages/video/render.mjs', *sorted((ROOT / 'packages/video/src').glob('*')), ROOT / 'packages/engineering-template/src/presentation.tsx', ROOT / 'packages/engineering-template/src/scene-objects.tsx']
     compatibility_hash = hashlib.sha256()
     for path in compatibility_sources:
         compatibility_hash.update(str(path.relative_to(ROOT)).encode())

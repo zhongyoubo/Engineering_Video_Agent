@@ -40,3 +40,13 @@ Review follow-up: moved typed/domain/publication validation into bounded native 
 rejected conflicting duplicate editorial plans, invalidated stale title/language/mode plans
 and exposed pending request changes without reusing the old strategy display. Verification
 details are recorded in goals/2026-11-18-content-taxonomy.md.
+
+## Concrete object/action scenes · 2026-11-18
+
+Implemented composable object silhouettes/ports, cables and distinct video/audio/control/data
+signals, persistent device state, measured anchors, quiet original optional Foley, native
+planning/review, Studio inspection/editing and shared protected rendering. Fixed nine-second
+checks exercise both render paths and eleven prototype shapes; see verification-object-scenes.json.
+HDMI revision reuses actual Edge narration/timing. Real native automatic asset generation,
+unseen-object quality, text-to-image/video adapters, broad camera/3D systems and human full
+watching/listening remain separate acceptance work. See goals/2026-11-18-object-scenes.md.

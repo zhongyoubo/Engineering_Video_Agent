@@ -22,6 +22,12 @@ def check_font(board, font):
     text += board.creator_brand + "".join(
         s.message + "".join(d.text for d in s.disclosures) for s in board.scenes
     )
+    text += "".join(
+        "".join(o.label + "".join(p.label for p in o.ports) for o in s.visual_scene.objects)
+        + "".join(c.label for c in s.visual_scene.connections)
+        for s in board.scenes
+        if s.visual_scene
+    )
     if "\ufffd" in text:
         raise EngineeringError("Text contains Unicode replacement characters")
     with TTFont(font) as face:

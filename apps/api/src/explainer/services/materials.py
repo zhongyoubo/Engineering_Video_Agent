@@ -13,7 +13,7 @@ class Material(BaseModel):
     id: str = Field(pattern=r"^[a-z0-9_.-]{1,80}$")
     version: str = Field(min_length=1, max_length=20)
     name: str = Field(min_length=1, max_length=100)
-    kind: Literal["design", "visual", "motion", "bookend", "font"]
+    kind: Literal["design", "visual", "motion", "bookend", "font", "audio"]
     purpose: str = Field(min_length=5, max_length=500)
     source: str = Field(max_length=240)
     symbol: str = Field(max_length=100)
@@ -27,7 +27,7 @@ def material_source(relative):
     path = PurePosixPath(relative)
     if path.is_absolute() or ".." in path.parts or "\\" in relative or str(path) != relative:
         raise ValueError("Material path must be canonical and relative")
-    approved = ("packages/engineering-template/src/", "assets/fonts/")
+    approved = ("packages/engineering-template/src/", "assets/fonts/", "assets/sfx/")
     resolved = (ROOT / relative).resolve()
     if not relative.startswith(approved) or not resolved.is_relative_to(ROOT) or not resolved.is_file():
         raise ValueError("Material source is outside the approved library roots")

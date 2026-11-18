@@ -1,0 +1,165 @@
+{
+  "$defs": {
+    "ObjectPort": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,40}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "left",
+            "right",
+            "top",
+            "bottom"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "position": {
+          "default": 0.5,
+          "maximum": 0.9,
+          "minimum": 0.1,
+          "title": "Position",
+          "type": "number"
+        },
+        "label": {
+          "default": "",
+          "maxLength": 20,
+          "title": "Label",
+          "type": "string"
+        },
+        "kind": {
+          "default": "hdmi",
+          "enum": [
+            "hdmi",
+            "network",
+            "wireless",
+            "generic"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "side"
+      ],
+      "title": "ObjectPort",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "tv",
+        "monitor",
+        "laptop",
+        "console",
+        "player",
+        "soundbar",
+        "speaker",
+        "remote",
+        "phone",
+        "server",
+        "router"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "label": {
+      "maxLength": 40,
+      "minLength": 1,
+      "title": "Label",
+      "type": "string"
+    },
+    "x": {
+      "maximum": 1650,
+      "minimum": 0,
+      "title": "X",
+      "type": "number"
+    },
+    "y": {
+      "maximum": 530,
+      "minimum": 0,
+      "title": "Y",
+      "type": "number"
+    },
+    "width": {
+      "maximum": 1200,
+      "minimum": 70,
+      "title": "Width",
+      "type": "number"
+    },
+    "height": {
+      "maximum": 600,
+      "minimum": 70,
+      "title": "Height",
+      "type": "number"
+    },
+    "color": {
+      "default": "#173e42",
+      "pattern": "^#[0-9a-fA-F]{6}$",
+      "title": "Color",
+      "type": "string"
+    },
+    "powered": {
+      "default": true,
+      "title": "Powered",
+      "type": "boolean"
+    },
+    "screen": {
+      "default": "landscape",
+      "enum": [
+        "landscape",
+        "game",
+        "stream",
+        "pixels",
+        "black"
+      ],
+      "title": "Screen",
+      "type": "string"
+    },
+    "playback": {
+      "default": "smooth",
+      "enum": [
+        "smooth",
+        "stepped"
+      ],
+      "title": "Playback",
+      "type": "string"
+    },
+    "hdr": {
+      "default": false,
+      "title": "Hdr",
+      "type": "boolean"
+    },
+    "ports": {
+      "items": {
+        "$ref": "#/$defs/ObjectPort"
+      },
+      "maxItems": 5,
+      "title": "Ports",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "kind",
+    "label",
+    "x",
+    "y",
+    "width",
+    "height"
+  ],
+  "title": "SceneObject",
+  "type": "object"
+}

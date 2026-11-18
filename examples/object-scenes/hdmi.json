@@ -1,0 +1,1751 @@
+{
+  "title": "HDMI，不只是传画面",
+  "scene_authorship": "fixed platform-authored object/action fixture; not native inference",
+  "scenes": [
+    {
+      "id": "opening",
+      "type": "title",
+      "title": "HDMI，不只是传画面",
+      "subtitle": "",
+      "narration": "一根 HDMI 线，除了传画面，还能把电视声音送回音响，甚至让设备一起开关。它是怎样做到的？",
+      "bullets": [],
+      "code": "",
+      "claim_ids": [
+        "c_prompt"
+      ],
+      "evidence_ids": [],
+      "verification": "concept",
+      "duration": 9.3,
+      "start_frame": 0,
+      "frames": 279,
+      "audio_id": null,
+      "media_id": null,
+      "media_kind": "image",
+      "cues": [],
+      "locked": false,
+      "diagram": null,
+      "motion": null,
+      "compiled_events": [],
+      "visual_scene": {
+        "schema_version": "1.0",
+        "purpose": "用设备、接口、动作和结果解释当前功能",
+        "setting": "living_room",
+        "objects": [
+          {
+            "id": "console",
+            "kind": "console",
+            "label": "游戏机 / 播放设备",
+            "x": 110.0,
+            "y": 220.0,
+            "width": 210.0,
+            "height": 295.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "out",
+                "side": "right",
+                "position": 0.4,
+                "label": "HDMI OUT",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "tv",
+            "kind": "tv",
+            "label": "电视",
+            "x": 930.0,
+            "y": 40.0,
+            "width": 680.0,
+            "height": 395.0,
+            "color": "#173e42",
+            "powered": false,
+            "screen": "game",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "video",
+                "side": "left",
+                "position": 0.42,
+                "label": "HDMI IN",
+                "kind": "hdmi"
+              },
+              {
+                "id": "arc",
+                "side": "left",
+                "position": 0.82,
+                "label": "eARC / ARC",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "bar",
+            "kind": "soundbar",
+            "label": "回音壁",
+            "x": 1070.0,
+            "y": 485.0,
+            "width": 500.0,
+            "height": 70.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "arc",
+                "side": "left",
+                "position": 0.5,
+                "label": "eARC / ARC",
+                "kind": "hdmi"
+              }
+            ]
+          }
+        ],
+        "connections": [
+          {
+            "id": "picture",
+            "source": "console",
+            "source_port": "out",
+            "target": "tv",
+            "target_port": "video",
+            "label": "图像 + 声音",
+            "kind": "cable",
+            "connected": true
+          },
+          {
+            "id": "return",
+            "source": "bar",
+            "source_port": "arc",
+            "target": "tv",
+            "target_port": "arc",
+            "label": "声音回传",
+            "kind": "cable",
+            "connected": true
+          }
+        ],
+        "events": [
+          {
+            "id": "wake",
+            "target": "tv",
+            "action": "power_on",
+            "anchor": {
+              "phrase": "一根 HDMI 线",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 900,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "play",
+            "target": "tv",
+            "action": "play",
+            "anchor": {
+              "phrase": "传画面",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 900,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "video",
+            "target": "picture",
+            "action": "signal",
+            "anchor": {
+              "phrase": "传画面",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 3000,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "audio",
+            "target": "return",
+            "action": "signal",
+            "anchor": {
+              "phrase": "送回音响",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 1800,
+            "channel": "audio",
+            "reverse": true,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "waves",
+            "target": "bar",
+            "action": "sound",
+            "anchor": {
+              "phrase": "送回音响",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 2000,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": "notify"
+          }
+        ],
+        "sound_enabled": true,
+        "sound_volume": 0.18
+      },
+      "compiled_object_events": [],
+      "role": "opening",
+      "message": "画面、声音与设备联动，一次讲清",
+      "viewer_question": "",
+      "disclosures": []
+    },
+    {
+      "id": "av",
+      "type": "architecture",
+      "title": "最基础的工作：一根线传音视频",
+      "subtitle": "",
+      "narration": "HDMI 是数字音视频接口。电脑、播放器或游戏机，把画面和声音通过同一根线，送到电视或显示器。接上以后，还要选对电视的输入源。",
+      "bullets": [],
+      "code": "",
+      "claim_ids": [
+        "c_prompt"
+      ],
+      "evidence_ids": [],
+      "verification": "concept",
+      "duration": 14.6,
+      "start_frame": 0,
+      "frames": 438,
+      "audio_id": null,
+      "media_id": null,
+      "media_kind": "image",
+      "cues": [],
+      "locked": false,
+      "diagram": null,
+      "motion": null,
+      "compiled_events": [],
+      "visual_scene": {
+        "schema_version": "1.0",
+        "purpose": "用设备、接口、动作和结果解释当前功能",
+        "setting": "living_room",
+        "objects": [
+          {
+            "id": "console",
+            "kind": "console",
+            "label": "游戏机 / 播放设备",
+            "x": 110.0,
+            "y": 220.0,
+            "width": 210.0,
+            "height": 295.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "out",
+                "side": "right",
+                "position": 0.4,
+                "label": "HDMI OUT",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "tv",
+            "kind": "tv",
+            "label": "电视",
+            "x": 930.0,
+            "y": 40.0,
+            "width": 680.0,
+            "height": 395.0,
+            "color": "#173e42",
+            "powered": false,
+            "screen": "game",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "video",
+                "side": "left",
+                "position": 0.42,
+                "label": "HDMI IN",
+                "kind": "hdmi"
+              },
+              {
+                "id": "arc",
+                "side": "left",
+                "position": 0.82,
+                "label": "eARC / ARC",
+                "kind": "hdmi"
+              }
+            ]
+          }
+        ],
+        "connections": [
+          {
+            "id": "hdmi",
+            "source": "console",
+            "source_port": "out",
+            "target": "tv",
+            "target_port": "video",
+            "label": "HDMI",
+            "kind": "cable",
+            "connected": false
+          }
+        ],
+        "events": [
+          {
+            "id": "connect",
+            "target": "hdmi",
+            "action": "connect",
+            "anchor": {
+              "phrase": "同一根线",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 700,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": "connect"
+          },
+          {
+            "id": "video",
+            "target": "hdmi",
+            "action": "signal",
+            "anchor": {
+              "phrase": "同一根线",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 800
+            },
+            "duration_ms": 2800,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [
+              "connect"
+            ],
+            "sound": null
+          },
+          {
+            "id": "audio",
+            "target": "hdmi",
+            "action": "signal",
+            "anchor": {
+              "phrase": "同一根线",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 1000
+            },
+            "duration_ms": 2800,
+            "channel": "audio",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [
+              "connect"
+            ],
+            "sound": null
+          },
+          {
+            "id": "wake",
+            "target": "tv",
+            "action": "power_on",
+            "anchor": {
+              "phrase": "电视或显示器",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 650,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "play",
+            "target": "tv",
+            "action": "play",
+            "anchor": {
+              "phrase": "电视或显示器",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 700
+            },
+            "duration_ms": 650,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [
+              "wake"
+            ],
+            "sound": null
+          },
+          {
+            "id": "hear",
+            "target": "tv",
+            "action": "sound",
+            "anchor": {
+              "phrase": "电视或显示器",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 900
+            },
+            "duration_ms": 1800,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          }
+        ],
+        "sound_enabled": true,
+        "sound_volume": 0.18
+      },
+      "compiled_object_events": [],
+      "role": "demonstration",
+      "message": "",
+      "viewer_question": "",
+      "disclosures": []
+    },
+    {
+      "id": "picture",
+      "type": "cards",
+      "title": "4K、120Hz、HDR，分别看什么？",
+      "subtitle": "",
+      "narration": "看画面，先分清三个词。四K说的是分辨率，一百二十赫兹说的是刷新频率，HDR关注亮度与色彩层次。具体能用哪些组合，要看设备、接口和线材共同支持。",
+      "bullets": [
+        "4K｜分辨率：画面有多少细节",
+        "120Hz｜刷新频率：每秒刷新多少次",
+        "HDR｜动态范围：亮部与暗部层次",
+        "实际输出｜设备、接口与线材共同决定"
+      ],
+      "code": "",
+      "claim_ids": [
+        "c_prompt"
+      ],
+      "evidence_ids": [],
+      "verification": "concept",
+      "duration": 16.066666666666666,
+      "start_frame": 0,
+      "frames": 482,
+      "audio_id": null,
+      "media_id": null,
+      "media_kind": "image",
+      "cues": [],
+      "locked": false,
+      "diagram": null,
+      "motion": null,
+      "compiled_events": [],
+      "visual_scene": {
+        "schema_version": "1.0",
+        "purpose": "用设备、接口、动作和结果解释当前功能",
+        "setting": "studio",
+        "objects": [
+          {
+            "id": "pixels",
+            "kind": "monitor",
+            "label": "分辨率：像素构成画面",
+            "x": 30.0,
+            "y": 130.0,
+            "width": 500.0,
+            "height": 340.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "pixels",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": []
+          },
+          {
+            "id": "refresh",
+            "kind": "tv",
+            "label": "刷新：运动节奏",
+            "x": 610.0,
+            "y": 130.0,
+            "width": 500.0,
+            "height": 340.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "game",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": []
+          },
+          {
+            "id": "hdr",
+            "kind": "tv",
+            "label": "HDR：亮部与暗部层次",
+            "x": 1190.0,
+            "y": 130.0,
+            "width": 500.0,
+            "height": 340.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": true,
+            "ports": []
+          }
+        ],
+        "connections": [],
+        "events": [
+          {
+            "id": "pixels",
+            "target": "pixels",
+            "action": "highlight",
+            "anchor": {
+              "phrase": "四K",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 2000,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "refresh",
+            "target": "refresh",
+            "action": "play",
+            "anchor": {
+              "phrase": "一百二十赫兹",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 1000,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "hdr",
+            "target": "hdr",
+            "action": "highlight",
+            "anchor": {
+              "phrase": "HDR",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 2600,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          }
+        ],
+        "sound_enabled": true,
+        "sound_volume": 0.18
+      },
+      "compiled_object_events": [],
+      "role": "example",
+      "message": "",
+      "viewer_question": "",
+      "disclosures": [
+        {
+          "text": "画质与节奏为说明示意，非 HDR / 120Hz 实测",
+          "start_seconds": 0.0,
+          "end_seconds": 5.0
+        }
+      ]
+    },
+    {
+      "id": "return",
+      "type": "architecture",
+      "title": "ARC / eARC：把电视声音送回音响",
+      "subtitle": "",
+      "narration": "看电视自带的视频应用，声音怎样交给回音壁？连接双方支持的 ARC 或 eARC 接口，并开启相应设置，就能使用音频回传。eARC支持更高带宽的音频格式，但实际格式仍取决于节目、电视和音响。",
+      "bullets": [],
+      "code": "",
+      "claim_ids": [
+        "c_prompt"
+      ],
+      "evidence_ids": [],
+      "verification": "concept",
+      "duration": 18.666666666666668,
+      "start_frame": 0,
+      "frames": 560,
+      "audio_id": null,
+      "media_id": null,
+      "media_kind": "image",
+      "cues": [],
+      "locked": false,
+      "diagram": null,
+      "motion": null,
+      "compiled_events": [],
+      "visual_scene": {
+        "schema_version": "1.0",
+        "purpose": "用设备、接口、动作和结果解释当前功能",
+        "setting": "living_room",
+        "objects": [
+          {
+            "id": "tv",
+            "kind": "tv",
+            "label": "电视内置应用",
+            "x": 920.0,
+            "y": 50.0,
+            "width": 690.0,
+            "height": 390.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "stream",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "arc",
+                "side": "left",
+                "position": 0.8,
+                "label": "ARC / eARC",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "bar",
+            "kind": "soundbar",
+            "label": "回音壁 / 功放",
+            "x": 150.0,
+            "y": 330.0,
+            "width": 550.0,
+            "height": 135.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "arc",
+                "side": "right",
+                "position": 0.5,
+                "label": "ARC / eARC",
+                "kind": "hdmi"
+              }
+            ]
+          }
+        ],
+        "connections": [
+          {
+            "id": "audio",
+            "source": "bar",
+            "source_port": "arc",
+            "target": "tv",
+            "target_port": "arc",
+            "label": "音频回传",
+            "kind": "cable",
+            "connected": false
+          }
+        ],
+        "events": [
+          {
+            "id": "app",
+            "target": "tv",
+            "action": "play",
+            "anchor": {
+              "phrase": "视频应用",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 900,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "plug",
+            "target": "audio",
+            "action": "connect",
+            "anchor": {
+              "phrase": "ARC 或 eARC",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 700,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": "connect"
+          },
+          {
+            "id": "flow",
+            "target": "audio",
+            "action": "signal",
+            "anchor": {
+              "phrase": "ARC 或 eARC",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 900
+            },
+            "duration_ms": 10000,
+            "channel": "audio",
+            "reverse": true,
+            "value": 1,
+            "depends_on": [
+              "plug"
+            ],
+            "sound": null
+          },
+          {
+            "id": "hear",
+            "target": "bar",
+            "action": "sound",
+            "anchor": {
+              "phrase": "音频回传",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 7000,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": "notify"
+          }
+        ],
+        "sound_enabled": true,
+        "sound_volume": 0.18
+      },
+      "compiled_object_events": [],
+      "role": "mechanism",
+      "message": "",
+      "viewer_question": "",
+      "disclosures": []
+    },
+    {
+      "id": "cec",
+      "type": "architecture",
+      "title": "CEC：用一个遥控器联动设备",
+      "subtitle": "",
+      "narration": "想用一个遥控器控制多台设备，要看 CEC。兼容设备开启对应设置后，可以联动开关机、切换输入或调节音响音量。注意，它传的是控制指令，不是音频回传。",
+      "bullets": [],
+      "code": "",
+      "claim_ids": [
+        "c_prompt"
+      ],
+      "evidence_ids": [],
+      "verification": "concept",
+      "duration": 15.7,
+      "start_frame": 0,
+      "frames": 471,
+      "audio_id": null,
+      "media_id": null,
+      "media_kind": "image",
+      "cues": [],
+      "locked": false,
+      "diagram": null,
+      "motion": null,
+      "compiled_events": [],
+      "visual_scene": {
+        "schema_version": "1.0",
+        "purpose": "用设备、接口、动作和结果解释当前功能",
+        "setting": "living_room",
+        "objects": [
+          {
+            "id": "console",
+            "kind": "console",
+            "label": "游戏机 / 播放设备",
+            "x": 110.0,
+            "y": 220.0,
+            "width": 210.0,
+            "height": 295.0,
+            "color": "#173e42",
+            "powered": false,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "out",
+                "side": "right",
+                "position": 0.4,
+                "label": "HDMI OUT",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "tv",
+            "kind": "tv",
+            "label": "电视",
+            "x": 930.0,
+            "y": 40.0,
+            "width": 680.0,
+            "height": 395.0,
+            "color": "#173e42",
+            "powered": false,
+            "screen": "game",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "video",
+                "side": "left",
+                "position": 0.42,
+                "label": "HDMI IN",
+                "kind": "hdmi"
+              },
+              {
+                "id": "arc",
+                "side": "left",
+                "position": 0.82,
+                "label": "eARC / ARC",
+                "kind": "hdmi"
+              },
+              {
+                "id": "control",
+                "side": "left",
+                "position": 0.15,
+                "label": "",
+                "kind": "wireless"
+              }
+            ]
+          },
+          {
+            "id": "bar",
+            "kind": "soundbar",
+            "label": "回音壁",
+            "x": 1070.0,
+            "y": 485.0,
+            "width": 500.0,
+            "height": 70.0,
+            "color": "#173e42",
+            "powered": false,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "arc",
+                "side": "left",
+                "position": 0.5,
+                "label": "eARC / ARC",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "remote",
+            "kind": "remote",
+            "label": "遥控器",
+            "x": 520.0,
+            "y": 330.0,
+            "width": 100.0,
+            "height": 220.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "control",
+                "side": "right",
+                "position": 0.2,
+                "label": "",
+                "kind": "wireless"
+              }
+            ]
+          }
+        ],
+        "connections": [
+          {
+            "id": "wire",
+            "source": "console",
+            "source_port": "out",
+            "target": "tv",
+            "target_port": "video",
+            "label": "控制指令",
+            "kind": "cable",
+            "connected": true
+          },
+          {
+            "id": "sound",
+            "source": "bar",
+            "source_port": "arc",
+            "target": "tv",
+            "target_port": "arc",
+            "label": "音量控制",
+            "kind": "cable",
+            "connected": true
+          },
+          {
+            "id": "remote_link",
+            "source": "remote",
+            "source_port": "control",
+            "target": "tv",
+            "target_port": "control",
+            "label": "遥控操作",
+            "kind": "wireless",
+            "connected": true
+          }
+        ],
+        "events": [
+          {
+            "id": "press",
+            "target": "remote",
+            "action": "press",
+            "anchor": {
+              "phrase": "开启对应设置",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 450,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": "click"
+          },
+          {
+            "id": "control",
+            "target": "remote_link",
+            "action": "signal",
+            "anchor": {
+              "phrase": "开启对应设置",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 500
+            },
+            "duration_ms": 2800,
+            "channel": "control",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [
+              "press"
+            ],
+            "sound": null
+          },
+          {
+            "id": "tv",
+            "target": "tv",
+            "action": "power_on",
+            "anchor": {
+              "phrase": "开关机",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 650,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "console",
+            "target": "console",
+            "action": "power_on",
+            "anchor": {
+              "phrase": "开关机",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 200
+            },
+            "duration_ms": 650,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "bar",
+            "target": "bar",
+            "action": "power_on",
+            "anchor": {
+              "phrase": "开关机",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 400
+            },
+            "duration_ms": 650,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "relay",
+            "target": "wire",
+            "action": "signal",
+            "anchor": {
+              "phrase": "开关机",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 2300,
+            "channel": "control",
+            "reverse": true,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "picture",
+            "target": "tv",
+            "action": "play",
+            "anchor": {
+              "phrase": "切换输入",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 650,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "volume",
+            "target": "bar",
+            "action": "volume",
+            "anchor": {
+              "phrase": "音响音量",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 600,
+            "channel": "video",
+            "reverse": false,
+            "value": 0.72,
+            "depends_on": [],
+            "sound": "click"
+          },
+          {
+            "id": "signal",
+            "target": "sound",
+            "action": "signal",
+            "anchor": {
+              "phrase": "音响音量",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 1800,
+            "channel": "control",
+            "reverse": true,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "waves",
+            "target": "bar",
+            "action": "sound",
+            "anchor": {
+              "phrase": "音响音量",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 1800,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          }
+        ],
+        "sound_enabled": true,
+        "sound_volume": 0.18
+      },
+      "compiled_object_events": [],
+      "role": "mechanism",
+      "message": "",
+      "viewer_question": "",
+      "disclosures": []
+    },
+    {
+      "id": "game",
+      "type": "architecture",
+      "title": "游戏体验：VRR 与 ALLM",
+      "subtitle": "",
+      "narration": "玩游戏，还可以关注两个功能。VRR让显示刷新节奏匹配游戏帧率，减少画面撕裂；ALLM让显示设备自动切换到低延迟模式。两者都需要相关设备支持，不能只看有没有 HDMI 插口。",
+      "bullets": [],
+      "code": "",
+      "claim_ids": [
+        "c_prompt"
+      ],
+      "evidence_ids": [],
+      "verification": "concept",
+      "duration": 17.033333333333335,
+      "start_frame": 0,
+      "frames": 511,
+      "audio_id": null,
+      "media_id": null,
+      "media_kind": "image",
+      "cues": [],
+      "locked": false,
+      "diagram": null,
+      "motion": null,
+      "compiled_events": [],
+      "visual_scene": {
+        "schema_version": "1.0",
+        "purpose": "用设备、接口、动作和结果解释当前功能",
+        "setting": "studio",
+        "objects": [
+          {
+            "id": "fixed",
+            "kind": "tv",
+            "label": "固定节奏：现象示意",
+            "x": 60.0,
+            "y": 115.0,
+            "width": 700.0,
+            "height": 400.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "game",
+            "playback": "stepped",
+            "hdr": false,
+            "ports": []
+          },
+          {
+            "id": "adaptive",
+            "kind": "tv",
+            "label": "VRR / ALLM：功能示意",
+            "x": 950.0,
+            "y": 115.0,
+            "width": 700.0,
+            "height": 400.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "game",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": []
+          }
+        ],
+        "connections": [],
+        "events": [
+          {
+            "id": "left",
+            "target": "fixed",
+            "action": "play",
+            "anchor": {
+              "phrase": "玩游戏",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 900,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "right",
+            "target": "adaptive",
+            "action": "play",
+            "anchor": {
+              "phrase": "玩游戏",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 900,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "vrr",
+            "target": "adaptive",
+            "action": "highlight",
+            "anchor": {
+              "phrase": "VRR",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 3200,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "allm",
+            "target": "adaptive",
+            "action": "highlight",
+            "anchor": {
+              "phrase": "ALLM",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 2800,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": "click"
+          }
+        ],
+        "sound_enabled": true,
+        "sound_volume": 0.18
+      },
+      "compiled_object_events": [],
+      "role": "example",
+      "message": "",
+      "viewer_question": "",
+      "disclosures": [
+        {
+          "text": "画质与节奏为说明示意，非 HDR / 120Hz 实测",
+          "start_seconds": 0.0,
+          "end_seconds": 5.0
+        }
+      ]
+    },
+    {
+      "id": "match",
+      "type": "flow",
+      "title": "想用哪项功能，就核对整条链路",
+      "subtitle": "",
+      "narration": "连接时，别只看版本号。先确认播放设备的输出能力，再看电视具体哪个接口支持目标功能，核对线材认证和带宽，最后开启对应设置。接音响认准回传口；要四K高刷，就检查整条链路。",
+      "bullets": [],
+      "code": "",
+      "claim_ids": [
+        "c_prompt"
+      ],
+      "evidence_ids": [],
+      "verification": "concept",
+      "duration": 18.3,
+      "start_frame": 0,
+      "frames": 549,
+      "audio_id": null,
+      "media_id": null,
+      "media_kind": "image",
+      "cues": [],
+      "locked": false,
+      "diagram": null,
+      "motion": null,
+      "compiled_events": [],
+      "visual_scene": {
+        "schema_version": "1.0",
+        "purpose": "用设备、接口、动作和结果解释当前功能",
+        "setting": "living_room",
+        "objects": [
+          {
+            "id": "console",
+            "kind": "console",
+            "label": "游戏机 / 播放设备",
+            "x": 110.0,
+            "y": 220.0,
+            "width": 210.0,
+            "height": 295.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "out",
+                "side": "right",
+                "position": 0.4,
+                "label": "HDMI OUT",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "tv",
+            "kind": "tv",
+            "label": "电视",
+            "x": 930.0,
+            "y": 40.0,
+            "width": 680.0,
+            "height": 395.0,
+            "color": "#173e42",
+            "powered": false,
+            "screen": "game",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "video",
+                "side": "left",
+                "position": 0.42,
+                "label": "HDMI IN",
+                "kind": "hdmi"
+              },
+              {
+                "id": "arc",
+                "side": "left",
+                "position": 0.82,
+                "label": "eARC / ARC",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "bar",
+            "kind": "soundbar",
+            "label": "回音壁",
+            "x": 1070.0,
+            "y": 485.0,
+            "width": 500.0,
+            "height": 70.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "arc",
+                "side": "left",
+                "position": 0.5,
+                "label": "eARC / ARC",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "remote",
+            "kind": "remote",
+            "label": "遥控器",
+            "x": 520.0,
+            "y": 330.0,
+            "width": 100.0,
+            "height": 220.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "control",
+                "side": "right",
+                "position": 0.2,
+                "label": "",
+                "kind": "wireless"
+              }
+            ]
+          }
+        ],
+        "connections": [
+          {
+            "id": "wire",
+            "source": "console",
+            "source_port": "out",
+            "target": "tv",
+            "target_port": "video",
+            "label": "核对线材",
+            "kind": "cable",
+            "connected": false
+          },
+          {
+            "id": "return",
+            "source": "bar",
+            "source_port": "arc",
+            "target": "tv",
+            "target_port": "arc",
+            "label": "回传接口",
+            "kind": "cable",
+            "connected": true
+          }
+        ],
+        "events": [
+          {
+            "id": "source",
+            "target": "console",
+            "action": "highlight",
+            "anchor": {
+              "phrase": "播放设备",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 2300,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "port",
+            "target": "tv",
+            "action": "highlight",
+            "anchor": {
+              "phrase": "电视具体哪个接口",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 2800,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "cable",
+            "target": "wire",
+            "action": "connect",
+            "anchor": {
+              "phrase": "线材认证",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 700,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": "connect"
+          },
+          {
+            "id": "press",
+            "target": "remote",
+            "action": "press",
+            "anchor": {
+              "phrase": "开启对应设置",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 450,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": "click"
+          },
+          {
+            "id": "wake",
+            "target": "tv",
+            "action": "power_on",
+            "anchor": {
+              "phrase": "开启对应设置",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 500
+            },
+            "duration_ms": 650,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [
+              "press"
+            ],
+            "sound": null
+          },
+          {
+            "id": "flow",
+            "target": "wire",
+            "action": "signal",
+            "anchor": {
+              "phrase": "开启对应设置",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 750
+            },
+            "duration_ms": 3000,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "screen",
+            "target": "tv",
+            "action": "play",
+            "anchor": {
+              "phrase": "开启对应设置",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 1200
+            },
+            "duration_ms": 650,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [
+              "wake"
+            ],
+            "sound": null
+          }
+        ],
+        "sound_enabled": true,
+        "sound_volume": 0.18
+      },
+      "compiled_object_events": [],
+      "role": "recommendation",
+      "message": "",
+      "viewer_question": "",
+      "disclosures": []
+    },
+    {
+      "id": "closing",
+      "type": "summary",
+      "title": "音视频 · 回传 · 联动",
+      "subtitle": "",
+      "narration": "记住这三件事：传音视频，回传声音，联动设备。先明确你要用什么功能，再核对整条连接链路。",
+      "bullets": [],
+      "code": "",
+      "claim_ids": [
+        "c_prompt"
+      ],
+      "evidence_ids": [],
+      "verification": "concept",
+      "duration": 11.433333333333334,
+      "start_frame": 0,
+      "frames": 343,
+      "audio_id": null,
+      "media_id": null,
+      "media_kind": "image",
+      "cues": [],
+      "locked": false,
+      "diagram": null,
+      "motion": null,
+      "compiled_events": [],
+      "visual_scene": {
+        "schema_version": "1.0",
+        "purpose": "用设备、接口、动作和结果解释当前功能",
+        "setting": "living_room",
+        "objects": [
+          {
+            "id": "console",
+            "kind": "console",
+            "label": "游戏机 / 播放设备",
+            "x": 110.0,
+            "y": 220.0,
+            "width": 210.0,
+            "height": 295.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "out",
+                "side": "right",
+                "position": 0.4,
+                "label": "HDMI OUT",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "tv",
+            "kind": "tv",
+            "label": "电视",
+            "x": 930.0,
+            "y": 40.0,
+            "width": 680.0,
+            "height": 395.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "game",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "video",
+                "side": "left",
+                "position": 0.42,
+                "label": "HDMI IN",
+                "kind": "hdmi"
+              },
+              {
+                "id": "arc",
+                "side": "left",
+                "position": 0.82,
+                "label": "eARC / ARC",
+                "kind": "hdmi"
+              }
+            ]
+          },
+          {
+            "id": "bar",
+            "kind": "soundbar",
+            "label": "回音壁",
+            "x": 1070.0,
+            "y": 485.0,
+            "width": 500.0,
+            "height": 70.0,
+            "color": "#173e42",
+            "powered": true,
+            "screen": "landscape",
+            "playback": "smooth",
+            "hdr": false,
+            "ports": [
+              {
+                "id": "arc",
+                "side": "left",
+                "position": 0.5,
+                "label": "eARC / ARC",
+                "kind": "hdmi"
+              }
+            ]
+          }
+        ],
+        "connections": [
+          {
+            "id": "hdmi",
+            "source": "console",
+            "source_port": "out",
+            "target": "tv",
+            "target_port": "video",
+            "label": "图像 + 声音",
+            "kind": "cable",
+            "connected": true
+          },
+          {
+            "id": "return",
+            "source": "bar",
+            "source_port": "arc",
+            "target": "tv",
+            "target_port": "arc",
+            "label": "音频回传",
+            "kind": "cable",
+            "connected": true
+          }
+        ],
+        "events": [
+          {
+            "id": "video",
+            "target": "hdmi",
+            "action": "signal",
+            "anchor": {
+              "phrase": "传音视频",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 2500,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "play",
+            "target": "tv",
+            "action": "play",
+            "anchor": {
+              "phrase": "记住",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 900,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "audio",
+            "target": "return",
+            "action": "signal",
+            "anchor": {
+              "phrase": "回传声音",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 2500,
+            "channel": "audio",
+            "reverse": true,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          },
+          {
+            "id": "waves",
+            "target": "bar",
+            "action": "sound",
+            "anchor": {
+              "phrase": "回传声音",
+              "occurrence": 1,
+              "edge": "start",
+              "offset_ms": 0
+            },
+            "duration_ms": 3000,
+            "channel": "video",
+            "reverse": false,
+            "value": 1,
+            "depends_on": [],
+            "sound": null
+          }
+        ],
+        "sound_enabled": true,
+        "sound_volume": 0.18
+      },
+      "compiled_object_events": [],
+      "role": "closing",
+      "message": "先明确需求，再核对整条连接链路",
+      "viewer_question": "",
+      "disclosures": []
+    }
+  ]
+}

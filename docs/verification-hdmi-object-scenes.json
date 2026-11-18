@@ -1,0 +1,33 @@
+{
+  "fixture": "authored HDMI object/action data; unchanged actual Edge narration; trusted compatibility render",
+  "native_agent_inference": false,
+  "hardware_test": false,
+  "illustrative_hdr_120hz": true,
+  "render_paths": {
+    "HDMI_Preview_1080p.mp4": {
+      "decode": "passed",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30.0,
+      "frames": 3633,
+      "duration": 121.109
+    },
+    "HDMI_Feature_Intro_4K.mp4": {
+      "decode": "passed",
+      "width": 3840,
+      "height": 2160,
+      "fps": 30.0,
+      "frames": 3633,
+      "duration": 121.109
+    }
+  },
+  "encoded_review_sample_count": 14,
+  "review": "Observed encoded contact sheet, actual connection and CEC before/after; corrected wireless channel and plug direction before final render",
+  "human_full_playback_listening": false,
+  "renderer_sha256": "b4f0922648cba022de9d204b147eb3bd8f3c6a5de3b5bce649526a6646dffebf",
+  "sha256": {
+    "HDMI_Preview_1080p.mp4": "1ea28d34dcbdd1ac6b146b916abd1280e96c9e91bfaddf5c401aca54b9ac13d7",
+    "HDMI_Feature_Intro_4K.mp4": "b36ff788fb6ddc51dfe4acf5a9706b20c5a0c073f99020acffffbf46e1ccc8d2",
+    "HDMI_Cover.png": "a96d4e299b440c8fe64ab37fe68c90cccdb2b0675163969eaa13281ae50fecb7"
+  }
+}
