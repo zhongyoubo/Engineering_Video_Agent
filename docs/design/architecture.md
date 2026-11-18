@@ -60,3 +60,17 @@ stateDiagram-v2
 每次动作结果都记录在工作日志，并将源文件状态与关键帧资产保存到对象存储；更新输出角色时在数据库事务中检查 job fence 和 lease_owner。新 Worker 可以重建本地目录。源码 hash 不一致时旧检查不生效。
 
 平台阶段检查点与原生内部会话不同；本版每次决策通过完整工程上下文重建，不迁移厂商内部记忆。崩溃发生在供应商请求完成、平台状态提交之前，可能重复调用并产生额外费用。取消通过 guard 与容器删除生效，不承诺瞬时撤销已发生的供应商费用。
+
+## Semantic production extension
+
+The data-only SemanticScene sits beside the existing physical VisualScene. Scene validation
+checks display bindings and narration anchors; atomic compilation resolves state/content
+updates against measured word timing. Native planning supplies a structured VisualIntent.
+The protected SceneRenderer consumes these typed scenes in both render paths. It shares
+SemanticPanel between standalone information and device-local screen content.
+
+The engineering controller mediates request_assets/inspect_asset. A workspace-scoped
+registry stores controlled SVG/companion-PNG receipts in existing tenant-fenced checkpoints;
+asset changes invalidate build, preview and review. RenderPlan records source/asset/scene
+dependencies without claiming a rendered-scene cache. Causal preview windows and exact
+expectation review remain bound to the full workspace hash. See semantic-production.md.

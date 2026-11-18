@@ -17,6 +17,9 @@ from .adapters.base import MANIFESTS
 from .adapters.native_agent import capability as native_capability
 from .content_taxonomy import taxonomy_options
 from .visual_scene import visual_scene_guidance
+from .semantic_scene import semantic_guidance
+from .api_materials import register_material_routes
+from .services.assets.image_service import configured as image_service_configured
 from .config import ROOT, get_settings
 from .db import Database, encode, uid
 from .domain import CreateProject, CreateVideo, ForkRevision, CreateEngineeringVideo
@@ -197,6 +200,12 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
         "material_library": material_library(),
         "content_taxonomy": taxonomy_options(),
         "visual_scene_toolkit": visual_scene_guidance(),
+        "semantic_scene_toolkit": semantic_guidance(),
+        "asset_factory": {
+            "component_svg": True,
+            "project_image": True,
+            "image_service": image_service_configured(settings),
+        },
         "model": bool(settings.model_url and settings.model_name and settings.allow_external_model),
         "model_name": settings.model_name if settings.allow_external_model else "local-template",
         "voice": {
@@ -582,6 +591,7 @@ async def fork_revision(
                 scene.audio_id, scene.cues = None, []
                 scene.compiled_events = []
                 scene.compiled_object_events = []
+                scene.compiled_semantic_events = []
     brief.mode = "automatic" if body.auto_render else "storyboard"
     return await schedule(
         settings,
@@ -758,6 +768,8 @@ def asset(asset_id: str, download: bool = False, tenant_id=Depends(tenant), deps
         content_disposition_type="attachment" if download else "inline",
     )
 
+
+register_material_routes(app, dependencies)
 
 static = ROOT / "apps/studio/dist"
 if static.exists():

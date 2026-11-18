@@ -1,0 +1,196 @@
+{
+  "scenes": [
+    {
+      "id": "linked",
+      "type": "cards",
+      "title": "一个参数，驱动相关变化",
+      "narration": "强度提高，分支和指标一起变化。",
+      "frames": 150,
+      "duration": 5,
+      "semantic_scene": {
+        "viewer_question": "调整强度后，哪些对象应该一起改变？",
+        "parameters": [
+          {
+            "id": "strength",
+            "minimum": 0,
+            "maximum": 1,
+            "initial": 0,
+            "unit": "强度"
+          }
+        ],
+        "entities": [
+          {
+            "id": "dial",
+            "component": "Dial",
+            "title": "推理强度",
+            "x": 0,
+            "y": 90,
+            "width": 520,
+            "height": 430,
+            "parameter_id": "strength"
+          },
+          {
+            "id": "tree",
+            "component": "BranchTree",
+            "title": "展开的分支",
+            "x": 560,
+            "y": 90,
+            "width": 650,
+            "height": 430,
+            "parameter_id": "strength"
+          },
+          {
+            "id": "metric",
+            "component": "MetricBar",
+            "title": "相对消耗",
+            "x": 1260,
+            "y": 90,
+            "width": 450,
+            "height": 430,
+            "parameter_id": "strength"
+          }
+        ],
+        "events": [
+          {
+            "id": "raise",
+            "action": "parameter",
+            "target": "strength",
+            "value": 1,
+            "anchor": {
+              "phrase": "强度提高"
+            },
+            "duration_ms": 1400
+          }
+        ],
+        "expectations": [
+          {
+            "id": "linked_result",
+            "event_id": "raise",
+            "visible_result": "拨盘转动时分支增多，指标同步增大"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow",
+      "type": "cards",
+      "title": "流入、处理与积压共享同一状态",
+      "narration": "请求进入，等待增加；处理加快，积压下降。",
+      "frames": 180,
+      "duration": 6,
+      "semantic_scene": {
+        "viewer_question": "处理速度改变后，积压怎样变化？",
+        "parameters": [
+          {
+            "id": "stock",
+            "minimum": 0,
+            "maximum": 100,
+            "initial": 10,
+            "unit": ""
+          },
+          {
+            "id": "arrivals",
+            "minimum": 0,
+            "maximum": 30,
+            "initial": 12,
+            "unit": "每秒"
+          },
+          {
+            "id": "service",
+            "minimum": 0,
+            "maximum": 30,
+            "initial": 4,
+            "unit": "每秒"
+          }
+        ],
+        "entities": [
+          {
+            "id": "reservoir",
+            "component": "FlowReservoir",
+            "title": "存量随流入流出改变",
+            "x": 100,
+            "y": 90,
+            "width": 660,
+            "height": 430,
+            "parameter_id": "stock",
+            "inflow_id": "arrivals",
+            "outflow_id": "service",
+            "capacity": 100
+          },
+          {
+            "id": "queue",
+            "component": "QueueFlow",
+            "title": "等待任务与已处理任务",
+            "x": 870,
+            "y": 90,
+            "width": 760,
+            "height": 430,
+            "parameter_id": "stock",
+            "inflow_id": "arrivals",
+            "outflow_id": "service",
+            "capacity": 100
+          }
+        ],
+        "events": [
+          {
+            "id": "speedup",
+            "action": "parameter",
+            "target": "service",
+            "value": 24,
+            "anchor": {
+              "phrase": "处理加快"
+            },
+            "duration_ms": 500
+          }
+        ],
+        "expectations": [
+          {
+            "id": "drain",
+            "event_id": "speedup",
+            "visible_result": "处理加快后，存量和等待数下降，处理数增加"
+          }
+        ]
+      }
+    },
+    {
+      "id": "code",
+      "type": "code",
+      "title": "关键代码不再被截掉",
+      "narration": "先扫描代码，再定位最后一行的问题。",
+      "code": "const item_01 = normalize(input[1]);\nconst item_02 = normalize(input[2]);\nconst item_03 = normalize(input[3]);\nconst item_04 = normalize(input[4]);\nconst item_05 = normalize(input[5]);\nconst item_06 = normalize(input[6]);\nconst item_07 = normalize(input[7]);\nconst item_08 = normalize(input[8]);\nconst item_09 = normalize(input[9]);\nconst item_10 = normalize(input[10]);\nconst item_11 = normalize(input[11]);\nconst item_12 = normalize(input[12]);\nconst item_13 = normalize(input[13]);\nconst item_14 = normalize(input[14]);\nconst item_15 = normalize(input[15]);\nconst item_16 = normalize(input[16]);\nconst item_17 = normalize(input[17]);\nconst item_18 = normalize(input[18]);\nconst item_19 = normalize(input[19]);\nconst item_20 = normalize(input[20]);\nconst item_21 = normalize(input[21]);\nconst item_22 = normalize(input[22]);\nconst item_23 = normalize(input[23]);\nreturn important_fix_must_be_seen();",
+      "frames": 150,
+      "duration": 5,
+      "motion": {
+        "purpose": "保留源行号并定位第二页最后一行的问题",
+        "pattern": "code_scan",
+        "elements": [
+          {
+            "id": "scan",
+            "label": "浏览源码"
+          },
+          {
+            "id": "issue",
+            "label": "第24行：检查结果返回"
+          }
+        ],
+        "code_focus": [
+          {
+            "element_id": "issue",
+            "line": 24
+          }
+        ],
+        "events": [
+          {
+            "id": "locate",
+            "target": "issue",
+            "action": "highlight",
+            "anchor": {
+              "phrase": "最后一行"
+            },
+            "duration_ms": 400
+          }
+        ]
+      }
+    }
+  ]
+}

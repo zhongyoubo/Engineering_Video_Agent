@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from .specs import RenderProfile, VoiceSpec, SceneSpec, CompiledEvent
+from .semantic_scene import SemanticScene, CompiledSemanticEvent
 from .visual_scene import VisualScene, CompiledObjectEvent
 from .editorial import (
     EditorialBrief,
@@ -173,6 +174,8 @@ class Scene(StrictModel):
     compiled_events: list[CompiledEvent] = Field(default_factory=list, max_length=24)
     visual_scene: VisualScene | None = None
     compiled_object_events: list[CompiledObjectEvent] = Field(default_factory=list, max_length=32)
+    semantic_scene: SemanticScene | None = None
+    compiled_semantic_events: list[CompiledSemanticEvent] = Field(default_factory=list, max_length=16)
     role: SceneRole = "content"
     message: str = Field(default="", max_length=500)
     viewer_question: str = Field(default="", max_length=500)
@@ -180,6 +183,34 @@ class Scene(StrictModel):
 
     @model_validator(mode="after")
     def validate_object_scene(self):
+        if self.motion:
+            count = len(self.code.split("\n"))
+            if any((f.end_line or f.line) > count for f in self.motion.code_focus):
+                raise ValueError("Code focus references a missing source line")
+        if self.semantic_scene:
+            import re
+
+            if self.motion or self.diagram:
+                raise ValueError("Semantic scene cannot use legacy diagram/motion simultaneously")
+            objects = {o.id: o for o in self.visual_scene.objects} if self.visual_scene else {}
+            for e in self.semantic_scene.entities:
+                if e.bind_to and (
+                    e.bind_to not in objects
+                    or objects[e.bind_to].kind not in {"tv", "monitor", "laptop", "phone"}
+                ):
+                    raise ValueError("Semantic screen binding requires a display device")
+            for event in self.semantic_scene.events:
+
+                def clean(t):
+                    return re.sub(r"[\W_]+", "", t).lower()
+
+                phrase, text, position = clean(event.anchor.phrase), clean(self.narration), -1
+                if not phrase:
+                    raise ValueError("Semantic anchors must contain spoken characters")
+                for _ in range(event.anchor.occurrence):
+                    position = text.find(phrase, position + 1)
+                    if position < 0:
+                        raise ValueError("Semantic anchor phrase is missing from narration")
         if self.visual_scene:
             import re
 

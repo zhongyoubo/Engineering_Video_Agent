@@ -36,6 +36,8 @@ jobs:
       - run: npm run test:ui
       - name: Fixed authored visual fixture (no model inference)
         run: .venv/bin/python scripts/verify_visual_v4.py
+      - name: Fixed parameter/code/theme fixture (no model inference)
+        run: .venv/bin/python scripts/verify_reference_mechanisms.py
       - name: MCP SDK and authenticated API smoke
         run: |
           python -m venv .mcp-venv
@@ -51,5 +53,8 @@ jobs:
             .verify-visual-v4/*/result.json
             .verify-visual-v4/final/video.mp4
             .verify-visual-v4/preview/motion-*.mp4
+            .verify-reference-mechanisms/verification.json
+            .verify-reference-mechanisms/final/video.mp4
+            .verify-reference-mechanisms/preview/motion-*.mp4
             .verify-mcp-v4/verification.json
             test-results/

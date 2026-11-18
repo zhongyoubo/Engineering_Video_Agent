@@ -125,3 +125,62 @@ Studio 可查看对象与动作、修改标注/旁白锚点及提示音开关；
 详见 [对象场景设计](docs/design/object-scenes.md)、[固定样例](examples/object-scenes/) 和
 [实际验证](docs/verification-object-scenes.json)。固定场景检查覆盖两条路径的屏幕状态变化、
 十一类对象与真实提示音混入；示意动画不代表 HDMI 硬件、120Hz/HDR 或音质实测。
+
+## AI 语义场景与受控素材制作
+
+新增目标输入、对话、Token、上下文、文档片段、检索结果、模型边界、工具调用、任务状态、
+证据、操作确认和代码界面等十二类语义组件。`Scene.semantic_scene` 描述对象、真实旁白锚点、
+状态变化与可见结果；可以单独组成镜头，也可以用 `bind_to` 绑定到电视、显示器、电脑或
+手机屏幕。状态标题、按钮和标注读取同一份状态。旧对象、图解和分镜继续兼容。
+
+原生工程动作新增 `request_assets` / `inspect_asset`：实际制作带中文字体的原创文档 SVG、
+同输入 PNG 预览和来源/哈希记录，支持任务检查点恢复、去重、取消及版本失效。原生 Agent
+仍需编写真实工程、隔离构建并看图审核。当前素材制作器为受控代码绘制，尚未接入照片、
+视频或 3D 生成服务；不会把本对话可用的生图工具冒充项目已接入的能力。
+
+预览按关键语义事件采样动作前、中、后，并覆盖镜头后半段的确认与结果。工作台可编辑
+标题/旁白锚点，查看绑定和每段连续预览。RenderPlan 统一登记素材与依赖；目前只有依赖
+指纹，没有实现镜头视频缓存或通用 FFmpeg 合成后端。
+
+详见 [语义场景设计](docs/design/semantic-production.md)、[固定样例](examples/semantic-scenes/)
+和 `scripts/verify_semantic_scenes.py`。固定样例验证与真实原生模型自动创作验收分别记录。
+
+复查修复了隔离渲染镜像遗漏运行依赖、恢复后素材缓存不一致、重复请求清除已有审核等问题。
+素材恢复先校验整批数据；画面发生变化才失效审核。镜头依赖同时覆盖主题/字体等全局设置，
+连续预览会核对实际帧数、帧率与声明范围。拉取本次更新后需重建工程渲染镜像；当前环境的
+本地渲染与镜像文件检查不等于 Docker 部署验收。
+
+## 项目内插画与独立元素制作
+
+现已把图片素材接入工程：原生 Agent 可通过受控 `request_assets` 调用管理员配置的图片网关，
+或复用本项目上传的 PNG。创建页支持参考图片/透明元素上传；策划与编排阶段会收到实际素材
+预览。素材有来源、哈希、尺寸、透明度和恢复记录，进入同一 Remotion 构建、预览、审查与导出。
+
+`semantic_scene.background_asset_key` 支持整幅场景插画；`AssetImage.image_style=artwork`
+支持无边框独立元素；`transform` 根据真实旁白时间戳实现移动、显隐、缩放和旋转。底色与标题
+颜色可按镜头设置。仍需原生 Agent 根据表达目的设计具体对象、场景与结果，不按主题关键词套模板。
+
+图片服务使用文档规定的 `eva-image-1` 网关协议，需要实际部署并配置 `.env.example` 中的
+`EXPLAINER_IMAGE_SERVICE_*`。它不是 ChatGPT 对话生图工具的直接接入，也不是内置图片模型；
+未配置时明确失败。已有素材走项目上传入口，报告记录为导入，不能算本次图片生成。
+详细协议、限制和复现见 [工程素材制作设计](docs/design/project-owned-visual-production.md)。
+
+固定晚餐案例检查：`scripts/verify_production_assets.py --media-directory <固定素材目录>`；
+真实原生 Agent＋图片模型＋隔离渲染验收：
+`scripts/verify_image_production_deployment.py --provider codex --voice edge`（需要已部署服务并消耗额度）。
+实际运行结果与未验收项见 `goals/2026-11-18-production-assets.md`。
+
+## 参考片复核后的工程修正
+
+已补上跨镜头素材 ID 一致性检查、完整代码分页与源行定位、按实测动效结束时间预留结果帧，
+并统一语义组件、场景、字幕和缩略图的主题入口。生成素材还需要绑定镜头并通过可见性审查，
+不能只凭素材回执认定成片已使用它。
+
+新增五种可组合图形：拨盘、分支树、指标条、存量容器、队列。多个图形可以共用一个参数；
+容器/队列按流入与处理速率逐帧计算存量、已处理量和溢出。Studio 可修改初始参数并保存版本。
+原生 Agent 仍按内容语义选择与编排，保留自由 TSX 与隔离运行。
+
+运行 `npm run test:visual` 检查渲染函数；运行 `scripts/verify_reference_mechanisms.py`
+可生成 16 秒无配音固定验证片。它是原创工程图解检查，不是一次真实原生模型自动制作。
+实现、约束与剩余事项见 [参考效果工程修正](docs/design/reference-production-corrections.md)。
+本轮交付采用面向 `main` 的整合 PR；未合并之前，默认分支不会自动包含这些增强。

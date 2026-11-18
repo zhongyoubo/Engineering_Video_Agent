@@ -1,0 +1,36 @@
+{
+  "source_hash": "2bab30744c292587e59f81946f4395debb7b84b73d0444b2f7b0e79d2fc05c5a",
+  "media": {
+    "decode": "passed",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0,
+    "frames": 480,
+    "duration": 16.0
+  },
+  "video_sha256": "fc30cf8d3b353c5e5c796250584ee1cfbc5d4fa0405fc8a5b911eb8b46345568",
+  "theme_pixel_difference": 34.26490596064815,
+  "features": [
+    "shared parameter dial/tree/metric",
+    "integrated reservoir and queue rates",
+    "24-line paged code focus",
+    "shared theme"
+  ],
+  "native_inference": false,
+  "image_generation": false,
+  "audio": "none",
+  "timing": "estimated_draft",
+  "human_playback_and_listening": false,
+  "isolation": "fixed reviewed host verifier only",
+  "checks": {
+    "backend_tests": 256,
+    "browser_tests": 13,
+    "visual_contracts": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "format": "passed"
+  },
+  "review_baseline": "c9664c7153ce582352cef2ee036b13f85273bc4f",
+  "main_before_integration": "a94bee8bafcc3e7b74baf4cec8f2e0f718b6422f",
+  "deployment": "native/image/voice provider integration and Docker/gVisor not exercised; infrastructure absent"
+}

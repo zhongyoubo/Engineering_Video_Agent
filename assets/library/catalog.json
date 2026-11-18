@@ -3,11 +3,11 @@
   "items": [
     {
       "id": "design.editorial_warm",
-      "version": "1.1",
+      "version": "1.2",
       "name": "暖白讲解风格",
       "kind": "design",
       "purpose": "统一暖白底、深青主体、红色强调与版式留白。",
-      "source": "packages/engineering-template/src/motion-kit.tsx",
+      "source": "packages/engineering-template/src/theme.tsx",
       "symbol": "designPacks.editorial_warm",
       "provenance": "项目内原创 React/SVG 代码；参考视频用于分析，没有提取其画面或音轨。",
       "rights": "沿用项目源码使用条款；不包含参考视频素材的使用授权。",
@@ -16,11 +16,11 @@
     },
     {
       "id": "design.workspace_tech",
-      "version": "1.1",
+      "version": "1.2",
       "name": "科技工作台风格",
       "kind": "design",
       "purpose": "统一蓝白背景、青色强调与软件工程界面表达。",
-      "source": "packages/engineering-template/src/motion-kit.tsx",
+      "source": "packages/engineering-template/src/theme.tsx",
       "symbol": "designPacks.workspace_tech",
       "provenance": "项目内原创 React/SVG 代码；参考视频用于分析，没有提取其画面或音轨。",
       "rights": "沿用项目源码使用条款；不包含参考视频素材的使用授权。",
@@ -42,12 +42,12 @@
     },
     {
       "id": "visual.code_scan",
-      "version": "1.1",
+      "version": "1.2",
       "name": "代码扫描",
       "kind": "visual",
-      "purpose": "沿真实源码逐行扫描，关联侧边问题或解释清单。",
-      "source": "packages/engineering-template/src/motion-kit.tsx",
-      "symbol": "MotionScene",
+      "purpose": "按原始行号换行、分页、扫描并定位代码问题，不静默截断正文。",
+      "source": "packages/engineering-template/src/code-view.tsx",
+      "symbol": "CodeViewport",
       "provenance": "项目内原创 React/SVG 代码；参考视频用于分析，没有提取其画面或音轨。",
       "rights": "沿用项目源码使用条款；不包含参考视频素材的使用授权。",
       "readiness": "implemented",
@@ -390,6 +390,19 @@
       "rights": "Apache-2.0。",
       "readiness": "implemented",
       "verification": "固定9秒场景已在两条路径实际渲染，验证11类对象、屏幕变化与三种提示音混入；见 docs/verification-object-scenes.json。不是原生推理、硬件或完整人工视听认证。"
+    },
+    {
+      "id": "visual.parameter_mechanisms",
+      "version": "1.0",
+      "name": "共享参数与流量机制",
+      "kind": "visual",
+      "purpose": "组合拨盘、分支、指标、存量与队列，使用同一参数和流入流出状态解释变化。",
+      "source": "packages/engineering-template/src/mechanism-kit.tsx",
+      "symbol": "MechanismPanel",
+      "provenance": "项目内原创参数化 React/SVG，不使用参考视频画面或音轨。",
+      "rights": "沿用项目源码使用条款。",
+      "readiness": "implemented",
+      "verification": "纯函数与真实固定渲染检查；不代表实际供应商或人工视听认证。"
     }
   ]
 }

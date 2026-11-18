@@ -16,6 +16,8 @@ import {
 } from 'remotion';
 import type { Scene, VideoProps } from './types';
 import { Bookend, ViewerDisclosures } from '../../engineering-template/src/presentation';
+import { ThemeProvider, useTheme } from '../../engineering-template/src/theme';
+import { SceneRenderer } from '../../engineering-template/src/semantic-kit';
 import { ObjectScene, ObjectSceneSounds } from '../../engineering-template/src/scene-objects';
 export type { Scene, Storyboard, VideoProps, EditorialRequest, ContentStrategy } from './types';
 
@@ -390,7 +392,8 @@ function SceneView({
   const f = useCurrentFrame(),
     { fps } = useVideoConfig();
   const progress = Math.min(1, f / Math.max(scene.frames - 1, 1));
-  const objectScene = Boolean(scene.visual_scene);
+  const objectScene = Boolean(scene.visual_scene || scene.semantic_scene);
+  const theme = useTheme();
   const bookend =
     (props.presentation_profile || 'creator') === 'creator' &&
     (scene.role === 'opening' || scene.role === 'closing');
@@ -422,7 +425,16 @@ function SceneView({
           borderRadius: '50%',
         }}
       />
-      {objectScene && <ObjectScene scene={scene} />}
+      {objectScene &&
+        (scene.semantic_scene ? (
+          <SceneRenderer
+            scene={scene}
+            assets={props.generated_assets}
+            designPack={props.design_pack}
+          />
+        ) : (
+          <ObjectScene scene={scene} />
+        ))}
       {(props.presentation_profile || 'creator') !== 'creator' && (
         <div
           style={{
@@ -487,9 +499,9 @@ function SceneView({
               lineHeight: 1.55,
               maxWidth: 1560,
               padding: '10px 24px',
-              color: '#20334e',
-              background: '#e2eaf4bb',
-              border: '1px solid #c8d6e788',
+              color: theme.ink,
+              background: theme.panel + 'd9',
+              border: '1px solid ' + theme.border,
               borderRadius: 12,
             }}
           >
@@ -541,27 +553,29 @@ export function Video(props: VideoProps) {
     return finish;
   }, [handle, props.fontSrc]);
   return (
-    <AbsoluteFill
-      style={{
-        fontFamily: 'ExplainerNoto, system-ui, sans-serif',
-        width: 1920,
-        height: 1080,
-        transform: `scale(${(props.width || 1920) / 1920})`,
-        transformOrigin: 'top left',
-      }}
-    >
-      {props.scenes.map((scene, index) => (
-        <Sequence key={scene.id} from={scene.start_frame} durationInFrames={scene.frames}>
-          <SceneView
-            scene={scene}
-            index={index}
-            total={props.scenes.length}
-            accent={colors[props.accent]}
-            language={props.language}
-            props={props}
-          />
-        </Sequence>
-      ))}
-    </AbsoluteFill>
+    <ThemeProvider pack={props.design_pack}>
+      <AbsoluteFill
+        style={{
+          fontFamily: 'ExplainerNoto, system-ui, sans-serif',
+          width: 1920,
+          height: 1080,
+          transform: `scale(${(props.width || 1920) / 1920})`,
+          transformOrigin: 'top left',
+        }}
+      >
+        {props.scenes.map((scene, index) => (
+          <Sequence key={scene.id} from={scene.start_frame} durationInFrames={scene.frames}>
+            <SceneView
+              scene={scene}
+              index={index}
+              total={props.scenes.length}
+              accent={colors[props.accent]}
+              language={props.language}
+              props={props}
+            />
+          </Sequence>
+        ))}
+      </AbsoluteFill>
+    </ThemeProvider>
   );
 }

@@ -29,3 +29,25 @@ turn every noun into a graph box or keyword-routed device template. scene-object
 platform-owned and protected like motion-kit.tsx. Unsupported subjects may use authored
 SVG/TSX under the existing isolation; do not fake an image-generation service or hardware
 measurements. Fixed platform fixtures alone may run through verify_object_scenes.py.
+
+Semantic production: read docs/design/semantic-production.md. semantic-kit.tsx and
+semantic-types.ts are protected platform code. Software concepts use semantic entities
+and explicit causal results, selected semantically rather than by keywords. Fixed
+verify_semantic_scenes.py alone may host-render its fixed reviewed platform dispatcher;
+never substitute arbitrary uploaded/model TSX. Preserve native source authoring, isolation,
+voice truth, tenant checkpoints, asset provenance and complete source-hash review gates.
+
+Project-owned illustrated production: read docs/design/project-owned-visual-production.md.
+Image services run only through mediated Worker tools; project-image IDs require both tenant
+and project membership. Retain bounded canonical PNG receipts and preserve legacy SVG keys.
+The explicitly reviewed verify_production_assets.py may host-render only its fixed repository
+source/storyboard and hash-pinned media; it is not native/image inference or an arbitrary
+source runner. Real unseen-topic acceptance uses verify_image_production_deployment.py on
+configured isolated infrastructure. Record this work in goals/2026-11-18-production-assets.md.
+
+Reference corrections: read docs/design/reference-production-corrections.md. Preserve global
+asset identities, complete code visibility, measured event budgets, native material-binding
+review and numeric flow conservation. theme.tsx, code-view.tsx and mechanism-kit.tsx are
+protected. verify_reference_mechanisms.py and verify_visual_contracts.cjs execute ONLY fixed
+reviewed repository data/modules; never accept user/model source/path arguments or enable a
+host fallback. Record execution in goals/2026-11-18-reference-optimization.md.

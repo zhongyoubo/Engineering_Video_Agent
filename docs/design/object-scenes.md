@@ -85,3 +85,12 @@ visual effects or nonlinear editing system.
 
 Actual HDMI revision evidence: docs/verification-hdmi-object-scenes.json (eight scenes,
 121.1s, both decoded resolutions, measured narration and encoded-frame inspection).
+
+Illustration composition now supports a registered semantic background beneath physical
+objects; ObjectScene can preserve that background through its protected transparency option.
+Screen content remains device-bound; semantic transforms may change its opacity, not detach
+its geometry. See project-owned-visual-production.md for project assets and measured layers.
+
+The stage now inherits shared theme background/text tokens while intrinsic device and signal
+colors remain distinct. Frame allocation includes actual object-event endings before compile,
+preserving cable/power/dependency validation and held results. See reference-production-corrections.md.

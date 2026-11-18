@@ -1,6 +1,7 @@
 """Native CLI agents run in disposable, administrator-provisioned containers only."""
 
 import json
+from ..semantic_scene import semantic_guidance
 import os
 from pathlib import PurePosixPath
 import shutil
@@ -76,6 +77,7 @@ def native_plan(
         "content": content.model_dump(),
         "content_guidance": planning_guidance(brief),
         "visual_scene_toolkit": visual_scene_guidance(),
+        "semantic_scene_toolkit": semantic_guidance(),
         "model": settings.codex_agent_model if provider == "codex" else settings.claude_agent_model,
         "budget_usd": settings.native_agent_budget_usd,
         "max_turns": settings.native_agent_max_turns,

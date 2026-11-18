@@ -1,0 +1,260 @@
+{
+  "$defs": {
+    "SemanticItem": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "maxLength": 180,
+          "title": "Detail",
+          "type": "string"
+        },
+        "active": {
+          "default": false,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "SemanticItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "component": {
+      "enum": [
+        "PromptInput",
+        "Conversation",
+        "TokenSequence",
+        "ContextWindow",
+        "DocumentChunks",
+        "RetrievalResults",
+        "ModelBoundary",
+        "ToolCall",
+        "TaskState",
+        "EvidenceStack",
+        "ApprovalGate",
+        "CodeWorkspace",
+        "AssetImage",
+        "Dial",
+        "BranchTree",
+        "MetricBar",
+        "FlowReservoir",
+        "QueueFlow"
+      ],
+      "title": "Component",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 60,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "text": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Text",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/SemanticItem"
+      },
+      "maxItems": 12,
+      "title": "Items",
+      "type": "array"
+    },
+    "state": {
+      "default": "pending",
+      "enum": [
+        "pending",
+        "running",
+        "succeeded",
+        "failed",
+        "awaiting_confirmation",
+        "rejected",
+        "cancelled"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "x": {
+      "default": 0,
+      "maximum": 1520,
+      "minimum": 0,
+      "title": "X",
+      "type": "number"
+    },
+    "y": {
+      "default": 0,
+      "maximum": 530,
+      "minimum": 0,
+      "title": "Y",
+      "type": "number"
+    },
+    "width": {
+      "default": 520,
+      "maximum": 1720,
+      "minimum": 180,
+      "title": "Width",
+      "type": "number"
+    },
+    "height": {
+      "default": 400,
+      "maximum": 650,
+      "minimum": 120,
+      "title": "Height",
+      "type": "number"
+    },
+    "bind_to": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bind To"
+    },
+    "asset_key": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Asset Key"
+    },
+    "image_style": {
+      "default": "panel",
+      "enum": [
+        "panel",
+        "artwork"
+      ],
+      "title": "Image Style",
+      "type": "string"
+    },
+    "image_fit": {
+      "default": "contain",
+      "enum": [
+        "contain",
+        "cover"
+      ],
+      "title": "Image Fit",
+      "type": "string"
+    },
+    "opacity": {
+      "default": 1,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Opacity",
+      "type": "number"
+    },
+    "scale": {
+      "default": 1,
+      "maximum": 3,
+      "minimum": 0.2,
+      "title": "Scale",
+      "type": "number"
+    },
+    "rotation": {
+      "default": 0,
+      "maximum": 180,
+      "minimum": -180,
+      "title": "Rotation",
+      "type": "number"
+    },
+    "parameter_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parameter Id"
+    },
+    "inflow_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Inflow Id"
+    },
+    "outflow_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outflow Id"
+    },
+    "capacity": {
+      "default": 100,
+      "exclusiveMinimum": 0,
+      "maximum": 1000,
+      "title": "Capacity",
+      "type": "number"
+    },
+    "provenance": {
+      "default": "illustrative",
+      "enum": [
+        "illustrative",
+        "observed"
+      ],
+      "title": "Provenance",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Evidence Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "component",
+    "title"
+  ],
+  "title": "SemanticEntity",
+  "type": "object"
+}

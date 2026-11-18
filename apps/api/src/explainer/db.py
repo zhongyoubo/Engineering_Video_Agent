@@ -55,6 +55,10 @@ SCHEMA_SQL = """
             CREATE INDEX IF NOT EXISTS ix_events_job ON events(tenant,job_id,seq);
 """
 SCHEMA_SQL += """
+CREATE TABLE IF NOT EXISTS project_images(
+ id TEXT PRIMARY KEY, tenant TEXT NOT NULL, project_id TEXT NOT NULL,
+ asset_id TEXT NOT NULL, metadata TEXT NOT NULL, created REAL NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_project_images ON project_images(tenant,project_id);
 CREATE TABLE IF NOT EXISTS audio_timings(
  tenant TEXT NOT NULL,asset_id TEXT NOT NULL,method TEXT NOT NULL,payload TEXT NOT NULL,
  PRIMARY KEY(tenant,asset_id));
