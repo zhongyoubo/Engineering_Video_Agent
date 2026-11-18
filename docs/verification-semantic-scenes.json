@@ -1,6 +1,6 @@
 {
   "fixture": "Fixed authored data; not native inference or actual business execution",
-  "source_hash": "941ac22b4aaf5fe1bf75de45fde31a85915ae9c685cfffdbe337501323822024",
+  "source_hash": "befa7af23afc1ed3c7e84f6173a5804eea06ee2faecfa81aac2f006628f3ba50",
   "semantic_renderer_sha256": "d9bfc28c0d42cde263c96e0705b79a1295fa0bfd72ce092c38fa085fc4d28da1",
   "engineering": {
     "decode": "passed",
@@ -42,5 +42,6 @@
     5.906194885361552
   ],
   "late_confirmation_preview": "covered",
-  "continuous_clips": 9
+  "continuous_clips": 9,
+  "clip_metadata_vs_declared_ranges": "all passed"
 }

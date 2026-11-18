@@ -7,7 +7,8 @@ from ..config import ROOT
 
 def build_render_plan(props, public):
     digest = hashlib.sha256()
-    for file in sorted((ROOT / "packages/engineering-template/src").glob("*")):
+    template = ROOT / "packages/engineering-template"
+    for file in sorted([*template.joinpath("src").glob("*"), *template.glob("*.mjs")]):
         if file.name == "Video.tsx":
             continue
         digest.update(file.name.encode())
@@ -17,12 +18,13 @@ def build_render_plan(props, public):
         for f in sorted(public.rglob("*"))
         if f.is_file()
     }
+    presentation = {k: v for k, v in props.items() if k not in {"scenes", "render_plan", "total_frames"}}
     scenes = []
     for scene in props["scenes"]:
         local = {**scene, "start_frame": 0}
         key = hashlib.sha256(
             json.dumps(
-                [local, assets, props.get("width"), props.get("height"), digest.hexdigest()],
+                [local, assets, presentation, digest.hexdigest()],
                 sort_keys=True,
                 ensure_ascii=False,
             ).encode()

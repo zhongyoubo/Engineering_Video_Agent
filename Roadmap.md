@@ -62,3 +62,9 @@ goal and docs/verification-semantic-scenes.json after actual checks.
 Remaining V5 work: real native unseen-topic acceptance, external image/video/3D adapters,
 general layer graphs and FFmpeg media backend, rendered-scene cache, advanced layout/OCR
 review and human full playback/listening. Dependency keys are not a rendered-video cache.
+
+Semantic review follow-up: repaired the isolated image's missing runtime dependency,
+canonical asset-cache recovery and atomic validation, unchanged-request gate preservation,
+presentation/runtime dependency hashing, and bounded receipts with actual clip-range checks.
+224 backend tests and 11 browser flows passed; real isolated Docker deployment still needs
+the target Worker. See goals/2026-11-18-semantic-review.md for executed media verification.

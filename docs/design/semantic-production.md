@@ -128,3 +128,26 @@ The complete [V5 target proposal](visual-production-v5-target-cn.md) is retained
 Generated SVGs embed the font license and a renamed font subset; exported projects include
 public/FONT-LICENSE.txt. The companion PNG is a separately drawn review aid, not a claimed
 pixel-identical SVG rasterization. Actual SVGs must still be reviewed in the rendered scene.
+
+## Deployment and recovery review · 2026-11-18
+
+The isolated render image copies both render.mjs and its local review-plan.mjs dependency.
+A regression traverses local runtime imports against actual Dockerfile COPY inputs; a host
+render alone cannot establish image packaging correctness. Rebuild the image after this
+change. A real Docker build/run remains target-environment acceptance when Docker is absent.
+
+Checkpoint recovery validates the entire asset batch and its count/byte budgets before any
+publication. Both files and in-memory SVG/PNG cache fields are rebuilt canonically from typed
+requests. A subsequent deduplicated request cannot republish unchecked checkpoint bytes.
+Cached requests also verify current receipt checksums/paths. Repeated requests preserve
+acceptance only if the complete workspace fingerprint is unchanged; repairs, replacements
+or partial publication failures that change files invalidate build/preview/review evidence.
+
+RenderPlan includes global presentation props (including theme and font) and trusted root
+runtime modules as dependencies, excluding the manifest itself to avoid recursive refreshes.
+This remains dependency evidence, not a rendered-video cache.
+
+Tool receipts remain bounded at 128 KiB to accommodate the protocol's bounded frame and
+multi-window lists. Each continuous clip must have integer scene-local bounds expressed in
+global frames; its probed resolution, fps, frame count and duration must agree with that
+range. Clip counts, frame counts, file-size limits and causal result coverage still apply.

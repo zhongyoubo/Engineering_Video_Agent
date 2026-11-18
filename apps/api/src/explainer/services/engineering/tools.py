@@ -1,6 +1,8 @@
 """Generated code executes only in credential-free offline containers."""
 
 import json
+import math
+from fractions import Fraction
 from pathlib import Path
 import shutil
 import subprocess
@@ -20,6 +22,52 @@ def inspect_frame(path, width=1920, height=1080):
         if max(ImageStat.Stat(region).stddev) < 3:
             raise EngineeringError("Preview is visually empty above the caption area")
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+MAX_RECEIPT_BYTES = 128 * 1024
+
+
+def read_receipt(path, action):
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_RECEIPT_BYTES:
+        raise EngineeringError("Invalid tool receipt")
+    try:
+        result = json.loads(path.read_text())
+    except (ValueError, UnicodeError) as exc:
+        raise EngineeringError("Invalid tool receipt") from exc
+    if (
+        not isinstance(result, dict)
+        or result.get("protocol") != "3.0"
+        or result.get("action") != action
+        or not isinstance(result.get("ok"), bool)
+    ):
+        raise EngineeringError("Invalid tool protocol")
+    return result
+
+
+def validate_motion_clip(item, scene, metadata, fps):
+    try:
+        start, end = item["start_frame"], item["end_frame"]
+        if (
+            type(start) is not int
+            or type(end) is not int
+            or item["scene_id"] != scene["id"]
+            or not scene["start_frame"] <= start <= end < scene["start_frame"] + scene["frames"]
+        ):
+            raise ValueError("range")
+        video = next(s for s in metadata["streams"] if s["codec_type"] == "video")
+        duration = float(metadata["format"]["duration"])
+        count = end - start + 1
+        if (
+            (video["width"], video["height"]) != (1280, 720)
+            or Fraction(video["avg_frame_rate"]) != fps
+            or int(video["nb_frames"]) != count
+            or not math.isfinite(duration)
+            or not 0 < duration <= 5.1
+            or abs(duration - count / fps) > 1 / fps + 0.01
+        ):
+            raise ValueError("media timing")
+    except (KeyError, TypeError, ValueError, StopIteration, ZeroDivisionError) as exc:
+        raise EngineeringError("Motion preview metadata differs from its scene/frame range") from exc
 
 
 class RenderTools:
@@ -88,16 +136,7 @@ class RenderTools:
                         "action": action,
                         "diagnostic": "Container build/render failed without a valid receipt",
                     }
-            receipt = output / "result.json"
-            if receipt.is_symlink() or receipt.stat().st_size > 20000:
-                raise EngineeringError("Invalid tool receipt")
-            result = json.loads(receipt.read_text())
-            if (
-                result.get("protocol") != "3.0"
-                or result.get("action") != action
-                or not isinstance(result.get("ok"), bool)
-            ):
-                raise EngineeringError("Invalid tool protocol")
+            result = read_receipt(output / "result.json", action)
             if result["ok"] and action == "preview":
                 frames = result.get("frames", [])
                 if not 1 <= len(frames) <= 128:
@@ -170,11 +209,10 @@ class RenderTools:
                                 ]
                             )
                         )
-                        video = next(s for s in metadata["streams"] if s["codec_type"] == "video")
-                        if (video["width"], video["height"]) != (1280, 720) or not 0 < float(
-                            metadata["format"]["duration"]
-                        ) <= 5.1:
-                            raise EngineeringError("Invalid motion preview dimensions/duration")
+                        scene = next((s for s in props["scenes"] if s["id"] == item.get("scene_id")), None)
+                        if scene is None:
+                            raise EngineeringError("Unknown motion preview scene")
+                        validate_motion_clip(item, scene, metadata, props.get("fps", 30))
                     if {c.get("scene_id") for c in clips} != {s["id"] for s in props["scenes"]}:
                         raise EngineeringError("Continuous previews must cover every scene")
                     for scene in props["scenes"]:

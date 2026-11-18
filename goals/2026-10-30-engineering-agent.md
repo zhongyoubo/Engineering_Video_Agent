@@ -98,3 +98,16 @@ all 11 configured browser flows, format checks and six editorial contracts passe
 goals/2026-11-18-semantic-scenes.md and docs/verification-semantic-scenes.json for fixed
 render evidence and limitations. RenderPlan keys are not a rendered-scene cache; image/3D
 services and deployed native unseen-topic acceptance remain open.
+
+
+## 2026-11-18 semantic review follow-up
+
+Rechecked deployment/recovery/preview contracts and fixed the render image's missing local
+runtime module, canonical asset cache recovery and whole-batch validation, identical-request
+gate preservation, global presentation/runtime dependency hashes, and probed clip metadata
+matching its declared frame range. Receipt bytes stay bounded at 128 KiB.
+
+Verification: 224 backend tests, Ruff, three TypeScript projects, production build, all
+11 configured browser flows, format and six editorial checks passed. Details and media
+evidence are in goals/2026-11-18-semantic-review.md. Docker is absent; structural image
+packaging verification is not an actual isolated image build/run or native inference test.

@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT / "apps/api/src"))
 from explainer.domain import Scene, StoryboardIR
 from explainer.semantic_scene import AssetRequirement
 from explainer.services.motion import compile_motion
+from explainer.services.engineering.tools import read_receipt, validate_motion_clip
 from explainer.services.engineering.workspace import Workspace
 from explainer.services.engineering.contracts import SourceEdit
 from explainer.services.assets.registry import request_assets
@@ -83,7 +84,15 @@ def main():
             timeout=900,
             env=os.environ.copy(),
         )
-        result = json.loads((target / "result.json").read_text())
+        result = read_receipt(target / "result.json", action)
+        if action == "preview":
+            for clip in result["clips"]:
+                raw_scene = next(s.model_dump() for s in scenes if s.id == clip["scene_id"])
+                metadata = json.loads(runner.run([
+                    "ffprobe", "-v", "error", "-show_streams", "-show_format", "-of", "json",
+                    target / clip["name"],
+                ]))
+                validate_motion_clip(clip, raw_scene, metadata, board.fps)
         assert result["ok"]
         assert w.fingerprint() == stamp
     props = json.loads((w.project / "props.json").read_text())
@@ -152,6 +161,7 @@ def main():
     )
     report["late_confirmation_preview"] = "covered"
     report["continuous_clips"] = len(preview["clips"])
+    report["clip_metadata_vs_declared_ranges"] = "all passed"
     sheet = Image.new("RGB", (1920, 720), "#e4ece7")
     for i, path in enumerate(samples):
         im = Image.open(path).convert("RGB")
