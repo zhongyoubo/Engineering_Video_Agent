@@ -15,8 +15,8 @@
     "typecheck": "tsc --noEmit -p apps/studio/tsconfig.json && tsc --noEmit -p packages/video/tsconfig.json && tsc --noEmit -p packages/engineering-template/tsconfig.json",
     "browser:install": "remotion browser ensure",
     "test:ui": "playwright test --config playwright.config.ts",
-    "format": "prettier --write apps/studio/src packages/video/src packages/video/render.mjs tests/browser playwright.config.ts packages/engineering-template/src packages/engineering-template/render.mjs",
-    "format:check": "prettier --check apps/studio/src packages/video/src packages/video/render.mjs tests/browser playwright.config.ts packages/engineering-template/src packages/engineering-template/render.mjs"
+    "format": "prettier --write apps/studio/src packages/video/src packages/video/render.mjs tests/browser playwright.config.ts packages/engineering-template/src packages/engineering-template/*.mjs",
+    "format:check": "prettier --check apps/studio/src packages/video/src packages/video/render.mjs tests/browser playwright.config.ts packages/engineering-template/src packages/engineering-template/*.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.8",

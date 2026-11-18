@@ -51,17 +51,30 @@ def resolve_events(scene, events, words, fps, allow_estimated=False):
 def compile_motion(scene, words, fps, allow_estimated=False):
     from .visuals import compile_visual_scene
 
-    compile_visual_scene(scene, words, fps, allow_estimated)
-    scene.compiled_events = [
-        CompiledEvent(
-            id=event.id,
-            target=event.target,
-            action=event.action,
-            start_frame=first,
-            end_frame=last,
-            timing_source=source,
-        )
-        for event, first, last, source in resolve_events(
-            scene, scene.motion.events if scene.motion else [], words, fps, allow_estimated
-        )
-    ]
+    from .semantics import compile_semantics
+
+    candidate = scene.model_copy(deep=True)
+    try:
+        compile_semantics(candidate, words, fps, allow_estimated)
+        compile_visual_scene(candidate, words, fps, allow_estimated)
+        legacy = [
+            CompiledEvent(
+                id=event.id,
+                target=event.target,
+                action=event.action,
+                start_frame=first,
+                end_frame=last,
+                timing_source=source,
+            )
+            for event, first, last, source in resolve_events(
+                candidate, candidate.motion.events if candidate.motion else [], words, fps, allow_estimated
+            )
+        ]
+    except ValueError:
+        scene.compiled_semantic_events = []
+        scene.compiled_object_events = []
+        scene.compiled_events = []
+        raise
+    scene.compiled_semantic_events = candidate.compiled_semantic_events
+    scene.compiled_object_events = candidate.compiled_object_events
+    scene.compiled_events = legacy

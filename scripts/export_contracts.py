@@ -20,6 +20,7 @@ from explainer.specs import (
     CompiledEvent,
 )
 
+from explainer.semantic_scene import SemanticScene, SemanticEntity, SemanticEvent, CompiledSemanticEvent, VisualIntent, AssetRequirement
 from explainer.visual_scene import VisualScene, SceneObject, ObjectPort, SceneConnection, ObjectEvent, CompiledObjectEvent
 
 from explainer.editorial import EditorialBrief, EditorialPlan, CoverSpec, ViewerDisclosure, ContentStrategy, NarrativeBeat
@@ -28,6 +29,7 @@ from explainer.content_taxonomy import taxonomy_options
 directory = ROOT / "packages/contracts"
 for model in [
     Brief,
+    SemanticScene, SemanticEntity, SemanticEvent, CompiledSemanticEvent, VisualIntent, AssetRequirement,
     VisualScene,
     SceneObject,
     ObjectPort,

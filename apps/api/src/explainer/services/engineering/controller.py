@@ -62,7 +62,38 @@ class EngineeringController:
         if action.action == "write_files":
             w.edit(action.files)
             w.record("files.written", {"paths": [e.path for e in action.files], "hash": w.fingerprint()})
+        elif action.action == "request_assets":
+            from ..assets.registry import request_assets
+
+            receipts = request_assets(w, action.asset_requests, self.guard)
+            w.record("assets.created", {"receipts": receipts})
+        elif action.action == "inspect_asset":
+            receipt = w.state.get("generated_assets", {}).get(action.asset_id)
+            if not receipt:
+                raise EngineeringError("No generated asset with this ID in this project")
+            import hashlib
+
+            path = w.project / "public" / receipt["filename"]
+            if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != receipt["sha256"]:
+                raise EngineeringError("Asset bytes differ from receipt")
+            preview = w.project / "public" / receipt["preview_filename"]
+            if (
+                not preview.is_file()
+                or hashlib.sha256(preview.read_bytes()).hexdigest() != receipt["preview_sha256"]
+            ):
+                raise EngineeringError("Asset preview differs from receipt")
+            w.record(
+                "asset.inspected",
+                {k: v for k, v in receipt.items() if k not in {"svg", "request", "preview_png"}},
+            )
         elif action.action == "build":
+            props = json.loads((w.project / "props.json").read_text())
+            for scene in props.get("scenes", []):
+                for entity in (scene.get("semantic_scene") or {}).get("entities", []):
+                    if entity.get("asset_key") and entity["asset_key"] not in w.state.get(
+                        "generated_assets", {}
+                    ):
+                        raise EngineeringError("Request the referenced generated asset before build")
             w.state["build_hash"], w.state["preview_hash"], w.state["review_hash"] = None, None, None
             w.state["frames"], w.state["review"] = [], None
             w.state["clips"], w.state["motion_frames"] = [], []
@@ -110,6 +141,16 @@ class EngineeringController:
             object_required = any(s.get("visual_scene") for s in props.get("scenes", []))
             if publication_required and not any(f.get("kind") == "thumbnail" for f in w.state["frames"]):
                 raise EngineeringError("Publication review requires an independently rendered thumbnail")
+            required_expectations = {
+                scene["id"] + ":" + item["id"]
+                for scene in props.get("scenes", [])
+                for item in (scene.get("semantic_scene") or {}).get("expectations", [])
+            }
+            if required_expectations and (
+                set(review["semantic_expectations"]) != required_expectations
+                or review["semantic_accuracy"] < 4
+            ):
+                raise EngineeringError("Review must verify every causal semantic expectation")
             accepted = (
                 review["accepted"]
                 and not review["issues"]

@@ -1,0 +1,197 @@
+{
+  "$defs": {
+    "CueAnchor": {
+      "additionalProperties": false,
+      "properties": {
+        "phrase": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Phrase",
+          "type": "string"
+        },
+        "occurrence": {
+          "default": 1,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "edge": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "title": "Edge",
+          "type": "string"
+        },
+        "offset_ms": {
+          "default": 0,
+          "maximum": 2000,
+          "minimum": -2000,
+          "title": "Offset Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "CueAnchor",
+      "type": "object"
+    },
+    "SemanticItem": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "maxLength": 180,
+          "title": "Detail",
+          "type": "string"
+        },
+        "active": {
+          "default": false,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "SemanticItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "target": {
+      "maxLength": 60,
+      "title": "Target",
+      "type": "string"
+    },
+    "action": {
+      "enum": [
+        "transition",
+        "replace",
+        "append",
+        "select",
+        "highlight"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "anchor": {
+      "$ref": "#/$defs/CueAnchor"
+    },
+    "duration_ms": {
+      "default": 700,
+      "maximum": 4000,
+      "minimum": 100,
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "depends_on": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Depends On",
+      "type": "array"
+    },
+    "from_state": {
+      "anyOf": [
+        {
+          "enum": [
+            "pending",
+            "running",
+            "succeeded",
+            "failed",
+            "awaiting_confirmation",
+            "rejected",
+            "cancelled"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "From State"
+    },
+    "to_state": {
+      "anyOf": [
+        {
+          "enum": [
+            "pending",
+            "running",
+            "succeeded",
+            "failed",
+            "awaiting_confirmation",
+            "rejected",
+            "cancelled"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "To State"
+    },
+    "text": {
+      "anyOf": [
+        {
+          "maxLength": 600,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Text"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/SemanticItem"
+      },
+      "maxItems": 12,
+      "title": "Items",
+      "type": "array"
+    },
+    "selected": {
+      "anyOf": [
+        {
+          "maximum": 11,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Selected"
+    }
+  },
+  "required": [
+    "id",
+    "target",
+    "action",
+    "anchor"
+  ],
+  "title": "SemanticEvent",
+  "type": "object"
+}

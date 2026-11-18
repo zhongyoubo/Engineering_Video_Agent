@@ -116,10 +116,14 @@ function ObjectShape({
   o,
   frame,
   events,
+  renderScreen,
+  objectLabel,
 }: {
   o: Actor;
   frame: number;
   events: CompiledObjectEvent[];
+  renderScreen?: (object: Actor, frame: number, width: number, height: number) => React.ReactNode;
+  objectLabel?: (object: Actor) => string;
 }) {
   const own = events.filter((e) => e.target === o.id);
   const powerEvents = own
@@ -150,17 +154,35 @@ function ObjectShape({
   const opacity = reveal ? amount(frame, reveal) : 1;
   const w = o.width,
     h = o.height;
-  const display = (x: number, y: number, width: number, height: number) => (
-    <svg x={x} y={y} width={width} height={height} viewBox="0 0 100 100" preserveAspectRatio="none">
-      <rect width="100" height="100" fill="#112331" />
-      <Picture
-        object={o}
-        frame={Math.max(0, frame - (play?.start_frame || 0))}
-        power={power}
-        playing={Boolean(play)}
-      />
-    </svg>
-  );
+  const display = (x: number, y: number, width: number, height: number) => {
+    const content = renderScreen?.(o, frame, width, height);
+    return (
+      <svg
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        viewBox={content ? `0 0 ${width} ${height}` : '0 0 100 100'}
+        preserveAspectRatio="none"
+      >
+        {content ? (
+          <foreignObject data-device-surface="screen" width={width} height={height}>
+            {content}
+          </foreignObject>
+        ) : (
+          <>
+            <rect width="100" height="100" fill="#112331" />
+            <Picture
+              object={o}
+              frame={Math.max(0, frame - (play?.start_frame || 0))}
+              power={power}
+              playing={Boolean(play)}
+            />
+          </>
+        )}
+      </svg>
+    );
+  };
   const waves = sound
     ? [0, 1, 2].map((i) => {
         const progress = ((frame - sound.start_frame) / 32 + i / 3) % 1;
@@ -464,7 +486,7 @@ function ObjectShape({
             overflowWrap: 'anywhere',
           }}
         >
-          {o.label}
+          {objectLabel?.(o) || o.label}
         </div>
       </foreignObject>
       {volumeEvent && (
@@ -606,10 +628,14 @@ export function ObjectScene({
   scene,
   frameOverride,
   titleOverride,
+  renderScreen,
+  objectLabel,
 }: {
   scene: Scene;
   frameOverride?: number;
   titleOverride?: string;
+  renderScreen?: (object: Actor, frame: number, width: number, height: number) => React.ReactNode;
+  objectLabel?: (object: Actor) => string;
 }) {
   const current = useCurrentFrame(),
     frame = frameOverride ?? current,
@@ -677,7 +703,14 @@ export function ObjectScene({
           />
         ))}
         {spec.objects.map((o) => (
-          <ObjectShape key={o.id} o={o} frame={frame} events={events} />
+          <ObjectShape
+            key={o.id}
+            o={o}
+            frame={frame}
+            events={events}
+            renderScreen={renderScreen}
+            objectLabel={objectLabel}
+          />
         ))}
       </svg>
       <div

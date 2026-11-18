@@ -4,7 +4,7 @@ WORKDIR /opt/engine
 COPY packages/engineering-template/package*.json ./
 RUN npm ci --no-audit --no-fund
 RUN npm install --no-save @remotion/cli@4.0.538 && npx remotion browser ensure
-COPY packages/engineering-template/render.mjs ./render.mjs
+COPY packages/engineering-template/render.mjs packages/engineering-template/review-plan.mjs ./
 COPY infra/engineering-render/run.mjs ./run.mjs
 RUN mkdir /output && chown renderer:renderer /output
 USER renderer

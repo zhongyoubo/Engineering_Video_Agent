@@ -1,0 +1,621 @@
+{
+  "authorship": "Fixed authored data; not native inference or actual business execution",
+  "scenes": [
+    {
+      "id": "agent",
+      "type": "ui",
+      "role": "opening",
+      "title": "Agent：目标、工具与确认",
+      "narration": "提出目标，查询问题，等待确认，确认完成。",
+      "duration": 8,
+      "frames": 240,
+      "visual_scene": {
+        "purpose": "把目标和确认界面绑定到真实设备屏幕",
+        "setting": "studio",
+        "objects": [
+          {
+            "id": "laptop",
+            "kind": "laptop",
+            "label": "目标输入",
+            "x": 30,
+            "y": 120,
+            "width": 620,
+            "height": 380,
+            "screen": "black"
+          },
+          {
+            "id": "phone",
+            "kind": "phone",
+            "label": "操作确认",
+            "x": 1420,
+            "y": 40,
+            "width": 200,
+            "height": 460,
+            "screen": "black"
+          }
+        ]
+      },
+      "semantic_scene": {
+        "viewer_question": "工具结果怎样影响下一步？",
+        "entities": [
+          {
+            "id": "goal",
+            "component": "PromptInput",
+            "title": "项目交付分析",
+            "x": 0,
+            "y": 0,
+            "width": 520,
+            "height": 400,
+            "bind_to": "laptop",
+            "text": "判断项目能否按期交付",
+            "items": [
+              {
+                "text": "范围：当前项目"
+              }
+            ]
+          },
+          {
+            "id": "query",
+            "component": "ToolCall",
+            "title": "查询当前问题",
+            "x": 730,
+            "y": 100,
+            "width": 560,
+            "height": 420,
+            "items": [
+              {
+                "text": "search_issues",
+                "detail": "当前项目 / 未关闭"
+              }
+            ]
+          },
+          {
+            "id": "approval",
+            "component": "ApprovalGate",
+            "title": "发送风险通知",
+            "x": 0,
+            "y": 0,
+            "width": 520,
+            "height": 400,
+            "state": "awaiting_confirmation",
+            "bind_to": "phone",
+            "text": "拟发送给项目负责人",
+            "items": [
+              {
+                "text": "发送前由人确认"
+              }
+            ]
+          }
+        ],
+        "events": [
+          {
+            "id": "submit",
+            "target": "goal",
+            "action": "transition",
+            "anchor": {
+              "phrase": "提出目标"
+            },
+            "duration_ms": 350,
+            "from_state": "pending",
+            "to_state": "running"
+          },
+          {
+            "id": "query",
+            "target": "query",
+            "action": "transition",
+            "anchor": {
+              "phrase": "查询问题"
+            },
+            "duration_ms": 350,
+            "from_state": "pending",
+            "to_state": "running"
+          },
+          {
+            "id": "return",
+            "target": "query",
+            "action": "transition",
+            "anchor": {
+              "phrase": "等待确认"
+            },
+            "duration_ms": 350,
+            "from_state": "running",
+            "to_state": "succeeded",
+            "depends_on": [
+              "query"
+            ],
+            "items": [
+              {
+                "text": "search_issues",
+                "detail": "请求已完成"
+              },
+              {
+                "text": "接口契约未冻结",
+                "detail": "影响集成"
+              },
+              {
+                "text": "回归测试失败",
+                "detail": "恢复时间待查"
+              }
+            ]
+          },
+          {
+            "id": "confirm",
+            "target": "approval",
+            "action": "transition",
+            "anchor": {
+              "phrase": "确认完成"
+            },
+            "duration_ms": 350,
+            "from_state": "awaiting_confirmation",
+            "to_state": "succeeded"
+          }
+        ],
+        "expectations": [
+          {
+            "id": "goal_started",
+            "event_id": "submit",
+            "visible_result": "目标从待执行变为执行中"
+          },
+          {
+            "id": "tool_started",
+            "event_id": "query",
+            "visible_result": "工具请求显示执行中"
+          },
+          {
+            "id": "tool_result",
+            "event_id": "return",
+            "visible_result": "结果区域显示两项具体问题"
+          },
+          {
+            "id": "confirmed",
+            "event_id": "confirm",
+            "visible_result": "手机按钮和标注均显示已完成"
+          }
+        ]
+      }
+    },
+    {
+      "id": "rag",
+      "type": "ui",
+      "title": "RAG：选出依据，再组织回答",
+      "narration": "读取文档，选取片段，形成回答。",
+      "duration": 6,
+      "frames": 180,
+      "semantic_scene": {
+        "viewer_question": "回答的依据从哪里来？",
+        "entities": [
+          {
+            "id": "document",
+            "component": "AssetImage",
+            "title": "知识文档",
+            "x": 20,
+            "y": 40,
+            "width": 500,
+            "height": 540,
+            "state": "succeeded",
+            "asset_key": "knowledge"
+          },
+          {
+            "id": "retrieved",
+            "component": "RetrievalResults",
+            "title": "检索候选",
+            "x": 575,
+            "y": 40,
+            "width": 520,
+            "height": 540,
+            "items": [
+              {
+                "text": "交付检查清单",
+                "detail": "文档第 2 节"
+              },
+              {
+                "text": "接口约定说明",
+                "detail": "文档第 3 节"
+              },
+              {
+                "text": "界面规范",
+                "detail": "与问题相关度低"
+              }
+            ]
+          },
+          {
+            "id": "answer",
+            "component": "Conversation",
+            "title": "回答与引用",
+            "x": 1150,
+            "y": 40,
+            "width": 540,
+            "height": 540,
+            "items": [
+              {
+                "text": "怎样判断项目的交付风险？",
+                "detail": "用户问题"
+              }
+            ]
+          }
+        ],
+        "events": [
+          {
+            "id": "selected",
+            "target": "retrieved",
+            "action": "select",
+            "anchor": {
+              "phrase": "选取片段"
+            },
+            "duration_ms": 350,
+            "selected": 0
+          },
+          {
+            "id": "answered",
+            "target": "answer",
+            "action": "append",
+            "anchor": {
+              "phrase": "形成回答"
+            },
+            "duration_ms": 350,
+            "items": [
+              {
+                "text": "先核对阻塞与恢复计划。",
+                "detail": "依据：交付检查清单，第 2 节"
+              }
+            ],
+            "depends_on": [
+              "selected"
+            ]
+          }
+        ],
+        "expectations": [
+          {
+            "id": "selection",
+            "event_id": "selected",
+            "visible_result": "第一条检索片段被明确选中"
+          },
+          {
+            "id": "citation",
+            "event_id": "answered",
+            "visible_result": "回答出现且带有对应文档引用"
+          }
+        ]
+      }
+    },
+    {
+      "id": "gallery0",
+      "type": "ui",
+      "title": "AI 语义组件 · 1",
+      "narration": "这些是固定的教学示例组件。",
+      "duration": 2,
+      "frames": 60,
+      "semantic_scene": {
+        "viewer_question": "不同信息应采用不同的视觉表达",
+        "entities": [
+          {
+            "id": "entity0",
+            "component": "PromptInput",
+            "title": "PromptInput",
+            "x": 0,
+            "y": 0,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "输入目标",
+                "detail": "当前任务"
+              },
+              {
+                "text": "查询执行记录",
+                "detail": "以记录为依据",
+                "active": true
+              },
+              {
+                "text": "检查可见结果",
+                "detail": "明确下一步"
+              }
+            ]
+          },
+          {
+            "id": "entity1",
+            "component": "Conversation",
+            "title": "Conversation",
+            "x": 860,
+            "y": 0,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "输入目标",
+                "detail": "当前任务"
+              },
+              {
+                "text": "查询执行记录",
+                "detail": "以记录为依据",
+                "active": true
+              },
+              {
+                "text": "检查可见结果",
+                "detail": "明确下一步"
+              }
+            ]
+          },
+          {
+            "id": "entity2",
+            "component": "TokenSequence",
+            "title": "TokenSequence",
+            "x": 0,
+            "y": 325,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "输入",
+                "active": false
+              },
+              {
+                "text": "示例",
+                "active": false
+              },
+              {
+                "text": "片段",
+                "active": true
+              },
+              {
+                "text": "输出",
+                "active": false
+              }
+            ]
+          },
+          {
+            "id": "entity3",
+            "component": "ContextWindow",
+            "title": "ContextWindow",
+            "x": 860,
+            "y": 325,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "输入目标",
+                "detail": "当前任务"
+              },
+              {
+                "text": "查询执行记录",
+                "detail": "以记录为依据",
+                "active": true
+              },
+              {
+                "text": "检查可见结果",
+                "detail": "明确下一步"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "gallery1",
+      "type": "ui",
+      "title": "AI 语义组件 · 2",
+      "narration": "这些是固定的教学示例组件。",
+      "duration": 2,
+      "frames": 60,
+      "semantic_scene": {
+        "viewer_question": "不同信息应采用不同的视觉表达",
+        "entities": [
+          {
+            "id": "entity0",
+            "component": "DocumentChunks",
+            "title": "DocumentChunks",
+            "x": 0,
+            "y": 0,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "输入目标",
+                "detail": "当前任务"
+              },
+              {
+                "text": "查询执行记录",
+                "detail": "以记录为依据",
+                "active": true
+              },
+              {
+                "text": "检查可见结果",
+                "detail": "明确下一步"
+              }
+            ]
+          },
+          {
+            "id": "entity1",
+            "component": "RetrievalResults",
+            "title": "RetrievalResults",
+            "x": 860,
+            "y": 0,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "输入目标",
+                "detail": "当前任务"
+              },
+              {
+                "text": "查询执行记录",
+                "detail": "以记录为依据",
+                "active": true
+              },
+              {
+                "text": "检查可见结果",
+                "detail": "明确下一步"
+              }
+            ]
+          },
+          {
+            "id": "entity2",
+            "component": "ModelBoundary",
+            "title": "ModelBoundary",
+            "x": 0,
+            "y": 325,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "输入目标",
+                "detail": "当前任务"
+              },
+              {
+                "text": "查询执行记录",
+                "detail": "以记录为依据",
+                "active": true
+              },
+              {
+                "text": "检查可见结果",
+                "detail": "明确下一步"
+              }
+            ]
+          },
+          {
+            "id": "entity3",
+            "component": "ToolCall",
+            "title": "ToolCall",
+            "x": 860,
+            "y": 325,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "输入目标",
+                "detail": "当前任务"
+              },
+              {
+                "text": "查询执行记录",
+                "detail": "以记录为依据",
+                "active": true
+              },
+              {
+                "text": "检查可见结果",
+                "detail": "明确下一步"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "gallery2",
+      "type": "ui",
+      "title": "AI 语义组件 · 3",
+      "narration": "这些是固定的教学示例组件。",
+      "duration": 2,
+      "frames": 60,
+      "semantic_scene": {
+        "viewer_question": "不同信息应采用不同的视觉表达",
+        "entities": [
+          {
+            "id": "entity0",
+            "component": "TaskState",
+            "title": "TaskState",
+            "x": 0,
+            "y": 0,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "输入目标",
+                "detail": "当前任务"
+              },
+              {
+                "text": "查询执行记录",
+                "detail": "以记录为依据",
+                "active": true
+              },
+              {
+                "text": "检查可见结果",
+                "detail": "明确下一步"
+              }
+            ]
+          },
+          {
+            "id": "entity1",
+            "component": "EvidenceStack",
+            "title": "EvidenceStack",
+            "x": 860,
+            "y": 0,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "输入目标",
+                "detail": "当前任务"
+              },
+              {
+                "text": "查询执行记录",
+                "detail": "以记录为依据",
+                "active": true
+              },
+              {
+                "text": "检查可见结果",
+                "detail": "明确下一步"
+              }
+            ]
+          },
+          {
+            "id": "entity2",
+            "component": "ApprovalGate",
+            "title": "ApprovalGate",
+            "x": 0,
+            "y": 325,
+            "width": 820,
+            "height": 300,
+            "state": "awaiting_confirmation",
+            "items": [
+              {
+                "text": "输入目标",
+                "detail": "当前任务"
+              },
+              {
+                "text": "查询执行记录",
+                "detail": "以记录为依据",
+                "active": true
+              },
+              {
+                "text": "检查可见结果",
+                "detail": "明确下一步"
+              }
+            ]
+          },
+          {
+            "id": "entity3",
+            "component": "CodeWorkspace",
+            "title": "CodeWorkspace",
+            "x": 860,
+            "y": 325,
+            "width": 820,
+            "height": 300,
+            "state": "running",
+            "items": [
+              {
+                "text": "query = search(project)"
+              },
+              {
+                "text": "assert query.blockers == 2",
+                "active": true
+              },
+              {
+                "text": "tests: passed"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

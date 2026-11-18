@@ -110,9 +110,11 @@ def publication_findings(board, content):
         if credits.search("\n".join(extra)):
             add("TOOL_SELF_CREDIT", "封面或内容主线包含无关的制作工具自宣传，请移入制作报告")
         for scene in board.scenes:
-            visual_text = []
+            from .semantics import semantic_text
+
+            visual_text = [semantic_text(scene)]
             if scene.visual_scene:
-                visual_text = (
+                visual_text += (
                     [o.label for o in scene.visual_scene.objects]
                     + [p.label for o in scene.visual_scene.objects for p in o.ports]
                     + [c.label for c in scene.visual_scene.connections]

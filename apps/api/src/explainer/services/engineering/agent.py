@@ -1,5 +1,6 @@
 """Native planning and engineering actions. No template or model fallback."""
 
+from ...semantic_scene import semantic_guidance
 from pydantic import ValidationError
 from ...adapters.native_agent import native_plan, NativeOutputError
 from ...adapters.native_contract import validate_design
@@ -58,6 +59,7 @@ class NativeEngineeringAgent:
                 "phase": "production-planning",
                 "content_guidance": planning_guidance(self.brief),
                 "visual_scene_toolkit": visual_scene_guidance(),
+                "semantic_scene_toolkit": semantic_guidance(),
                 "material_library": library,
                 "material_usage": "Choose materials by explanatory purpose; record selected entries as library:<id>@<version> in shot.assets. Custom TSX remains allowed. Unverified assets need actual rendering/review. Reference footage is not reusable material.",
                 "visual_constraints": {
@@ -92,6 +94,14 @@ class NativeEngineeringAgent:
             raise EditorialError("创作者制作方案缺少内容主张与观众收益，请补充 editorial 策划。")
         if self.brief.presentation_profile == "creator" and plan.editorial.strategy is None:
             raise EditorialError("新创作者策划必须解析表达目的、讲述对象、观众与表现形式，并给出叙事结构。")
+        by_shot = {s.scene_id: s for s in plan.shots}
+        evidence = {e.id for e in self.content.evidence}
+        for scene in board.scenes:
+            if scene.semantic_scene:
+                if by_shot[scene.id].intent is None:
+                    raise NativeOutputError("Semantic shots require a structured visual intent")
+                if any(set(e.evidence_ids) - evidence for e in scene.semantic_scene.entities):
+                    raise NativeOutputError("Semantic observed content references unknown evidence")
         prepare_presentation(board, self.brief, plan.editorial)
         try:
             require_publishable(board, self.content)
@@ -105,6 +115,10 @@ class NativeEngineeringAgent:
         frames = [
             workspace.root / f["name"]
             for f in workspace.state["frames"] + workspace.state.get("motion_frames", [])
+        ]
+        frames += [
+            workspace.project / "public" / r["preview_filename"]
+            for r in workspace.state.get("generated_assets", {}).values()
         ]
         files = {
             str(p.relative_to(workspace.project)): p.read_text()
@@ -120,6 +134,11 @@ class NativeEngineeringAgent:
                 "contract": instructions,
                 "production_plan": plan,
                 "current_hash": workspace.fingerprint(),
+                "semantic_contract": "Compose semantic_scene with SceneRenderer from ./semantic-kit in authored source. It uses software concepts and bound device surfaces; Root owns audio/captions. State changes require measured events and explicit expectations. Use request_assets for original SVG documents; inspect_asset validates its bytes and metadata. Reference the request ID in AssetImage.asset_key; props.generated_assets is platform-owned. No image service is connected. Review every scene_id:expectation_id and score semantic_accuracy >=4 against actual before/during/after frames, not decorative pixels.",
+                "generated_assets": {
+                    k: {f: v for f, v in r.items() if f not in {"svg", "request", "preview_png"}}
+                    for k, r in workspace.state.get("generated_assets", {}).items()
+                },
                 "status": {
                     k: workspace.state[k] for k in ["build_hash", "preview_hash", "review_hash", "review"]
                 },

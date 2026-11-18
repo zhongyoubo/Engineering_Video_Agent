@@ -553,6 +553,9 @@ class Pipeline:
             from .visuals import prepare_visual_assets
 
             prepare_visual_assets(board, public)
+            from .render_plan import build_render_plan
+
+            props["render_plan"] = build_render_plan(props, public)
             (directory / "props.json").write_text(encode(props))
             if self.brief.video_mode == "engineering":
                 from .engineering.integration import build_engineering_video

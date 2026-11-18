@@ -39,3 +39,15 @@ Object scenes additionally require object_fidelity and causal_motion >=4/5. Insp
 before/after states and continuous samples. VRR/HDR animation and decorative waves are
 illustrations, not frame-rate, luminance, electrical or acoustic measurements. Original
 optional connect/click/notify cues are quiet interaction Foley, not actual HDMI sound.
+
+## Semantic composition and assets
+
+Use `SceneRenderer` from `./semantic-kit` for semantic_scene data, optionally bound to physical
+objects. Compose it in authored Video.tsx; Root still supplies audio/captions. Do not scale twice.
+Every causal event requires a visible-result expectation. Review each scene_id:expectation_id
+against real before/during/after samples and score semantic_accuracy >=4.
+Use request_assets with typed AssetRequirement for original component_svg assets, then
+inspect_asset by request ID. Use that ID in AssetImage.asset_key; props.generated_assets is
+platform-owned. Image service is unavailable. The actual companion previews are supplied
+as image context; final SVG is checked through rendered frames. Do not overwrite protected
+semantic-kit.tsx, semantic-types.ts, renderer helpers or manifests.

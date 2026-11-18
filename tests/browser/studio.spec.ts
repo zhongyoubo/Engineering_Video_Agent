@@ -397,3 +397,94 @@ test('a saved object scene renders devices and preserves editable actions across
   await expect(page.getByLabel('对象标注：screen')).toHaveValue('客厅电视', { timeout: 30000 });
   expect(fork.revision_id).toBeTruthy();
 });
+
+test('semantic screen content follows a device and preserves editable state across versions', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  const submitted = page.waitForResponse(
+    (r) => r.url().endsWith('/api/v1/videos') && r.request().method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const created = await (await submitted).json();
+  await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
+  const original = await (
+    await context.request.get('/api/v1/revisions/' + created.revision_id)
+  ).json();
+  const scene = original.storyboard.scenes[0];
+  scene.diagram = null;
+  scene.motion = null;
+  scene.visual_scene = {
+    purpose: '具体手机屏幕绑定语义确认内容',
+    setting: 'studio',
+    objects: [
+      {
+        id: 'phone',
+        kind: 'phone',
+        label: '操作确认',
+        x: 930,
+        y: 30,
+        width: 220,
+        height: 460,
+        screen: 'black',
+      },
+    ],
+    connections: [],
+    events: [],
+  };
+  scene.semantic_scene = {
+    viewer_question: '关键操作由谁确认？',
+    entities: [
+      {
+        id: 'gate',
+        component: 'ApprovalGate',
+        title: '风险通知',
+        text: '发送给项目负责人',
+        state: 'awaiting_confirmation',
+        bind_to: 'phone',
+        items: [{ text: '按既定权限执行', detail: '发送前确认' }],
+      },
+    ],
+    events: [],
+    expectations: [],
+  };
+  const response = await context.request.post('/api/v1/revisions/' + original.id + '/fork', {
+    data: {
+      expected_version: original.version,
+      storyboard: original.storyboard,
+      auto_render: false,
+    },
+  });
+  expect(response.status()).toBe(202);
+  await page.reload();
+  await page.getByRole('button', { name: '视频与版本' }).click();
+  await page.locator('.video-card').first().click();
+  const panel = page.locator('[data-semantic-entity="gate"]');
+  await expect(panel).toBeVisible({ timeout: 30000 });
+  await expect(panel).toContainText('等待确认');
+  const screen = page.locator('[data-object-id="phone"] [data-device-surface="screen"]');
+  const a = await panel.boundingBox(),
+    b = await screen.boundingBox();
+  expect(a && b).toBeTruthy();
+  expect(Math.abs(a!.width - b!.width)).toBeLessThan(2);
+  expect(Math.abs(a!.height - b!.height)).toBeLessThan(2);
+  await page.getByRole('button', { name: '音画时间轴', exact: true }).click();
+  await expect(page.getByLabel('语义场景时间轴')).toContainText('phone.screen');
+  await page.getByLabel('语义标题：gate').fill('发送前确认');
+  const saved = page.waitForRequest((r) => r.url().endsWith('/fork') && r.method() === 'POST');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  expect((await saved).postDataJSON().storyboard.scenes[0].semantic_scene.entities[0].title).toBe(
+    '发送前确认',
+  );
+  await expect(page.getByLabel('语义标题：gate')).toHaveValue('发送前确认', { timeout: 30000 });
+  const capabilities = await (await context.request.get('/api/v1/capabilities')).json();
+  expect(capabilities.semantic_scene_toolkit.components).toContain('ToolCall');
+  expect(capabilities.asset_factory.image_service).toBe(false);
+});

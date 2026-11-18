@@ -83,3 +83,31 @@ WordBoundary timings. Both 121.1s/3633-frame 1080p and native-vector 4K videos d
 verification-object-scenes.json and verification-hdmi-object-scenes.json. Illustrations,
 not hardware/HDR/120Hz measurement; no real native inference or full human listening
 certification. Arbitrary photo/3D generation and unknown-subject quality remain open.
+
+
+## 2026-11-18 semantic production increment
+
+Implemented typed AI information/state scenes, twelve shared semantic components, local
+device-screen binding, structured shot intents, mediated original SVG/PNG assets and
+receipts/recovery/invalidation. Added per-event causal windows, exact expectation review,
+Studio editing and source/asset dependency evidence. README, architecture, contracts,
+authoring guide, user/API docs and Roadmap now describe implemented and remaining scope.
+
+Routine verification: 208 backend tests, Ruff, three TypeScript projects, production build,
+all 11 configured browser flows, format checks and six editorial contracts passed. See
+goals/2026-11-18-semantic-scenes.md and docs/verification-semantic-scenes.json for fixed
+render evidence and limitations. RenderPlan keys are not a rendered-scene cache; image/3D
+services and deployed native unseen-topic acceptance remain open.
+
+
+## 2026-11-18 semantic review follow-up
+
+Rechecked deployment/recovery/preview contracts and fixed the render image's missing local
+runtime module, canonical asset cache recovery and whole-batch validation, identical-request
+gate preservation, global presentation/runtime dependency hashes, and probed clip metadata
+matching its declared frame range. Receipt bytes stay bounded at 128 KiB.
+
+Verification: 224 backend tests, Ruff, three TypeScript projects, production build, all
+11 configured browser flows, format and six editorial checks passed. Details and media
+evidence are in goals/2026-11-18-semantic-review.md. Docker is absent; structural image
+packaging verification is not an actual isolated image build/run or native inference test.
