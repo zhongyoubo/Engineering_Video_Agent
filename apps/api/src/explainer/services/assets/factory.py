@@ -72,9 +72,13 @@ def create_svg(requirement):
 
 def requirement_key(req):
     font_hash = hashlib.sha256((ROOT / "assets/fonts/NotoSansCJKsc-Regular.otf").read_bytes()).hexdigest()
+    payload = AssetRequirement.model_validate(req).model_dump()
+    # Preserve the v2 document receipt key when new raster-only options gain defaults.
+    if payload["provider"] == "component_svg":
+        payload = {k: payload[k] for k in ["id", "purpose", "provider", "title", "items"]}
     return hashlib.sha256(
         json.dumps(
-            [FACTORY_VERSION, font_hash, AssetRequirement.model_validate(req).model_dump()],
+            [FACTORY_VERSION, font_hash, payload],
             ensure_ascii=False,
             sort_keys=True,
         ).encode()

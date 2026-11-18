@@ -38,3 +38,14 @@ full context and records rationale, ordered scene coverage and success criteria.
 publication review additionally scores purpose_fulfillment against actual content.
 See product/positioning-and-content-taxonomy.md (under docs) and content-strategy.md.
 The engineering execution loop and isolation/evidence boundaries remain unchanged.
+
+## Project-owned materials and illustration
+
+The trusted Worker now mediates image generation through an explicitly configured gateway,
+and resolves imported raster IDs against tenant AND project ownership. Image catalogs include
+actual bounded previews for native planning. Asset requests, byte inspection, checkpoint
+recovery and source export are application operations, not conversation-only helpers.
+Protected shared scenes compose full-frame illustrations and measured independent-element
+transforms while preserving the same source-hash and causal review gates. Provider secrets
+stay outside generated code containers. The fixed host verifier remains an explicit reviewed
+fixture only. See project-owned-visual-production.md for protocol, limits and actual acceptance.

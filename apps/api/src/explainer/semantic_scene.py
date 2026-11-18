@@ -41,6 +41,11 @@ class SemanticEntity(Spec):
     height: float = Field(default=400, ge=120, le=650)
     bind_to: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
     asset_key: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
+    image_style: Literal["panel", "artwork"] = "panel"
+    image_fit: Literal["contain", "cover"] = "contain"
+    opacity: float = Field(default=1, ge=0, le=1)
+    scale: float = Field(default=1, ge=0.2, le=3)
+    rotation: float = Field(default=0, ge=-180, le=180)
     provenance: Literal["illustrative", "observed"] = "illustrative"
     evidence_ids: list[str] = Field(default_factory=list, max_length=12)
 
@@ -52,6 +57,10 @@ class SemanticEntity(Spec):
             raise ValueError("AssetImage requires a registered asset key")
         if self.component != "AssetImage" and self.asset_key:
             raise ValueError("Only AssetImage can display an asset")
+        if self.component != "AssetImage" and self.image_style != "panel":
+            raise ValueError("Artwork treatment requires an AssetImage")
+        if self.bind_to and (self.scale != 1 or self.rotation != 0):
+            raise ValueError("Screen-bound content cannot transform its device surface")
         if self.provenance == "observed" and not self.evidence_ids:
             raise ValueError("Observed UI requires evidence references")
         return self
@@ -60,7 +69,7 @@ class SemanticEntity(Spec):
 class SemanticEvent(Spec):
     id: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,60}$")
     target: str = Field(max_length=60)
-    action: Literal["transition", "replace", "append", "select", "highlight"]
+    action: Literal["transition", "replace", "append", "select", "highlight", "transform"]
     anchor: CueAnchor
     duration_ms: int = Field(default=700, ge=100, le=4000)
     depends_on: list[str] = Field(default_factory=list, max_length=4)
@@ -70,8 +79,19 @@ class SemanticEvent(Spec):
     items: list[SemanticItem] = Field(default_factory=list, max_length=12)
     selected: int | None = Field(default=None, ge=0, le=11)
 
+    x: float | None = Field(default=None, ge=0, le=1520)
+    y: float | None = Field(default=None, ge=0, le=530)
+    opacity: float | None = Field(default=None, ge=0, le=1)
+    scale: float | None = Field(default=None, ge=0.2, le=3)
+    rotation: float | None = Field(default=None, ge=-180, le=180)
+
     @model_validator(mode="after")
     def payload(self):
+        transforms = [self.x, self.y, self.opacity, self.scale, self.rotation]
+        if (self.action == "transform") != any(v is not None for v in transforms):
+            raise ValueError("Transform action requires explicit transform values only")
+        if self.action == "transform" and (self.text is not None or self.items):
+            raise ValueError("Transform cannot also change content")
         if self.action == "transition":
             if not self.from_state or not self.to_state or self.from_state == self.to_state:
                 raise ValueError("Transition requires two different explicit states")
@@ -97,6 +117,10 @@ class SemanticExpectation(Spec):
 class SemanticScene(Spec):
     schema_version: Literal["1.0"] = "1.0"
     viewer_question: str = Field(min_length=4, max_length=400)
+    background_color: str = Field(default="#edf4f4", pattern=r"^#[0-9a-fA-F]{6}$")
+    background_asset_key: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
+    title_color: str = Field(default="#173f43", pattern=r"^#[0-9a-fA-F]{6}$")
+    show_heading: bool = True
     entities: list[SemanticEntity] = Field(min_length=1, max_length=8)
     events: list[SemanticEvent] = Field(default_factory=list, max_length=16)
     expectations: list[SemanticExpectation] = Field(default_factory=list, max_length=16)
@@ -160,14 +184,30 @@ class VisualIntent(Spec):
 class AssetRequirement(Spec):
     id: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,60}$")
     purpose: str = Field(min_length=5, max_length=400)
-    provider: Literal["component_svg", "image_service"] = "component_svg"
+    provider: Literal["component_svg", "image_service", "project_image"] = "component_svg"
     title: str = Field(min_length=1, max_length=60)
-    items: list[SemanticItem] = Field(min_length=1, max_length=8)
+    items: list[SemanticItem] = Field(default_factory=list, max_length=8)
+    image_prompt: str | None = Field(default=None, min_length=20, max_length=2500)
+    size: Literal["landscape", "portrait", "square"] = "landscape"
+    transparent: bool = False
+    project_asset_id: str | None = Field(default=None, pattern=r"^mat_[a-f0-9]{32}$")
+
+    @model_validator(mode="after")
+    def provider_payload(self):
+        if self.provider == "component_svg" and not self.items:
+            raise ValueError("SVG document requires visible rows")
+        if (self.provider == "image_service") != (self.image_prompt is not None):
+            raise ValueError("Only image_service requires an image prompt")
+        if (self.provider == "project_image") != (self.project_asset_id is not None):
+            raise ValueError("Only project_image requires a registered project asset ID")
+        if self.provider == "component_svg" and self.transparent:
+            raise ValueError("SVG document factory does not generate transparent cutouts")
+        return self
 
 
 def semantic_guidance():
     return dict(
         components=list(Component.__args__),
         states=list(State.__args__),
-        instruction="Choose software concepts and UI by explanatory purpose, not noun keywords or hardware metaphors. semantic_scene composes with visual_scene through bind_to device screen surfaces. Events are measured narration anchors with explicit visible-result expectations. Illustrative data is not actual tool execution. Generated assets require mediated request_assets; inspect their real receipt. Image service is unavailable unless explicitly implemented/configured. Custom SVG/TSX remains available under existing isolation.",
+        instruction="Choose software concepts and UI by explanatory purpose, not noun keywords or hardware metaphors. semantic_scene composes with visual_scene through bind_to device screen surfaces. Events are measured narration anchors with explicit visible-result expectations. Illustrative data is not actual tool execution. Generated assets require mediated request_assets; inspect their real receipt. Use only advertised asset providers. image_service requires an administrator-configured gateway; project_image requires an ID from this project catalog. Image prompts describe recognizable objects, setting, palette, composition, empty text regions and cutouts. Use background_asset_key for full-frame illustration, AssetImage.image_style=artwork for independent unframed elements, and transform events for measured movement/reveal. No universal topic template or automatic demo disclaimer. Custom SVG/TSX remains available under existing isolation.",
     )

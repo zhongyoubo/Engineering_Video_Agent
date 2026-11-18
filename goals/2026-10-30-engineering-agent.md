@@ -111,3 +111,12 @@ Verification: 224 backend tests, Ruff, three TypeScript projects, production bui
 11 configured browser flows, format and six editorial checks passed. Details and media
 evidence are in goals/2026-11-18-semantic-review.md. Docker is absent; structural image
 packaging verification is not an actual isolated image build/run or native inference test.
+
+## Project-owned illustrated production follow-up
+
+Executed scripts/check.py: Ruff, 244 backend tests, all TypeScript projects and Studio build
+passed. Configured npm run test:ui: 12 passed. npm run format:check and git diff --check passed.
+The protected Remotion fixture rendered/decode-checked 2127 frames at 1080p with authenticated
+project imports and actual reused Edge timing. It did not invoke native/image inference.
+Actual provider/isolation deployment remains unconfigured; no host fallback was added.
+See goals/2026-11-18-production-assets.md and docs/verification-production-assets.json.

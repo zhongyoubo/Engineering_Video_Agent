@@ -66,6 +66,25 @@ export function ProductionInspector({
         <div aria-label="语义场景时间轴">
           <h4>信息、状态与可见结果</h4>
           <p>{scene.semantic_scene.viewer_question}</p>
+          <label>
+            画面底色
+            <input
+              aria-label="语义画面底色"
+              type="color"
+              value={scene.semantic_scene.background_color || '#edf4f4'}
+              disabled={disabled}
+              onChange={(event) =>
+                onEdit({
+                  semantic_scene: {
+                    ...scene.semantic_scene!,
+                    background_color: event.target.value,
+                  },
+                  compiled_semantic_events: [],
+                })
+              }
+            />
+          </label>
+          <p>插画背景：{scene.semantic_scene.background_asset_key || '无'}</p>
           {scene.semantic_scene.entities.map((entity) => (
             <label key={entity.id}>
               {entity.component}
@@ -92,6 +111,8 @@ export function ProductionInspector({
           {scene.semantic_scene.events.map((e) => (
             <label key={e.id}>
               {e.action} · {e.target}
+              {e.action === 'transform' &&
+                ` → x:${e.x ?? '保持'} y:${e.y ?? '保持'} 透明度:${e.opacity ?? '保持'} 缩放:${e.scale ?? '保持'}`}
               <input
                 aria-label={'语义旁白：' + e.id}
                 value={e.anchor.phrase}

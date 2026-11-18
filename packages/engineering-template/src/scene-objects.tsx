@@ -118,12 +118,14 @@ function ObjectShape({
   events,
   renderScreen,
   objectLabel,
+  transparentBackground = false,
 }: {
   o: Actor;
   frame: number;
   events: CompiledObjectEvent[];
   renderScreen?: (object: Actor, frame: number, width: number, height: number) => React.ReactNode;
   objectLabel?: (object: Actor) => string;
+  transparentBackground?: boolean;
 }) {
   const own = events.filter((e) => e.target === o.id);
   const powerEvents = own
@@ -630,12 +632,14 @@ export function ObjectScene({
   titleOverride,
   renderScreen,
   objectLabel,
+  transparentBackground = false,
 }: {
   scene: Scene;
   frameOverride?: number;
   titleOverride?: string;
   renderScreen?: (object: Actor, frame: number, width: number, height: number) => React.ReactNode;
   objectLabel?: (object: Actor) => string;
+  transparentBackground?: boolean;
 }) {
   const current = useCurrentFrame(),
     frame = frameOverride ?? current,
@@ -646,7 +650,11 @@ export function ObjectScene({
     <AbsoluteFill
       data-object-scene
       style={{
-        background: spec.setting === 'living_room' ? '#f5eee1' : '#edf4f7',
+        background: transparentBackground
+          ? 'transparent'
+          : spec.setting === 'living_room'
+            ? '#f5eee1'
+            : '#edf4f7',
         color: '#173e42',
       }}
     >

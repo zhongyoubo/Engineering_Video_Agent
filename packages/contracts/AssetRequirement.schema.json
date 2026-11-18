@@ -45,7 +45,8 @@
       "default": "component_svg",
       "enum": [
         "component_svg",
-        "image_service"
+        "image_service",
+        "project_image"
       ],
       "title": "Provider",
       "type": "string"
@@ -61,16 +62,56 @@
         "$ref": "#/$defs/SemanticItem"
       },
       "maxItems": 8,
-      "minItems": 1,
       "title": "Items",
       "type": "array"
+    },
+    "image_prompt": {
+      "anyOf": [
+        {
+          "maxLength": 2500,
+          "minLength": 20,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Image Prompt"
+    },
+    "size": {
+      "default": "landscape",
+      "enum": [
+        "landscape",
+        "portrait",
+        "square"
+      ],
+      "title": "Size",
+      "type": "string"
+    },
+    "transparent": {
+      "default": false,
+      "title": "Transparent",
+      "type": "boolean"
+    },
+    "project_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^mat_[a-f0-9]{32}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Project Asset Id"
     }
   },
   "required": [
     "id",
     "purpose",
-    "title",
-    "items"
+    "title"
   ],
   "title": "AssetRequirement",
   "type": "object"

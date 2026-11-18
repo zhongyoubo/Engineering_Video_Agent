@@ -5,9 +5,12 @@ from .workspace import EngineeringError
 
 
 class EngineeringController:
-    def __init__(self, workspace, agent, tools, persist, emit, guard, max_steps=18):
+    def __init__(
+        self, workspace, agent, tools, persist, emit, guard, max_steps=18, resolve_image=None, asset_scope=""
+    ):
         self.workspace, self.agent, self.tools = workspace, agent, tools
         self.persist, self.emit, self.guard, self.max_steps = persist, emit, guard, max_steps
+        self.resolve_image, self.asset_scope = resolve_image, asset_scope
 
     def run(self, plan):
         w = self.workspace
@@ -65,7 +68,14 @@ class EngineeringController:
         elif action.action == "request_assets":
             from ..assets.registry import request_assets
 
-            receipts = request_assets(w, action.asset_requests, self.guard)
+            receipts = request_assets(
+                w,
+                action.asset_requests,
+                self.guard,
+                getattr(self.tools, "settings", None),
+                self.resolve_image,
+                self.asset_scope,
+            )
             w.record("assets.created", {"receipts": receipts})
         elif action.action == "inspect_asset":
             receipt = w.state.get("generated_assets", {}).get(action.asset_id)
@@ -82,13 +92,15 @@ class EngineeringController:
                 or hashlib.sha256(preview.read_bytes()).hexdigest() != receipt["preview_sha256"]
             ):
                 raise EngineeringError("Asset preview differs from receipt")
-            w.record(
-                "asset.inspected",
-                {k: v for k, v in receipt.items() if k not in {"svg", "request", "preview_png"}},
-            )
+            from ..assets.registry import public_receipt
+
+            w.record("asset.inspected", public_receipt(receipt))
         elif action.action == "build":
             props = json.loads((w.project / "props.json").read_text())
             for scene in props.get("scenes", []):
+                background = (scene.get("semantic_scene") or {}).get("background_asset_key")
+                if background and background not in w.state.get("generated_assets", {}):
+                    raise EngineeringError("Request the background image before build")
                 for entity in (scene.get("semantic_scene") or {}).get("entities", []):
                     if entity.get("asset_key") and entity["asset_key"] not in w.state.get(
                         "generated_assets", {}

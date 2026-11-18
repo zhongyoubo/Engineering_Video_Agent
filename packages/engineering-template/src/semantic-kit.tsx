@@ -20,11 +20,30 @@ const tone = (s: SemanticState) =>
       ? '#b37b25'
       : '#098b82';
 export function semanticState(scene: Scene, entity: SemanticEntity, frame: number) {
-  const result = { ...entity, items: entity.items.map((i) => ({ ...i })), highlight: false };
+  const result = {
+    opacity: 1,
+    scale: 1,
+    rotation: 0,
+    ...entity,
+    items: entity.items.map((i) => ({ ...i })),
+    highlight: false,
+  };
   for (const event of scene.compiled_semantic_events || []) {
     if (event.target !== entity.id) continue;
     if (event.action === 'highlight' && frame >= event.start_frame && frame < event.end_frame)
       result.highlight = true;
+    if (event.action === 'transform') {
+      const progress = Math.max(
+        0,
+        Math.min(1, (frame - event.start_frame) / (event.end_frame - event.start_frame)),
+      );
+      const t = progress * progress * (3 - 2 * progress);
+      for (const key of ['x', 'y', 'opacity', 'scale', 'rotation'] as const) {
+        const dest = event[key];
+        if (dest != null) result[key] = result[key] + (dest - result[key]) * t;
+      }
+      continue;
+    }
     if (frame < event.end_frame) continue;
     if (event.to_state) result.state = event.to_state;
     if (event.action === 'append') {
@@ -78,6 +97,17 @@ export function SemanticPanel({
       {detail && <div style={{ fontSize: n * 0.76, color: '#587272', marginTop: 3 }}>{detail}</div>}
     </div>
   );
+  if (e.component === 'AssetImage' && e.image_style === 'artwork') {
+    const src = e.asset_key && assets[e.asset_key];
+    if (!src) throw new Error('Unregistered artwork asset');
+    return (
+      <Img
+        data-semantic-entity={e.id}
+        src={staticFile(src)}
+        style={{ width, height, objectFit: e.image_fit || 'contain' }}
+      />
+    );
+  }
   let content: React.ReactNode;
   switch (e.component) {
     case 'AssetImage': {
@@ -85,7 +115,12 @@ export function SemanticPanel({
       content = src ? (
         <Img
           src={staticFile(src)}
-          style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top' }}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: e.image_fit || 'contain',
+            objectPosition: 'top',
+          }}
         />
       ) : (
         <div style={{ color: '#a04a4a' }}>素材待制作</div>
@@ -372,9 +407,9 @@ export function SemanticPanel({
               : labels[e.state]}
         </div>
       )}
-      {e.component === 'EvidenceStack' && (
+      {e.component === 'EvidenceStack' && e.provenance === 'observed' && (
         <div style={{ padding: '4px 12px', fontSize: n * 0.65, color: '#687f74' }}>
-          {e.provenance === 'observed' ? '有记录的依据' : '教学示例依据'}
+          有记录的依据
         </div>
       )}
     </div>
@@ -394,10 +429,15 @@ export function SceneRenderer({
   const now = useCurrentFrame(),
     frame = frameOverride ?? now;
   const entities = scene.semantic_scene?.entities || [];
+  const art = scene.semantic_scene;
+  const bg = art?.background_asset_key && assets[art.background_asset_key];
+  if (art?.background_asset_key && !bg) throw new Error('Unregistered background asset');
   const renderScreen = (o: { id: string }, f: number, w: number, h: number) => {
     const e = entities.find((e) => e.bind_to === o.id);
     return e ? (
-      <SemanticPanel scene={scene} entity={e} frame={f} width={w} height={h} assets={assets} />
+      <div style={{ width: w, height: h, opacity: semanticState(scene, e, f).opacity }}>
+        <SemanticPanel scene={scene} entity={e} frame={f} width={w} height={h} assets={assets} />
+      </div>
     ) : null;
   };
   const label = (o: { id: string; label: string }) => {
@@ -405,7 +445,18 @@ export function SceneRenderer({
     return e ? e.title + ' · ' + labels[semanticState(scene, e, frame).state] : o.label;
   };
   return (
-    <AbsoluteFill style={{ background: '#edf4f4', color: '#173f43' }}>
+    <AbsoluteFill
+      style={{
+        background: art?.background_color || '#edf4f4',
+        color: art?.title_color || '#173f43',
+      }}
+    >
+      {bg && (
+        <Img
+          src={staticFile(bg)}
+          style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+      )}
       {scene.visual_scene ? (
         <ObjectScene
           scene={scene}
@@ -413,8 +464,9 @@ export function SceneRenderer({
           titleOverride={titleOverride}
           renderScreen={renderScreen}
           objectLabel={label}
+          transparentBackground={Boolean(bg)}
         />
-      ) : (
+      ) : art?.show_heading !== false ? (
         <>
           <div
             style={{
@@ -433,22 +485,35 @@ export function SceneRenderer({
             {scene.semantic_scene?.viewer_question}
           </div>
         </>
-      )}
+      ) : null}
       <div style={{ position: 'absolute', left: 100, top: 220, width: 1720, height: 650 }}>
         {entities
           .filter((e) => !e.bind_to)
-          .map((e) => (
-            <div key={e.id} style={{ position: 'absolute', left: e.x, top: e.y }}>
-              <SemanticPanel
-                scene={scene}
-                entity={e}
-                frame={frame}
-                width={e.width}
-                height={e.height}
-                assets={assets}
-              />
-            </div>
-          ))}
+          .map((entity) => {
+            const e = semanticState(scene, entity, frame);
+            return (
+              <div
+                key={e.id}
+                style={{
+                  position: 'absolute',
+                  left: e.x,
+                  top: e.y,
+                  opacity: e.opacity,
+                  transform: `scale(${e.scale}) rotate(${e.rotation}deg)`,
+                  transformOrigin: 'center',
+                }}
+              >
+                <SemanticPanel
+                  scene={scene}
+                  entity={entity}
+                  frame={frame}
+                  width={e.width}
+                  height={e.height}
+                  assets={assets}
+                />
+              </div>
+            );
+          })}
       </div>
     </AbsoluteFill>
   );
