@@ -5,22 +5,9 @@ import type { Scene } from './contracts';
 
 // Trusted, frame-driven building blocks. Source labels are supplied by the plan,
 // never inferred as runtime facts. Coordinates use a 1920x1080 logical canvas.
-export const designPacks = {
-  editorial_warm: {
-    background: '#f4efe5',
-    ink: '#273b38',
-    accent: '#a63d49',
-    panel: '#fffdf7',
-    muted: '#7a8580',
-  },
-  workspace_tech: {
-    background: '#eef4fa',
-    ink: '#17354b',
-    accent: '#087f83',
-    panel: '#ffffff',
-    muted: '#718698',
-  },
-};
+import { designPacks } from './theme';
+export { designPacks } from './theme';
+import { CodeViewport } from './code-view';
 type Pack = keyof typeof designPacks;
 type Action = 'reveal' | 'highlight' | 'progress';
 const clamp = (f: number, start: number, end: number) =>
@@ -92,24 +79,7 @@ export function MotionScene({
     if (spec.pattern === 'code_scan')
       return (
         <>
-          <rect x="0" y="10" width="1040" height="570" rx="20" fill="#102e34" />
-          {scene.code
-            .split('\n')
-            .slice(0, 14)
-            .map((line, i) => (
-              <text
-                key={i}
-                x="30"
-                y={55 + i * 35}
-                fontFamily="monospace"
-                fontSize="23"
-                fill="#d9ebe6"
-                opacity={0.65 + 0.35 * progress(0)}
-              >
-                {line.slice(0, 68)}
-              </text>
-            ))}
-          <rect x="0" y={30 + progress(0) * 480} width="1040" height="3" fill={pack.accent} />
+          <CodeViewport scene={scene} frame={frame} progress={progress(0)} accent={pack.accent} />
           {elements.slice(0, 4).map((_, i) => card(i, 1100, 15 + i * 145, 600, 125))}
         </>
       );

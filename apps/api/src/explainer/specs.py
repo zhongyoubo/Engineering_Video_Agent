@@ -69,6 +69,18 @@ class MotionEvent(Spec):
     duration_ms: int = Field(default=700, ge=100, le=5000)
 
 
+class CodeFocus(Spec):
+    element_id: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,60}$")
+    line: int = Field(ge=1, le=1401)
+    end_line: int | None = Field(default=None, ge=1, le=1401)
+
+    @model_validator(mode="after")
+    def ordered(self):
+        if self.end_line is not None and self.end_line < self.line:
+            raise ValueError("Code focus must have ordered source lines")
+        return self
+
+
 class SceneSpec(Spec):
     schema_version: Literal["4.0"] = "4.0"
     purpose: str = Field(min_length=5, max_length=500)
@@ -76,6 +88,7 @@ class SceneSpec(Spec):
     pattern: Literal["overview", "code_scan", "compare", "graph", "capacity", "queue", "depth"]
     layout: Literal["grid", "fan"] = "grid"
     elements: list[VisualElement] = Field(min_length=1, max_length=8)
+    code_focus: list[CodeFocus] = Field(default_factory=list, max_length=4)
     events: list[MotionEvent] = Field(default_factory=list, max_length=24)
 
     @model_validator(mode="after")
@@ -89,6 +102,12 @@ class SceneSpec(Spec):
         if any(len(e.label) > label_limit for e in self.elements):
             raise ValueError(f"Pattern {self.pattern} labels must fit within {label_limit} characters")
         ids = {e.id for e in self.elements}
+        if self.code_focus and (
+            self.pattern != "code_scan"
+            or any(f.element_id not in ids for f in self.code_focus)
+            or len({f.element_id for f in self.code_focus}) != len(self.code_focus)
+        ):
+            raise ValueError("Code focus must bind unique visible code_scan elements")
         if len(ids) != len(self.elements):
             raise ValueError("Visual element IDs must be unique")
         if len({e.id for e in self.events}) != len(self.events):

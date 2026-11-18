@@ -9,7 +9,7 @@ def normalize(text):
     return re.sub(r"[\W_]+", "", text).lower()
 
 
-def resolve_events(scene, events, words, fps, allow_estimated=False):
+def resolve_events(scene, events, words, fps, allow_estimated=False, enforce_budget=True):
     if not events:
         return []
     text = normalize(scene.narration)
@@ -42,7 +42,7 @@ def resolve_events(scene, events, words, fps, allow_estimated=False):
             second = position / max(1, len(text)) * scene.frames / fps
         first = round((second + event.anchor.offset_ms / 1000) * fps)
         last = first + max(1, round(event.duration_ms / 1000 * fps))
-        if first < 0 or last > scene.frames:
+        if first < 0 or (enforce_budget and last > scene.frames):
             raise TimelineConflict(f"Motion event {event.id} exceeds scene frame budget")
         compiled.append((event, first, last, "measured_words" if measured else "estimated_draft"))
     return compiled
@@ -51,17 +51,47 @@ def resolve_events(scene, events, words, fps, allow_estimated=False):
 def compile_motion(scene, words, fps, allow_estimated=False):
     from .visuals import compile_visual_scene
 
-    compile_visual_scene(scene, words, fps, allow_estimated)
-    scene.compiled_events = [
-        CompiledEvent(
-            id=event.id,
-            target=event.target,
-            action=event.action,
-            start_frame=first,
-            end_frame=last,
-            timing_source=source,
-        )
-        for event, first, last, source in resolve_events(
-            scene, scene.motion.events if scene.motion else [], words, fps, allow_estimated
-        )
-    ]
+    from .semantics import compile_semantics
+
+    candidate = scene.model_copy(deep=True)
+    try:
+        compile_semantics(candidate, words, fps, allow_estimated)
+        compile_visual_scene(candidate, words, fps, allow_estimated)
+        legacy = [
+            CompiledEvent(
+                id=event.id,
+                target=event.target,
+                action=event.action,
+                start_frame=first,
+                end_frame=last,
+                timing_source=source,
+            )
+            for event, first, last, source in resolve_events(
+                candidate, candidate.motion.events if candidate.motion else [], words, fps, allow_estimated
+            )
+        ]
+    except ValueError:
+        scene.compiled_semantic_events = []
+        scene.compiled_object_events = []
+        scene.compiled_events = []
+        raise
+    scene.compiled_semantic_events = candidate.compiled_semantic_events
+    scene.compiled_object_events = candidate.compiled_object_events
+    scene.compiled_events = legacy
+
+
+def measured_event_budgets(board, alignment):
+    """Use actual word boundaries, not audio padding, to reserve a held result frame."""
+    budgets = {}
+    for scene in board.scenes:
+        words = alignment[scene.id]["words"]
+        if not words:
+            continue  # Draft estimates remain explicitly estimated; never invent measured timing.
+        events = [
+            *(scene.motion.events if scene.motion else []),
+            *(scene.visual_scene.events if scene.visual_scene else []),
+            *(scene.semantic_scene.events if scene.semantic_scene else []),
+        ]
+        resolved = resolve_events(scene, events, words, board.fps, enforce_budget=False)
+        budgets[scene.id] = max((last + 1 for _, _, last, _ in resolved), default=0)
+    return budgets

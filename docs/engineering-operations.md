@@ -54,3 +54,11 @@ CHROME_EXECUTABLE=/你的Chrome路径 .venv/bin/python scripts/verify_engineerin
 最后一个命令会真实调用配置供应商并消耗其额度；去掉 --draft 使用正式 Qwen 与对齐。两个供应商、源码捕获、取消中途推理、跨 Worker 恢复、真实听感需分别验收。
 
 本次环境没有 Docker 与供应商凭据，未执行真实原生模型到视频联调。固定可信夹具实测了编译错误、修复、9 张关键帧、600 帧成片和整片解码。此夹具只允许固定自编源码，不是生产环境绕过隔离的开关。
+
+### Semantic renderer packaging follow-up
+
+Rebuild the engineering render image when pulling the semantic-scene changes: render.mjs
+imports the protected review-plan.mjs, and both must be installed in /opt/engine. The
+Dockerfile now copies this dependency explicitly. A local fixed render is not an image
+build/run test. Routine backend tests check the transitive local runtime imports against
+Dockerfile COPY inputs; still run the isolated deployment acceptance on the target Worker.

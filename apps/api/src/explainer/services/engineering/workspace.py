@@ -28,8 +28,14 @@ def source_path(value):
             "contracts.ts",
             "env.d.ts",
             "motion-kit.tsx",
+            "theme.tsx",
+            "code-view.tsx",
+            "mechanism-kit.tsx",
             "presentation.tsx",
             "scene-objects.tsx",
+            "semantic-kit.tsx",
+            "semantic-types.ts",
+            "review-plan.ts",
         }
         or any(p.startswith(".") or p == "node_modules" for p in path.parts)
         or path.suffix not in {".tsx", ".ts", ".css"}
@@ -75,6 +81,13 @@ class Workspace:
             ignore=shutil.ignore_patterns("node_modules", "output"),
         )
         shutil.copytree(media_directory, self.project / "public", dirs_exist_ok=True)
+        shutil.copyfile(ROOT / "assets/fonts/LICENSE.txt", self.project / "public/FONT-LICENSE.txt")
+        from ..assets.registry import restore_assets
+
+        props = {**props, "generated_assets": restore_assets(self)}
+        from ..render_plan import build_render_plan
+
+        props["render_plan"] = build_render_plan(props, self.project / "public")
         atomic_json(self.project / "props.json", props)
         for name, text in self.state["files"].items():
             target = self.project / source_path(name)
@@ -107,6 +120,9 @@ class Workspace:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(edit.content)
         self.state["files"] = candidate
+        self.invalidate()
+
+    def invalidate(self):
         for key in ["build_hash", "preview_hash", "review_hash"]:
             self.state[key] = None
         self.state["frames"], self.state["review"], self.state["finished"] = [], None, False
@@ -122,6 +138,17 @@ class Workspace:
             for path in sorted(self.project.rglob("*")):
                 if path.is_file() and "node_modules" not in path.parts:
                     archive.write(path, str(path.relative_to(self.project)))
+            archive.writestr(
+                "generated-assets.json",
+                json.dumps(
+                    {
+                        k: {f: v for f, v in r.items() if f not in {"svg", "image_png", "preview_png"}}
+                        for k, r in self.state.get("generated_assets", {}).items()
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                ),
+            )
             archive.writestr("production-plan.json", json.dumps(plan, ensure_ascii=False, indent=2))
             archive.writestr(
                 "authoring-journal.json", json.dumps(self.state["journal"], ensure_ascii=False, indent=2)

@@ -128,6 +128,7 @@ function App() {
   const [runtime, setRuntime] = useState('none'),
     [entry, setEntry] = useState(''),
     [real, setReal] = useState(false);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [file, setFile] = useState<File | null>(null),
     [busy, setBusy] = useState(false),
     [active, setActive] = useState<string | null>(null);
@@ -256,12 +257,30 @@ function App() {
       setError('描述一下你希望讲解的内容');
       return;
     }
+    if (
+      videoMode === 'engineering' &&
+      (imageFiles.length > 24 || imageFiles.some((f) => f.size > 12 * 1024 * 1024))
+    ) {
+      setError('图片最多 24 张，每张不得超过 12 MB');
+      return;
+    }
     setBusy(true);
     setError('');
     try {
       const actions = JSON.parse(actionText);
       if (!Array.isArray(actions)) throw new Error('演示动作必须是 JSON 数组');
       const project = await post('/v1/projects', { name: title });
+      if (videoMode === 'engineering') {
+        for (const image of imageFiles) {
+          const material = new FormData();
+          material.append('file', image);
+          material.append('title', image.name.replace(/\.png$/i, '').slice(0, 60) || '图片素材');
+          await request('/v3/projects/' + project.id + '/images', {
+            method: 'POST',
+            body: material,
+          });
+        }
+      }
       let input_id = null;
       if (inputMode === 'source' && file) {
         const form = new FormData();
@@ -688,6 +707,23 @@ function App() {
                       </span>
                     </button>
                   </>
+                )}
+                {videoMode === 'engineering' && (
+                  <div>
+                    <label>参考图片与独立素材（可选）</label>
+                    <input
+                      aria-label="项目图片素材"
+                      type="file"
+                      accept="image/png"
+                      multiple
+                      disabled={busy}
+                      onChange={(e) => setImageFiles(Array.from(e.target.files || []))}
+                    />
+                    <p className="subtle">
+                      PNG，每张最多 12 MB，最多 24 张；使用透明图可单独编排元素动作。
+                    </p>
+                    {imageFiles.length > 0 && <p>{imageFiles.map((f) => f.name).join('、')}</p>}
+                  </div>
                 )}
                 <label>
                   {inputMode === 'prompt' ? '你想讲解什么？' : '希望重点讲解什么？（可选）'}

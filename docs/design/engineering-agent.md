@@ -38,3 +38,23 @@ full context and records rationale, ordered scene coverage and success criteria.
 publication review additionally scores purpose_fulfillment against actual content.
 See product/positioning-and-content-taxonomy.md (under docs) and content-strategy.md.
 The engineering execution loop and isolation/evidence boundaries remain unchanged.
+
+## Project-owned materials and illustration
+
+The trusted Worker now mediates image generation through an explicitly configured gateway,
+and resolves imported raster IDs against tenant AND project ownership. Image catalogs include
+actual bounded previews for native planning. Asset requests, byte inspection, checkpoint
+recovery and source export are application operations, not conversation-only helpers.
+Protected shared scenes compose full-frame illustrations and measured independent-element
+transforms while preserving the same source-hash and causal review gates. Provider secrets
+stay outside generated code containers. The fixed host verifier remains an explicit reviewed
+fixture only. See project-owned-visual-production.md for protocol, limits and actual acceptance.
+
+## Reference-effect correction
+
+The authoring loop retains its source and isolation boundaries. Production plans now enforce
+project-wide material identity; native actions cannot silently replace a planned material with
+a contradictory request. Measured event endings contribute to frame allocation before source
+rendering. Every declared material binding requires explicit native frame review. Shared
+protected theme/code/mechanism modules support parameter-linked diagrams without topic routing.
+See reference-production-corrections.md for precise implemented paths and limits.

@@ -50,3 +50,51 @@ checks exercise both render paths and eleven prototype shapes; see verification-
 HDMI revision reuses actual Edge narration/timing. Real native automatic asset generation,
 unseen-object quality, text-to-image/video adapters, broad camera/3D systems and human full
 watching/listening remain separate acceptance work. See goals/2026-11-18-object-scenes.md.
+
+## Semantic visual production · 2026-11-18
+
+Implemented typed semantic entities/state events/expectations, twelve trusted AI components,
+device-screen bindings, structured shot intents, mediated original SVG/companion-PNG assets,
+receipts/recovery/byte checks, shared scene renderer, dependency manifests, causal preview
+coverage and Studio editing. Validation evidence is recorded in the semantic implementation
+goal and docs/verification-semantic-scenes.json after actual checks.
+
+Remaining V5 work: real native unseen-topic acceptance, external image/video/3D adapters,
+general layer graphs and FFmpeg media backend, rendered-scene cache, advanced layout/OCR
+review and human full playback/listening. Dependency keys are not a rendered-video cache.
+
+Semantic review follow-up: repaired the isolated image's missing runtime dependency,
+canonical asset-cache recovery and atomic validation, unchanged-request gate preservation,
+presentation/runtime dependency hashing, and bounded receipts with actual clip-range checks.
+224 backend tests and 11 browser flows passed; real isolated Docker deployment still needs
+the target Worker. See goals/2026-11-18-semantic-review.md for executed media verification.
+
+## Project-owned illustrated production · 2026-11-18
+
+- Implemented: mediated configurable eva-image-1 gateway; authenticated immutable project PNG
+  catalogs and Studio upload; actual catalog previews in native planning/authoring; bounded
+  decoding/metadata stripping/transparency checks; durable raster receipts/recovery; provider
+  revision/idempotency scope; protected full-frame backgrounds, unframed artwork, per-shot
+  colors and measured transforms with causal review. Existing SVG receipt keys stay compatible.
+- Verification: see goals/2026-11-18-production-assets.md and
+  docs/verification-production-assets.json for executed commands and media results.
+- Still requires deployment: actual native/image-provider inference and Docker/gVisor acceptance.
+  The gateway adapter is implemented; a service implementing its contract is not bundled or
+  configured here. The fixed rendered dinner fixture reuses imported artwork and existing real
+  Edge audio. It is not new provider inference or human watching/listening certification.
+- Remaining broader work: generated video/3D backends, arbitrary layer/camera graphs, reusable
+  render cache, advanced layout/OCR review and unseen-topic quality acceptance.
+
+## Reference-production corrections · 2026-11-18
+
+Implemented global material identities and native request checks; complete paged code viewport
+and source-line bindings; measured event budgets with held result frames; shared protected
+theme tokens; declared asset-consumption/native binding review; Dial/BranchTree/MetricBar
+and integrated FlowReservoir/QueueFlow primitives; Studio parameter editing; fixed renderer
+and CI evidence. Latest semantic/image feature history is included in the main-targeted PR.
+
+Actual execution: goals/2026-11-18-reference-optimization.md and verification-reference-corrections.json.
+Remaining: real native/image/voice isolated deployment, broad unseen-topic quality, arbitrary
+layer/morph/camera graphs, richer calendar/chart/metaphor primitives, independent occlusion/OCR
+review and human full playback/listening. Strict impossible timing and invalid state/dependency
+plans are explicitly rejected; unrestricted pre-authoring replanning is not claimed.

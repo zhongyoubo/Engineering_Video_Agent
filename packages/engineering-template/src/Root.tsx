@@ -11,6 +11,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from 'remotion';
+import { ThemeProvider, useTheme, designPacks } from './theme';
 import EngineeringVideo from './Video';
 import { Bookend, PublicationThumbnail, ViewerDisclosures } from './presentation';
 import { ObjectSceneSounds } from './scene-objects';
@@ -18,6 +19,7 @@ import type { VideoProps, Scene } from './contracts';
 
 function Caption({ scene }: { scene: Scene }) {
   const frame = useCurrentFrame();
+  const theme = useTheme();
   const cue = scene.cues.find((c) => c.start <= frame / 30 && c.end > frame / 30);
   if (!cue) return null;
   return (
@@ -31,7 +33,7 @@ function Caption({ scene }: { scene: Scene }) {
         textAlign: 'center',
         fontSize: 30,
         lineHeight: 1.5,
-        color: '#172c49',
+        color: theme.ink,
       }}
     >
       <span
@@ -39,7 +41,7 @@ function Caption({ scene }: { scene: Scene }) {
           display: 'inline-block',
           padding: '10px 22px',
           borderRadius: 12,
-          background: '#f5f8fbd9',
+          background: theme.panel + 'd9',
           whiteSpace: 'pre-wrap',
         }}
       >
@@ -63,31 +65,34 @@ function TrustedVideo(props: VideoProps) {
       .catch((error) => cancelRender(error));
   }, [handle]);
   return (
-    <AbsoluteFill
-      style={{
-        fontFamily: 'EngineeringNoto, sans-serif',
-        background: '#f5f8fc',
-        width: 1920,
-        height: 1080,
-        transform: `scale(${(props.width || 1920) / 1920})`,
-        transformOrigin: 'top left',
-      }}
-    >
-      <EngineeringVideo {...props} />
-      {props.scenes.map((scene) => (
-        <Sequence key={scene.id} from={scene.start_frame} durationInFrames={scene.frames}>
-          {!scene.visual_scene &&
-            (props.presentation_profile || 'creator') === 'creator' &&
-            (scene.role === 'opening' || scene.role === 'closing') && (
-              <Bookend scene={scene} props={props} />
-            )}
-          <ViewerDisclosures scene={scene} fps={props.fps} />
-          {scene.audio_src && <Audio src={staticFile(scene.audio_src)} />}
-          <ObjectSceneSounds scene={scene} fps={props.fps} />
-          <Caption scene={scene} />
-        </Sequence>
-      ))}
-    </AbsoluteFill>
+    <ThemeProvider pack={props.design_pack}>
+      <AbsoluteFill
+        style={{
+          fontFamily: 'EngineeringNoto, sans-serif',
+          background: designPacks[props.design_pack || 'workspace_tech'].background,
+          width: 1920,
+          height: 1080,
+          transform: `scale(${(props.width || 1920) / 1920})`,
+          transformOrigin: 'top left',
+        }}
+      >
+        <EngineeringVideo {...props} />
+        {props.scenes.map((scene) => (
+          <Sequence key={scene.id} from={scene.start_frame} durationInFrames={scene.frames}>
+            {!scene.visual_scene &&
+              !scene.semantic_scene &&
+              (props.presentation_profile || 'creator') === 'creator' &&
+              (scene.role === 'opening' || scene.role === 'closing') && (
+                <Bookend scene={scene} props={props} />
+              )}
+            <ViewerDisclosures scene={scene} fps={props.fps} />
+            {scene.audio_src && <Audio src={staticFile(scene.audio_src)} />}
+            <ObjectSceneSounds scene={scene} fps={props.fps} />
+            <Caption scene={scene} />
+          </Sequence>
+        ))}
+      </AbsoluteFill>
+    </ThemeProvider>
   );
 }
 export function Root() {

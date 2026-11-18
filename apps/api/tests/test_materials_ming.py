@@ -24,8 +24,10 @@ def test_material_catalogue_is_authenticated_and_reports_provenance(client, head
     r = client.get("/api/v1/material-library", headers=headers)
     assert r.status_code == 200
     library = r.json()
-    assert len(library["items"]) == 30 and len(library["revision"]) == 64
+    assert len(library["items"]) == 31 and len(library["revision"]) == 64
     by_id = {x["id"]: x for x in library["items"]}
+    assert by_id["visual.parameter_mechanisms"]["symbol"] == "MechanismPanel"
+    assert by_id["design.editorial_warm"]["source"].endswith("theme.tsx")
     assert by_id["scene.cover"]["symbol"] == "CoverScene"
     assert by_id["visual.graph"]["readiness"] == "unverified"
     assert all(len(x["source_sha256"]) == 64 and x["provenance"] and x["rights"] for x in library["items"])

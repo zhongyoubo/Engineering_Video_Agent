@@ -1,5 +1,129 @@
 {
   "$defs": {
+    "AssetRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "purpose": {
+          "maxLength": 400,
+          "minLength": 5,
+          "title": "Purpose",
+          "type": "string"
+        },
+        "provider": {
+          "default": "component_svg",
+          "enum": [
+            "component_svg",
+            "image_service",
+            "project_image"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SemanticItem"
+          },
+          "maxItems": 8,
+          "title": "Items",
+          "type": "array"
+        },
+        "image_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 2500,
+              "minLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Prompt"
+        },
+        "size": {
+          "default": "landscape",
+          "enum": [
+            "landscape",
+            "portrait",
+            "square"
+          ],
+          "title": "Size",
+          "type": "string"
+        },
+        "transparent": {
+          "default": false,
+          "title": "Transparent",
+          "type": "boolean"
+        },
+        "project_asset_id": {
+          "anyOf": [
+            {
+              "pattern": "^mat_[a-f0-9]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Asset Id"
+        }
+      },
+      "required": [
+        "id",
+        "purpose",
+        "provider",
+        "title",
+        "items",
+        "image_prompt",
+        "size",
+        "transparent",
+        "project_asset_id"
+      ],
+      "title": "AssetRequirement",
+      "type": "object"
+    },
+    "SemanticItem": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "maxLength": 180,
+          "title": "Detail",
+          "type": "string"
+        },
+        "active": {
+          "default": false,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text",
+        "detail",
+        "active"
+      ],
+      "title": "SemanticItem",
+      "type": "object"
+    },
     "SourceEdit": {
       "additionalProperties": false,
       "properties": {
@@ -71,11 +195,41 @@
           "title": "Motion Continuity",
           "type": "integer"
         },
+        "semantic_expectations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 128,
+          "title": "Semantic Expectations",
+          "type": "array"
+        },
+        "asset_expectations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 256,
+          "title": "Asset Expectations",
+          "type": "array"
+        },
+        "asset_visibility": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Asset Visibility",
+          "type": "integer"
+        },
+        "semantic_accuracy": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Semantic Accuracy",
+          "type": "integer"
+        },
         "inspected_motion_frames": {
           "items": {
             "type": "string"
           },
-          "maxItems": 32,
+          "maxItems": 96,
           "title": "Inspected Motion Frames",
           "type": "array"
         },
@@ -137,6 +291,10 @@
         "issues",
         "inspected_frames",
         "motion_continuity",
+        "semantic_expectations",
+        "asset_expectations",
+        "asset_visibility",
+        "semantic_accuracy",
         "inspected_motion_frames",
         "content_focus",
         "cover_promise",
@@ -158,7 +316,9 @@
         "build",
         "render_preview",
         "review",
-        "finish"
+        "finish",
+        "request_assets",
+        "inspect_asset"
       ],
       "title": "Action",
       "type": "string"
@@ -186,13 +346,36 @@
           "type": "null"
         }
       ]
+    },
+    "asset_requests": {
+      "items": {
+        "$ref": "#/$defs/AssetRequirement"
+      },
+      "maxItems": 8,
+      "title": "Asset Requests",
+      "type": "array"
+    },
+    "asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Asset Id"
     }
   },
   "required": [
     "action",
     "summary",
     "files",
-    "review"
+    "review",
+    "asset_requests",
+    "asset_id"
   ],
   "title": "EngineeringAction",
   "type": "object"

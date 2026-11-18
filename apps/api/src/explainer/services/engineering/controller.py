@@ -5,11 +5,26 @@ from .workspace import EngineeringError
 
 
 class EngineeringController:
-    def __init__(self, workspace, agent, tools, persist, emit, guard, max_steps=18):
+    def __init__(
+        self, workspace, agent, tools, persist, emit, guard, max_steps=18, resolve_image=None, asset_scope=""
+    ):
         self.workspace, self.agent, self.tools = workspace, agent, tools
         self.persist, self.emit, self.guard, self.max_steps = persist, emit, guard, max_steps
+        self.resolve_image, self.asset_scope = resolve_image, asset_scope
+        self.planned_assets = {}
 
     def run(self, plan):
+        from ...semantic_scene import AssetRequirement
+
+        self.planned_assets = {}
+        # The pipeline validates ProductionPlan; protocol fixtures may have no creative plan.
+        # Revalidate global asset identity here as well before any paid request.
+        for shot in plan.get("shots", []):
+            for raw in shot.get("asset_requirements", []):
+                req = AssetRequirement.model_validate(raw)
+                if req.id in self.planned_assets and req != self.planned_assets[req.id]:
+                    raise EngineeringError("Conflicting project-wide asset requirements")
+                self.planned_assets[req.id] = req
         w = self.workspace
         if w.state.get("finished") and all(
             w.state.get(k) == w.fingerprint() for k in ["build_hash", "preview_hash", "review_hash"]
@@ -62,7 +77,68 @@ class EngineeringController:
         if action.action == "write_files":
             w.edit(action.files)
             w.record("files.written", {"paths": [e.path for e in action.files], "hash": w.fingerprint()})
+        elif action.action == "request_assets":
+            from ..assets.registry import request_assets
+
+            for req in action.asset_requests:
+                if req.id in self.planned_assets and req != self.planned_assets[req.id]:
+                    raise EngineeringError("Asset request conflicts with the global production-plan identity")
+            receipts = request_assets(
+                w,
+                action.asset_requests,
+                self.guard,
+                getattr(self.tools, "settings", None),
+                self.resolve_image,
+                self.asset_scope,
+            )
+            w.record("assets.created", {"receipts": receipts})
+        elif action.action == "inspect_asset":
+            receipt = w.state.get("generated_assets", {}).get(action.asset_id)
+            if not receipt:
+                raise EngineeringError("No generated asset with this ID in this project")
+            import hashlib
+
+            path = w.project / "public" / receipt["filename"]
+            if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != receipt["sha256"]:
+                raise EngineeringError("Asset bytes differ from receipt")
+            preview = w.project / "public" / receipt["preview_filename"]
+            if (
+                not preview.is_file()
+                or hashlib.sha256(preview.read_bytes()).hexdigest() != receipt["preview_sha256"]
+            ):
+                raise EngineeringError("Asset preview differs from receipt")
+            from ..assets.registry import public_receipt
+
+            w.record("asset.inspected", public_receipt(receipt))
         elif action.action == "build":
+            props = json.loads((w.project / "props.json").read_text())
+            from ..assets.usage import asset_usage
+
+            usage = asset_usage(props)
+            from ...semantic_scene import AssetRequirement
+            import hashlib
+
+            for key in {u["asset_key"] for u in usage.values()}:
+                receipt = w.state.get("generated_assets", {}).get(key)
+                if not receipt:
+                    raise EngineeringError("Request the declared material before build")
+                if (
+                    key in self.planned_assets
+                    and AssetRequirement.model_validate(receipt["request"]) != self.planned_assets[key]
+                ):
+                    raise EngineeringError("Registered material is stale for the current production plan")
+                path = w.project / "public" / receipt["filename"]
+                if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != receipt["sha256"]:
+                    raise EngineeringError("Registered material bytes differ from the receipt")
+            for scene in props.get("scenes", []):
+                background = (scene.get("semantic_scene") or {}).get("background_asset_key")
+                if background and background not in w.state.get("generated_assets", {}):
+                    raise EngineeringError("Request the background image before build")
+                for entity in (scene.get("semantic_scene") or {}).get("entities", []):
+                    if entity.get("asset_key") and entity["asset_key"] not in w.state.get(
+                        "generated_assets", {}
+                    ):
+                        raise EngineeringError("Request the referenced generated asset before build")
             w.state["build_hash"], w.state["preview_hash"], w.state["review_hash"] = None, None, None
             w.state["frames"], w.state["review"] = [], None
             w.state["clips"], w.state["motion_frames"] = [], []
@@ -110,6 +186,23 @@ class EngineeringController:
             object_required = any(s.get("visual_scene") for s in props.get("scenes", []))
             if publication_required and not any(f.get("kind") == "thumbnail" for f in w.state["frames"]):
                 raise EngineeringError("Publication review requires an independently rendered thumbnail")
+            from ..assets.usage import asset_usage
+
+            required_assets = asset_usage(props)
+            if required_assets and (
+                set(review["asset_expectations"]) != set(required_assets) or review["asset_visibility"] < 4
+            ):
+                raise EngineeringError("Review must inspect every declared material binding in actual frames")
+            required_expectations = {
+                scene["id"] + ":" + item["id"]
+                for scene in props.get("scenes", [])
+                for item in (scene.get("semantic_scene") or {}).get("expectations", [])
+            }
+            if required_expectations and (
+                set(review["semantic_expectations"]) != required_expectations
+                or review["semantic_accuracy"] < 4
+            ):
+                raise EngineeringError("Review must verify every causal semantic expectation")
             accepted = (
                 review["accepted"]
                 and not review["issues"]

@@ -1,0 +1,62 @@
+{
+  "source_hash": "aa47fc85c01ca33e9cbfa689e56740becd9cfe40d448309ede361e78aca18566",
+  "frames": 2127,
+  "seconds": 70.9,
+  "video": "final/video.mp4",
+  "media": {
+    "decode": "passed",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0,
+    "frames": 2127,
+    "duration": 70.912
+  },
+  "registered_images": 8,
+  "causal_changes": [
+    {
+      "scene": "ingredients",
+      "event": "show_tomato",
+      "before": 561,
+      "after": 583,
+      "pixel_difference": 2.1262644675925926
+    },
+    {
+      "scene": "feedback",
+      "event": "remove_tomato",
+      "before": 1090,
+      "after": 1112,
+      "pixel_difference": 1.4962220293209878
+    },
+    {
+      "scene": "feedback",
+      "event": "show_greens",
+      "before": 1185,
+      "after": 1207,
+      "pixel_difference": 1.3107301311728394
+    }
+  ],
+  "compiler_and_renderer": "actual protected Remotion",
+  "image_generation": false,
+  "native_agent_inference": false,
+  "audio": "reused hash-pinned Edge Yunxi audio and real WordBoundary times",
+  "isolation": "fixed reviewed fixture host verifier only; deployment not tested",
+  "human_playback_and_listening": false,
+  "video_sha256": "b86d6485a9f0c11e515361815af60ea6117b8b5086bfc2181b14e4418fea0627",
+  "checks": {
+    "backend_tests": 244,
+    "browser_tests": 12,
+    "typecheck": "passed",
+    "studio_build": "passed",
+    "format": "passed"
+  },
+  "deployment": {
+    "docker_available": false,
+    "native_provider_configured": false,
+    "image_gateway_configured": false,
+    "actual_integration_acceptance": "blocked at explicit preflight; not passed"
+  },
+  "preview": {
+    "sampled_png_count": 39,
+    "continuous_clips": 9
+  }
+}

@@ -1,3 +1,7 @@
+import type {
+  SemanticScene,
+  CompiledSemanticEvent,
+} from '../../engineering-template/src/semantic-types';
 export type SceneObjectKind =
   | 'tv'
   | 'monitor'
@@ -168,6 +172,7 @@ export type Scene = {
     schema_version: '4.0';
     purpose: string;
     layout?: 'grid' | 'fan';
+    code_focus?: { element_id: string; line: number; end_line?: number | null }[];
     chapter: string;
     pattern: 'overview' | 'code_scan' | 'compare' | 'graph' | 'capacity' | 'queue' | 'depth';
     elements: { id: string; label: string }[];
@@ -187,6 +192,8 @@ export type Scene = {
     end_frame: number;
     timing_source: string;
   }[];
+  semantic_scene?: SemanticScene | null;
+  compiled_semantic_events?: CompiledSemanticEvent[];
   visual_scene?: VisualScene | null;
   compiled_object_events?: CompiledObjectEvent[];
   diagram?: Diagram | null;
@@ -222,4 +229,9 @@ export type Storyboard = {
   notices: string[];
   audio_alignment: 'estimated_sentence' | 'native_words' | 'forced_words' | 'mixed' | 'none';
 };
-export type VideoProps = Storyboard & { fontSrc?: string; assetBase?: string; preview?: boolean };
+export type VideoProps = Storyboard & {
+  generated_assets?: Record<string, string>;
+  fontSrc?: string;
+  assetBase?: string;
+  preview?: boolean;
+};

@@ -10,7 +10,7 @@ Creator publication: props.editorial describes the audience question, central me
 
 Start by writing a real implementation. Different scenes need different explanatory visual treatments: product/UI walkthrough, animated data, architecture/data flow, process state, side-by-side comparisons, code highlighting, etc. Use provided real page assets where available; never fabricate a successful UI operation. Explain relationships and changes, not a sequence of decorative title cards.
 
-Decide exactly one next action: write_files (full contents for affected paths), build, render_preview, review or finish. Return files=[] for actions other than write_files; review=null except a review action. Compiler/renderer diagnostics are real observations; fix the source rather than claiming success. After every source edit build again, render new keyframes, then inspect all supplied images and return explicit review scores/issues with exact frame_names. If anything is clipped, unreadable, visually misleading or poorly synchronized, request source edits and another build/preview. Finish only after all gates match the current project hash. The platform performs final render after acceptance.
+Decide exactly one next action: write_files (full contents for affected paths), build, render_preview, review, finish, request_assets or inspect_asset. Return files=[] for actions other than write_files; review=null except a review action. Compiler/renderer diagnostics are real observations; fix the source rather than claiming success. After every source edit build again, render new keyframes, then inspect all supplied images and return explicit review scores/issues with exact frame_names. If anything is clipped, unreadable, visually misleading or poorly synchronized, request source edits and another build/preview. Finish only after all gates match the current project hash. The platform performs final render after acceptance.
 
 Preview also generates continuous 720p scene clips and sampled motion contact sheets. Review.inspected_frames names all ordinary frame_names. Review.inspected_motion_frames names all motion_frame_names and motion_continuity scores sampled continuity. Inspect the sheet left-to-right then top-to-bottom. These samples do not establish full playback or listening review: never claim to have watched/heard an MP4 that was not supplied in a supported modality. Human playback/listening remains a separate verification result.
 
@@ -39,3 +39,53 @@ Object scenes additionally require object_fidelity and causal_motion >=4/5. Insp
 before/after states and continuous samples. VRR/HDR animation and decorative waves are
 illustrations, not frame-rate, luminance, electrical or acoustic measurements. Original
 optional connect/click/notify cues are quiet interaction Foley, not actual HDMI sound.
+
+## Semantic composition and assets
+
+Use `SceneRenderer` from `./semantic-kit` for semantic_scene data, optionally bound to physical
+objects. Compose it in authored Video.tsx; Root still supplies audio/captions. Do not scale twice.
+Every causal event requires a visible-result expectation. Review each scene_id:expectation_id
+against real before/during/after samples and score semantic_accuracy >=4.
+Use request_assets with typed AssetRequirement for original component_svg assets, then
+inspect_asset by request ID. Use that ID in AssetImage.asset_key; props.generated_assets is
+platform-owned. Image service is unavailable. The actual companion previews are supplied
+as image context; final SVG is checked through rendered frames. Do not overwrite protected
+semantic-kit.tsx, semantic-types.ts, renderer helpers or manifests.
+
+
+## Illustrated scene production
+
+Only request advertised asset providers. image_service is a trusted Worker gateway call;
+project_image resolves a supplied project catalog ID; component_svg makes structured documents.
+The actual catalog images precede other supplied image context, indexed by image_index.
+Inspect source bytes/previews before relying on a generated asset. Never fetch your own URL,
+expose provider credentials, or substitute a different provider. Gateway failure requires
+repair or a clear missing-capability result, not a claim that the requested image was created.
+
+For concrete illustrations, use semantic_scene.background_asset_key for a full-frame scene
+and AssetImage with image_style=artwork for unframed independent elements. Keep text in the
+required project font, not baked into generated art. Separate background and cutout prompts,
+maintain object identity/palette and leave room for captions. Avoid a universal scene template.
+Use semantic transform events with explicit destination x/y/opacity/scale/rotation and measured
+narration anchors; every transform needs a visible-result expectation and held result frame.
+Device-bound entities may change opacity only. Root owns audio/captions. Report provenance in
+receipts; do not add unsolicited example/demo banners or tool credits to the film.
+
+## Shared parameters, source pages and material identity
+
+Material IDs are project-wide: repeated IDs must have identical requirements. Declare every
+registered background/element in the production plan. Distinct scenes need distinct IDs unless
+the material is intentionally shared. Review every scene_id:asset_key in asset_expectations
+and score asset_visibility >=4 from actual preview frames; unused receipts are insufficient.
+
+Use shared semantic parameters and parameter events to drive Dial/BranchTree/MetricBar from
+one explanatory variable. FlowReservoir/QueueFlow bind initial stock and nonnegative inflow/
+outflow rate parameters; change rates rather than assigning stock after integration. These
+are educational models unless actual observations establish the values. Provide causal result
+expectations. Never present these diagrams as measured model internals or hardware traces.
+
+The protected code viewport preserves/wraps all source characters and pages by original source
+line. motion.code_focus binds element IDs to source line/end_line; use narration-anchored
+compiled events for synchronized scanning, focus and issue cards. Plan sufficient reading time.
+Trusted Root owns shared theme/captions. Do not overwrite theme.tsx, code-view.tsx or
+mechanism-kit.tsx. Custom visual components still compile/render only under isolation.

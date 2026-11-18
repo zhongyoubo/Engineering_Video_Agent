@@ -1,0 +1,118 @@
+{
+  "$defs": {
+    "SemanticItem": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "maxLength": 180,
+          "title": "Detail",
+          "type": "string"
+        },
+        "active": {
+          "default": false,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "SemanticItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "purpose": {
+      "maxLength": 400,
+      "minLength": 5,
+      "title": "Purpose",
+      "type": "string"
+    },
+    "provider": {
+      "default": "component_svg",
+      "enum": [
+        "component_svg",
+        "image_service",
+        "project_image"
+      ],
+      "title": "Provider",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 60,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/SemanticItem"
+      },
+      "maxItems": 8,
+      "title": "Items",
+      "type": "array"
+    },
+    "image_prompt": {
+      "anyOf": [
+        {
+          "maxLength": 2500,
+          "minLength": 20,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Image Prompt"
+    },
+    "size": {
+      "default": "landscape",
+      "enum": [
+        "landscape",
+        "portrait",
+        "square"
+      ],
+      "title": "Size",
+      "type": "string"
+    },
+    "transparent": {
+      "default": false,
+      "title": "Transparent",
+      "type": "boolean"
+    },
+    "project_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^mat_[a-f0-9]{32}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Project Asset Id"
+    }
+  },
+  "required": [
+    "id",
+    "purpose",
+    "title"
+  ],
+  "title": "AssetRequirement",
+  "type": "object"
+}

@@ -8,7 +8,8 @@ class TimelineConflict(ValueError):
     pass
 
 
-def allocate(board, audio, brief):
+def allocate(board, audio, brief, event_minimums=None):
+    event_minimums = event_minimums or {}
     fps = board.fps
     by_id = {a["scene_id"]: a for a in audio}
     padding = math.ceil(0.45 * fps)
@@ -16,8 +17,11 @@ def allocate(board, audio, brief):
     for scene in board.scenes:
         speech = math.ceil(by_id[scene.id]["duration"] * fps) if by_id[scene.id].get("audio_id") else 0
         length = max(2 * fps, speech + padding) if speech else max(2 * fps, round(scene.duration * fps))
+        length = max(length, event_minimums.get(scene.id, 0))
+        if length > 180 * fps:
+            raise TimelineConflict("Narration and motion exceed the maximum scene duration")
         if scene.locked:
-            if speech + padding > scene.frames:
+            if max(speech + padding, event_minimums.get(scene.id, 0)) > scene.frames:
                 raise TimelineConflict(f"锁定场景 {scene.id} 无法容纳完整旁白")
             length = scene.frames
         minimum.append(length)
@@ -27,12 +31,14 @@ def allocate(board, audio, brief):
         # Video-only scenes may shrink to two seconds. Audio speed is handled before allocation.
         flexible = [i for i, s in enumerate(board.scenes) if not s.locked and not by_id[s.id].get("audio_id")]
         for i in flexible:
-            reduction = min(minimum[i] - 2 * fps, total - target)
+            reduction = min(
+                minimum[i] - max(2 * fps, event_minimums.get(board.scenes[i].id, 0)), total - target
+            )
             minimum[i] -= reduction
             total -= reduction
         if total > target:
             raise TimelineConflict(
-                f"完整旁白与锁定画面至少需要 {total / fps:.2f} 秒，目标 {target / fps:.2f} 秒；请精简脚本或放宽约束"
+                f"完整旁白、动效与锁定画面至少需要 {total / fps:.2f} 秒，目标 {target / fps:.2f} 秒；请精简脚本或放宽约束"
             )
     if brief.duration_mode == "exact" and total < target:
         candidates = [i for i, s in enumerate(board.scenes) if not s.locked]

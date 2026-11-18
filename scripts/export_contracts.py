@@ -16,10 +16,12 @@ from explainer.specs import (
     RenderProfile,
     VoiceSpec,
     SceneSpec,
+    CodeFocus,
     MotionEvent,
     CompiledEvent,
 )
 
+from explainer.semantic_scene import SemanticScene, SemanticEntity, SemanticEvent, CompiledSemanticEvent, VisualIntent, AssetRequirement, SemanticParameter
 from explainer.visual_scene import VisualScene, SceneObject, ObjectPort, SceneConnection, ObjectEvent, CompiledObjectEvent
 
 from explainer.editorial import EditorialBrief, EditorialPlan, CoverSpec, ViewerDisclosure, ContentStrategy, NarrativeBeat
@@ -28,6 +30,7 @@ from explainer.content_taxonomy import taxonomy_options
 directory = ROOT / "packages/contracts"
 for model in [
     Brief,
+    SemanticScene, SemanticEntity, SemanticEvent, CompiledSemanticEvent, VisualIntent, AssetRequirement, SemanticParameter,
     VisualScene,
     SceneObject,
     ObjectPort,
@@ -47,6 +50,7 @@ for model in [
     RenderProfile,
     VoiceSpec,
     SceneSpec,
+    CodeFocus,
     MotionEvent,
     CompiledEvent,
 ]:
