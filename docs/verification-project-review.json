@@ -1,0 +1,60 @@
+{
+  "date": "2026-11-24",
+  "timezone": "Asia/Shanghai",
+  "base_content_commit": "f1f5ea5f74d82726bef9afc8b1170292cbe09273",
+  "merge_base": "f2a415310f2cb9bffe45621775c4cc59321b78fa",
+  "coverage": "risk-based whole-project review; not exhaustive proof or full dependency audit",
+  "checks": {
+    "baseline_backend": 316,
+    "backend": 340,
+    "backend_added_cases": 24,
+    "new_backend_cases_reproduced_failing_before": 22,
+    "baseline_browser": 17,
+    "browser": 20,
+    "browser_added_flows": 3,
+    "ruff": "passed",
+    "visual_spatial_creative_contracts": "passed",
+    "typecheck": "passed",
+    "studio_build": "passed",
+    "format": "passed",
+    "pip_check": "passed",
+    "lock_versions_match_environment": true,
+    "git_diff_check": "passed",
+    "media": "see verification-project-review-media.json",
+    "postgres_protocol": "see verification-project-review-postgres.json"
+  },
+  "versions": {
+    "fastapi": "0.136.3",
+    "starlette": "1.10.0",
+    "python-multipart": "0.0.34",
+    "pydantic": "2.14.1",
+    "anyio": "4.15.1"
+  },
+  "changed_source_sha256": {
+    "apps/api/pyproject.toml": "e0663ffe6f2eaa1e14eea2e7fe3a138b151bab1bc51050c29c4a8e8a059f946c",
+    "apps/api/src/explainer/adapters/voice.py": "4e2b909e9e831506e6bcccf6f8a80335182565c2ed9ee44468b9c862b9044e81",
+    "apps/api/src/explainer/api.py": "42b2d153bbd034afaf25c41f36be5e46fd091e1ab898d73ba0c8f1f2cd21d728",
+    "apps/api/src/explainer/config.py": "7038f5504e5f587400450dad6b59c6d6edf99eafa3b7a0b6cf9664271354a258",
+    "apps/api/src/explainer/db.py": "847ed6c4c37983d21a50a34ecb0c19cc013202ed86caa0ed1f8b7e93b5d0dc87",
+    "apps/api/src/explainer/services/changes.py": "8b13df8be3044dad0849232d7e3659ef1bf5a69eda31f5a43f25908439d9c2ca",
+    "apps/api/src/explainer/services/engineering/agent.py": "dacb43620951decf388c0514840bfafda623ac7d19b8bf9b2ab645ab38c749a5",
+    "apps/api/src/explainer/services/engineering/tools.py": "bbc7b91acb19ad96c2af11ff8e8e1b27e7e539001a4768b78450df39f6d04b18",
+    "apps/api/src/explainer/services/ingestion.py": "f75d06aa5e6da9d710954e9ea47b0774687a31e95426ae80ae958256866771bf",
+    "apps/api/src/explainer/services/pipeline.py": "8b93b3e49688b19a4300c848a2cdaf2dfc724b1d14ed9303649db7f1ab628377",
+    "apps/api/src/explainer/services/process.py": "6e48cb2d9d02b743d212e96cc0989aab875125ce7434f819df4568799440e9b7",
+    "apps/api/tests/test_project_review.py": "a888f1ecc7371eacd8f0b834b74a491af3672a412e1de5ce95e24f46e27739f2",
+    "apps/studio/src/main.tsx": "b6d66ea03d1978a9fdcca8791423b21bec80429f68021744602b4e8d335a2025",
+    "packages/contracts/openapi.json": "97c8479ace80a9ce0d0190fd16e663af01787d71b0e9ae4ea6715b90d9d37dd2",
+    "playwright.config.ts": "476ce92baa3a123f177ec2be5beac0eed07e3cf65e1c452363e934f1c2f35d3e",
+    "requirements.lock": "eba96479ced87150bbd27f815940c5826a52c4ceedffbbba9abbe6f15d366092",
+    "services/qwen/requirements.txt": "cfeb19cb006616dc5a0a973c907aaf2ef447dd42bc5d86889a4371f1cd40bdb4",
+    "tests/browser/studio.spec.ts": "39dc1271733c68b88f50de28f7191e8825fe4f0961dfe748e859d42161e869c0"
+  },
+  "limitations": [
+    "No native model/image inference",
+    "No Docker/gVisor or native PostgreSQL multi-worker concurrency or Temporal deployment",
+    "No actual professional TTS, forced alignment or human listening",
+    "Fixed template media is PARTIAL with no voice and estimated timing",
+    "Vite large chunks and TestClient deprecation remain documented"
+  ]
+}

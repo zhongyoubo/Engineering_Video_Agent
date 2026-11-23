@@ -721,13 +721,13 @@ def get_job(job_id: str, tenant_id=Depends(tenant), deps=Depends(dependencies)):
 def cancel(job_id: str, tenant_id=Depends(tenant), deps=Depends(dependencies)):
     _, db, _ = deps
     job = owned(db, "jobs", job_id, tenant_id)
-    if job["state"] in {"QUEUED", "RUNNING"}:
-        state = "CANCELED" if job["state"] == "QUEUED" else "CANCEL_REQUESTED"
-        db.execute(
-            "UPDATE jobs SET state=?,updated=? WHERE id=? AND state IN ('QUEUED','RUNNING')",
-            (state, time.time(), job_id),
-        )
-        db.event(job, "cancel.requested", {"state": state})
+    with db.transaction() as c:
+        db.lock_job(c, job_id)
+        current = c.execute("SELECT state FROM jobs WHERE id=?", (job_id,)).fetchone()
+        if current["state"] in {"QUEUED", "RUNNING"}:
+            state = "CANCELED" if current["state"] == "QUEUED" else "CANCEL_REQUESTED"
+            c.execute("UPDATE jobs SET state=?,updated=? WHERE id=?", (state, time.time(), job_id))
+            db.event(job, "cancel.requested", {"state": state}, c)
     return owned(db, "jobs", job_id, tenant_id)
 
 
@@ -735,12 +735,23 @@ def cancel(job_id: str, tenant_id=Depends(tenant), deps=Depends(dependencies)):
 async def retry(job_id: str, tenant_id=Depends(tenant), deps=Depends(dependencies)):
     settings, db, _ = deps
     job = owned(db, "jobs", job_id, tenant_id)
-    if job["state"] != "FAILED":
-        raise HTTPException(409, "只能重试失败任务")
-    db.execute(
-        "UPDATE jobs SET state='QUEUED',error=NULL,attempts=0,updated=? WHERE id=? AND state='FAILED'",
-        (time.time(), job_id),
-    )
+    with db.transaction() as c:
+        db.lock_tenant(c, tenant_id)
+        db.lock_job(c, job_id)
+        current = c.execute("SELECT state FROM jobs WHERE id=?", (job_id,)).fetchone()
+        if current["state"] != "FAILED":
+            raise HTTPException(409, "只能重试失败任务")
+        active = c.execute(
+            "SELECT count(*) FROM jobs WHERE tenant=? AND state IN ('QUEUED','RUNNING','CANCEL_REQUESTED')",
+            (tenant_id,),
+        ).fetchone()[0]
+        if active >= settings.max_active_jobs:
+            raise HTTPException(429, "并发任务配额已满")
+        c.execute(
+            "UPDATE jobs SET state='QUEUED',error=NULL,attempts=0,lease_owner=NULL,lease_until=NULL,updated=? WHERE id=?",
+            (time.time(), job_id),
+        )
+        db.event(job, "job.queued", {"state": "QUEUED", "retry": True}, c)
     return await schedule(settings, {"job_id": job_id, "revision_id": job["revision_id"], "state": "QUEUED"})
 
 

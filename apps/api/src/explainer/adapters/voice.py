@@ -10,6 +10,18 @@ from ..services.process import ProcessError
 from ..specs import VoiceSpec
 
 
+QWEN_MAX_TEXT = 1600  # Matches the bundled gateway and isolated infer_worker contract.
+
+
+class VoiceRequestError(ValueError):
+    pass
+
+
+def validate_voice_text(text, engine):
+    if engine == "qwen" and len(text) > QWEN_MAX_TEXT:
+        raise VoiceRequestError("Qwen 单场景旁白最多1600个字符；请拆分镜头或精简旁白后重试。")
+
+
 def voice_configuration(engine, settings, spec=None):
     spec = spec or VoiceSpec()
     selected = engine if engine != "auto" else settings.tts_engine
@@ -68,6 +80,7 @@ def synthesize(scene, language, engine, settings, directory, runner, spec=None):
     raw, mastered = directory / (scene.id + "-raw.wav"), directory / (scene.id + ".wav")
     configuration = voice_configuration(engine, settings, spec)
     selected = configuration["engine"]
+    validate_voice_text(scene.narration, selected)
     if selected == "none":
         return {"path": None, "duration": scene.duration, "engine": "none"}
     words = []

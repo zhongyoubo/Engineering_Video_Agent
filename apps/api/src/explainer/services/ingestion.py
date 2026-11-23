@@ -95,6 +95,15 @@ class InvalidArchive(ValueError):
 
 
 def redact(text):
+    # Common credential forms are not always assigned to a key named token/password.
+    # Preserve the endpoint as evidence while removing URL userinfo and auth payloads.
+    text = re.sub(r"([A-Za-z][A-Za-z0-9+.-]*://)[^/\s\"'<>?#]+@", r"\1[REDACTED]@", text)
+    text = re.sub(
+        r"(\b(?:Authorization|Proxy-Authorization)['\"]?\s*[:=]\s*['\"]?\s*(?:Bearer|Basic)\s+)[A-Za-z0-9._~+/-]+=*",
+        r"\1[REDACTED]",
+        text,
+        flags=re.I,
+    )
     text = SECRET.sub(lambda m: m.group(1) + '"[REDACTED]"', text)
     return re.sub(
         r"-----BEGIN [^-]*PRIVATE KEY-----.*?-----END [^-]*PRIVATE KEY-----",
@@ -112,7 +121,7 @@ def read_archive(data, settings):
         archive = zipfile.ZipFile(io.BytesIO(data))
         if len(archive.infolist()) > settings.max_files:
             raise InvalidArchive("归档文件数超过限制")
-        normalized = set()
+        normalized, file_paths, parent_paths = set(), set(), set()
         for item in archive.infolist():
             name = item.filename
             path = PurePosixPath(name)
@@ -130,7 +139,13 @@ def read_archive(data, settings):
             canonical = str(path)
             if canonical in normalized:
                 raise InvalidArchive("归档包含重复路径")
+            parents = {str(p) for p in path.parents if str(p) != "."}
+            if parents & file_paths or (not item.is_dir() and canonical in parent_paths):
+                raise InvalidArchive("归档包含文件与目录路径冲突")
             normalized.add(canonical)
+            parent_paths.update(parents)
+            if not item.is_dir():
+                file_paths.add(canonical)
             total += item.file_size
             if total > settings.max_expanded_bytes:
                 raise InvalidArchive("展开大小超过限制")

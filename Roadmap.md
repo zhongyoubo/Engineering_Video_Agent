@@ -143,3 +143,17 @@ before prune-path rejection, invalid GLB numeric ranges and stale/error-prone br
 Batch operations reuse a fresh verified index; model cleanup/readiness and4K pixel density
 were strengthened. 316 backend tests,17 browser flows and fixed16-second compile/render/export
 regression passed. See docs/design/material-pack-review-20261124.md for reproductions and limits.
+
+## Full project review · 2026-11-24
+
+Fixed atomic cancellation/claim decisions, terminal worker fencing, retry quotas, failed-render
+receipt precedence, session-owned Studio state, subprocess pipe deadlines and graceful cleanup,
+atomic access-key publication, ZIP prefix collisions, common source credential redaction,
+full narration edits/Qwen early limits and resumable SSE. Reduced capability polling; pinned
+FastAPI0.136.3/Starlette1.10.0/python-multipart0.0.34 in API, lock and Qwen HTTP service.
+
+340 backend tests and20 browser flows, contracts/types/build/format/dependency checks passed.
+Fixed trusted compatibility pipeline rendered/decoded20s1080p30 and exported source; PARTIAL
+with no voice and estimated timing. PGlite SQL/API checks passed, not native PostgreSQL
+concurrency. Native/Docker/Temporal/professional voice/listening remain deployment acceptance.
+See docs/design/project-code-review-20261124.md and docs/verification-project-review.json.

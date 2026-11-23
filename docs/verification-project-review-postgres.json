@@ -1,0 +1,8 @@
+{
+  "engine": "PGlite PostgreSQL wire protocol; not native multi-process PostgreSQL",
+  "cancel_running": "passed",
+  "retry_quota": "passed",
+  "retry_after_capacity": "passed",
+  "terminal_fencing": "passed",
+  "native_postgres_concurrency": false
+}

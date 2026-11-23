@@ -167,7 +167,12 @@ class SQLiteDatabase:
         with self.transaction() as c:
             self.lock_job(c, job["id"])
             row = c.execute("SELECT * FROM jobs WHERE id=?", (job["id"],)).fetchone()
-            if row["fence"] != job["fence"] or row["lease_owner"] != job["lease_owner"]:
+            if (
+                not row
+                or row["state"] not in {"RUNNING", "CANCEL_REQUESTED"}
+                or row["fence"] != job["fence"]
+                or row["lease_owner"] != job["lease_owner"]
+            ):
                 return False
             state = "CANCELED" if row["state"] == "CANCEL_REQUESTED" else "QUEUED"
             c.execute(
@@ -180,7 +185,12 @@ class SQLiteDatabase:
         with self.transaction() as c:
             self.lock_job(c, job["id"])
             current = c.execute("SELECT * FROM jobs WHERE id=?", (job["id"],)).fetchone()
-            if current["fence"] != job["fence"] or current["lease_owner"] != job["lease_owner"]:
+            if (
+                not current
+                or current["state"] not in {"RUNNING", "CANCEL_REQUESTED"}
+                or current["fence"] != job["fence"]
+                or current["lease_owner"] != job["lease_owner"]
+            ):
                 return False
             if current["state"] == "CANCEL_REQUESTED":
                 state = "CANCELED"

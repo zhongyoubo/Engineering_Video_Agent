@@ -1,6 +1,101 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
+test('background polling does not repeatedly rebuild the capability catalog', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  let catalogs = 0;
+  page.on('request', (request) => {
+    if (new URL(request.url()).pathname === '/api/v1/capabilities') catalogs++;
+  });
+  await page.goto('/');
+  await expect(page.getByLabel('视频标题')).toBeVisible();
+  await expect.poll(() => catalogs).toBe(1);
+  await page.waitForTimeout(3400);
+  expect(catalogs).toBe(1);
+  await page.getByRole('button', { name: '刷新', exact: true }).click();
+  await expect.poll(() => catalogs).toBe(2);
+});
+
+test('retry reconnects a completed event stream from its last cursor', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.addInitScript(() => {
+    (window as any).__eventUrls = [];
+    window.EventSource = class {
+      first: boolean;
+      constructor(url: string) {
+        this.first = (window as any).__eventUrls.length === 0;
+        (window as any).__eventUrls.push(url);
+      }
+      addEventListener(type: string, callback: (event: MessageEvent) => void) {
+        if (type === 'update' && this.first)
+          queueMicrotask(() =>
+            callback(
+              new MessageEvent('update', {
+                data: JSON.stringify({
+                  seq: 17,
+                  kind: 'engineering.action',
+                  payload: JSON.stringify({ action: 'write_files' }),
+                }),
+              }),
+            ),
+          );
+        if (type === 'done')
+          queueMicrotask(() => callback(new MessageEvent('done', { data: '{}' })));
+      }
+      close() {}
+    } as any;
+  });
+  await page.goto('/');
+  await page.getByLabel('视频标题').fill('Retry event regression');
+  await page.getByLabel('讲解要求').fill('Explain an API using actual engineering production.');
+  await page.getByRole('button', { name: '开始创作' }).click();
+  await expect(page.getByRole('button', { name: '重试', exact: true })).toBeVisible({
+    timeout: 30000,
+  });
+  const before = await page.evaluate(() => (window as any).__eventUrls.length);
+  await page.getByRole('button', { name: '重试', exact: true }).click();
+  await expect
+    .poll(() => page.evaluate(() => (window as any).__eventUrls.length))
+    .toBeGreaterThan(before);
+  expect(await page.evaluate(() => (window as any).__eventUrls.at(-1))).toContain('after=17');
+});
+
+test('logout removes private editor state before another tenant signs in', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('视频标题').fill('PRIVATE-PREVIOUS-TENANT-REVIEW');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  await page.getByLabel('讲解要求').fill('This private prompt belongs to the first tenant.');
+  await page.getByRole('button', { name: '开始创作' }).click();
+  await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
+  await page.getByRole('button', { name: '退出登录' }).click();
+  await expect(page.getByLabel('工作空间访问密钥')).toBeVisible();
+  await page.getByLabel('工作空间访问密钥').fill('e2e-second-tenant-only-test-key-123456');
+  await page.getByRole('button', { name: '进入工作空间' }).click();
+  await expect(page.getByLabel('视频标题')).toBeVisible();
+  await expect(page.getByLabel('视频标题')).toHaveValue('');
+  await expect(page.getByLabel('讲解旁白')).toHaveCount(0);
+  await expect(page.getByText('PRIVATE-PREVIOUS-TENANT-REVIEW', { exact: true })).toHaveCount(0);
+  await page.waitForTimeout(3200);
+  await expect(page.getByText('PRIVATE-PREVIOUS-TENANT-REVIEW', { exact: true })).toHaveCount(0);
+});
+
 test('material discovery clears stale results on failure and handles unavailable clipboard', async ({
   page,
   context,

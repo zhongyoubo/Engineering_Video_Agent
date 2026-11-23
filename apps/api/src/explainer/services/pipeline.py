@@ -8,7 +8,15 @@ from pathlib import Path
 from ..adapters.runtime import execute_runtime
 from ..adapters.native_agent import native_plan, NativeAgentError
 from .engineering.workspace import EngineeringError
-from ..adapters.voice import estimated_cues, probe, synthesize, voice_cache_key
+from ..adapters.voice import (
+    estimated_cues,
+    probe,
+    synthesize,
+    voice_cache_key,
+    voice_configuration,
+    validate_voice_text,
+    VoiceRequestError,
+)
 from ..config import ROOT
 from ..db import encode
 from ..domain import Brief, ContentIR, Cue, Scene, StoryboardIR
@@ -59,8 +67,10 @@ class Pipeline:
         row = self.db.one("SELECT state,fence,lease_owner FROM jobs WHERE id=?", (self.job["id"],))
         if not row or row["fence"] != self.job["fence"] or row["lease_owner"] != self.job["lease_owner"]:
             raise LostLease()
-        if row["state"] == "CANCEL_REQUESTED":
+        if row["state"] in {"CANCEL_REQUESTED", "CANCELED"}:
             raise Canceled()
+        if row["state"] != "RUNNING":
+            raise LostLease()
 
     def heartbeat(self):
         while not self.stopped.wait(max(1, self.settings.lease_seconds / 3)):
@@ -93,10 +103,16 @@ class Pipeline:
             current = c.execute(
                 "SELECT fence,lease_owner,state FROM jobs WHERE id=?", (self.job["id"],)
             ).fetchone()
-            if current["fence"] != self.job["fence"] or current["lease_owner"] != self.job["lease_owner"]:
+            if (
+                not current
+                or current["fence"] != self.job["fence"]
+                or current["lease_owner"] != self.job["lease_owner"]
+            ):
                 raise LostLease()
-            if current["state"] == "CANCEL_REQUESTED":
+            if current["state"] in {"CANCEL_REQUESTED", "CANCELED"}:
                 raise Canceled()
+            if current["state"] != "RUNNING":
+                raise LostLease()
             for column, value in result.get("revision_fields", {}).items():
                 if column not in {"content", "storyboard", "quality", "brief"}:
                     raise ValueError("Invalid revision update")
@@ -130,7 +146,10 @@ class Pipeline:
                 self.job,
                 "FAILED",
                 str(exc)
-                if isinstance(exc, (TimelineConflict, NativeAgentError, EngineeringError, EditorialError))
+                if isinstance(
+                    exc,
+                    (TimelineConflict, NativeAgentError, EngineeringError, EditorialError, VoiceRequestError),
+                )
                 else f"{code}: 阶段 {self.db.one('SELECT stage FROM jobs WHERE id=?', (self.job['id'],))['stage']} 未完成；检查服务和运行配置。",
             )
             raise
@@ -213,6 +232,10 @@ class Pipeline:
                 )["id"]
             else:
                 board = plan(content, self.brief, self.settings)
+            if self.brief.mode != "storyboard":
+                engine = voice_configuration(self.brief.voice, self.settings, self.brief.voice_spec)["engine"]
+                for scene in board.scenes:
+                    validate_voice_text(scene.narration, engine)
             prepare_presentation(board, self.brief)
             valid = {x.id for x in content.claims}
             evid = {x.id for x in content.evidence}
