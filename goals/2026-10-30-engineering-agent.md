@@ -173,3 +173,17 @@ repeated scans; strengthened model cleanup/draw/4K handling.8 pre-fix failures w
 Final316 backend tests,17 UI flows, contracts/types/build/format/diff and fixed16s real material
 compile/preview/render/decode/export passed. See goals/2026-11-24-material-pack-review.md and
 docs/design/material-pack-review-20261124.md. No native/deployment/human listening claim.
+
+## Full project review · 2026-11-24
+
+Fixed atomic cancellation/claim decisions, terminal worker fencing, retry quotas, failed-render
+receipt precedence, session-owned Studio state, subprocess pipe deadlines and graceful cleanup,
+atomic access-key publication, ZIP prefix collisions, common source credential redaction,
+full narration edits/Qwen early limits and resumable SSE. Reduced capability polling; pinned
+FastAPI0.136.3/Starlette1.10.0/python-multipart0.0.34 in API, lock and Qwen HTTP service.
+
+340 backend tests and20 browser flows, contracts/types/build/format/dependency checks passed.
+Fixed trusted compatibility pipeline rendered/decoded20s1080p30 and exported source; PARTIAL
+with no voice and estimated timing. PGlite SQL/API checks passed, not native PostgreSQL
+concurrency. Native/Docker/Temporal/professional voice/listening remain deployment acceptance.
+See docs/design/project-code-review-20261124.md and docs/verification-project-review.json.

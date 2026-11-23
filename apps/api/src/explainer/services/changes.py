@@ -13,14 +13,16 @@ def apply_instruction(board, instruction, scene_id, settings):
         raise ValueError("请先选择一个场景")
     if target.locked:
         raise ValueError("场景已锁定，请先解锁并保存")
-    title = re.search(r"(?:标题)(?:改为|改成|修改为|[:：])\s*[\"“]?(.+?)[\"”]?$", instruction.strip())
+    title = re.search(
+        r"(?:标题)(?:(?:改为|改成|修改为)\s*[:：]?|[:：])\s*[\"“]?(.+?)[\"”]?$", instruction.strip()
+    )
     narration = re.search(
-        r"(?:旁白)(?:改为|改成|修改为|[:：])\s*[\"“]?(.+?)[\"”]?$", instruction.strip(), re.S
+        r"(?:旁白)(?:(?:改为|改成|修改为)\s*[:：]?|[:：])\s*[\"“]?(.+?)[\"”]?$", instruction.strip(), re.S
     )
     if title:
-        target.title = title.group(1).strip()[:90]
+        target.title = title.group(1).strip()
     elif narration:
-        target.narration = narration.group(1).strip()[:1600]
+        target.narration = narration.group(1).strip()
     elif settings.allow_external_model and settings.model_url and settings.model_name:
         # Constrain the model to a single text/visual scene patch, never executable actions or assets.
         with httpx.Client(timeout=90, trust_env=False, follow_redirects=False) as client:

@@ -8,7 +8,7 @@ version = "3.0.0"
 description = "Source and prompt to editable narrated explainer video"
 requires-python = ">=3.11"
 dependencies = [
-  "fastapi==0.115.12", "uvicorn==0.34.2", "python-multipart==0.0.20",
+  "fastapi==0.136.3", "starlette==1.10.0", "uvicorn==0.34.2", "python-multipart==0.0.34",
   "httpx==0.28.1", "pydantic-settings==2.9.1", "temporalio==1.11.1",
   "psycopg[binary]==3.2.9", "boto3==1.38.23", "fonttools==4.60.1", "pillow==11.3.0"
 ]

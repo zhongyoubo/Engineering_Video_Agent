@@ -10,6 +10,7 @@ from ...config import ROOT
 from ...content_taxonomy import planning_guidance
 from ...visual_scene import visual_scene_guidance
 from ...specs import PATTERN_ELEMENT_LIMITS, PATTERN_LABEL_LIMITS
+from ...adapters.voice import QWEN_MAX_TEXT, validate_voice_text, voice_configuration, VoiceRequestError
 from ..materials import material_library, validate_material_references
 from ..editorial import EDITORIAL_INSTRUCTION, prepare_presentation, require_publishable, EditorialError
 from .contracts import ProductionPlan, EngineeringAction, schema
@@ -112,6 +113,10 @@ class NativeEngineeringAgent:
             ProductionPlan,
             {
                 "phase": "production-planning",
+                "narration_limits": {
+                    "qwen_characters_per_scene": QWEN_MAX_TEXT,
+                    "instruction": "Split longer narration into meaningful shots; never silently truncate the text",
+                },
                 "content_guidance": planning_guidance(self.brief),
                 "visual_scene_toolkit": visual_scene_guidance(),
                 "semantic_scene_toolkit": semantic_guidance(),
@@ -157,6 +162,13 @@ class NativeEngineeringAgent:
             raise EditorialError("新创作者策划必须解析表达目的、讲述对象、观众与表现形式，并给出叙事结构。")
         declared = {r.id for shot in plan.shots for r in shot.asset_requirements}
         for scene in board.scenes:
+            try:
+                validate_voice_text(
+                    scene.narration,
+                    voice_configuration(self.brief.voice, self.settings, self.brief.voice_spec)["engine"],
+                )
+            except VoiceRequestError as exc:
+                raise NativeOutputError(str(exc)) from exc
             if require_creation and scene.creation is None:
                 raise NativeOutputError(
                     "Design a concrete creation plan for every engineering scene; stock components alone are not a creative plan."

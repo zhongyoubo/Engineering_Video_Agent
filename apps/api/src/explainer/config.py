@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import os
 import secrets
+import tempfile
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -94,9 +95,19 @@ class Settings(BaseSettings):
         if not self.api_token:
             path = self.data_dir / "access-token"
             if not path.exists():
-                fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-                with os.fdopen(fd, "w") as out:
-                    out.write(secrets.token_urlsafe(32))
+                # Publish only complete bytes, and never overwrite a concurrent starter's key.
+                fd, temporary = tempfile.mkstemp(prefix="access-token-", dir=self.data_dir)
+                try:
+                    with os.fdopen(fd, "w") as out:
+                        out.write(secrets.token_urlsafe(32))
+                        out.flush()
+                        os.fsync(out.fileno())
+                    try:
+                        os.link(temporary, path)
+                    except FileExistsError:
+                        pass
+                finally:
+                    Path(temporary).unlink(missing_ok=True)
             self.api_token = path.read_text().strip()
         if len(self.api_token) < 24:
             raise ValueError("EXPLAINER_API_TOKEN must have at least 24 characters")

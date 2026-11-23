@@ -93,10 +93,14 @@ function Logo() {
     </div>
   );
 }
-function App() {
-  const [session, setSession] = useState<any>(undefined),
-    [token, setToken] = useState(''),
-    [error, setError] = useState('');
+function Studio({
+  session,
+  onLogout,
+}: {
+  session: { tenant: string };
+  onLogout: () => Promise<void>;
+}) {
+  const [error, setError] = useState('');
   const [projects, setProjects] = useState<Project[]>([]),
     [jobs, setJobs] = useState<Job[]>([]),
     [caps, setCaps] = useState<any>(null);
@@ -121,6 +125,8 @@ function App() {
   const [editorialInput, setEditorialInput] = useState(defaultEditorialRequest);
   const [creatorBrand, setCreatorBrand] = useState('');
   const [agentEvents, setAgentEvents] = useState<any[]>([]);
+  const [eventRetry, setEventRetry] = useState(0);
+  const eventCursor = useRef<{ job: string | null; seq: number }>({ job: null, seq: 0 });
   const [durationMode, setDurationMode] = useState('target'),
     [requireAlignment, setRequireAlignment] = useState(false);
   const [gitUrl, setGitUrl] = useState(''),
@@ -154,27 +160,33 @@ function App() {
     setJobs(j.items);
     setCaps(c);
   };
-  useEffect(() => {
-    // Local convenience: #token=<key> in the URL hash auto-logs in once.
-    // The fragment stays client-side; the backend still validates the key.
-    const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
-    const prefill = hash.get('token');
-    if (prefill) {
-      history.replaceState(null, '', location.pathname + location.search);
-      post('/session', { token: prefill })
-        .then(setSession)
-        .catch(() => setSession(null));
-      return;
-    }
-    request('/session')
-      .then(setSession)
-      .catch(() => setSession(null));
-  }, []);
+
   useEffect(() => {
     if (!session) return;
+    let live = true,
+      polling = false;
     refresh().catch((e) => setError(e.message));
-    const id = setInterval(() => refresh().catch(() => {}), 3000);
-    return () => clearInterval(id);
+    const id = setInterval(async () => {
+      if (polling) return;
+      polling = true;
+      try {
+        // Capabilities include immutable source/font/pack hashes. Load on session entry or
+        // explicit refresh; job polling must not re-hash the whole catalog every 3 seconds.
+        const [p, j] = await Promise.all([request('/v1/projects'), request('/v1/jobs')]);
+        if (live) {
+          setProjects(p.items);
+          setJobs(j.items);
+        }
+      } catch {
+        /* A transient poll failure does not replace the current editor. */
+      } finally {
+        polling = false;
+      }
+    }, 3000);
+    return () => {
+      live = false;
+      clearInterval(id);
+    };
   }, [session]);
   useEffect(() => {
     if (!activeJob) return;
@@ -208,10 +220,20 @@ function App() {
   useEffect(() => {
     setAgentEvents([]);
     if (!active) return;
-    const stream = new EventSource('/api/v1/jobs/' + active + '/events', { withCredentials: true });
+    if (eventCursor.current.job !== active) eventCursor.current = { job: active, seq: 0 };
+    const cursor = eventCursor.current;
+    let live = true;
+    const stream = new EventSource('/api/v1/jobs/' + active + '/events?after=' + cursor.seq, {
+      withCredentials: true,
+    });
     stream.addEventListener('update', (event) => {
+      if (!live) return;
       try {
         const row = JSON.parse((event as MessageEvent).data);
+        if (Number.isSafeInteger(row.seq)) {
+          if (row.seq <= cursor.seq) return;
+          cursor.seq = row.seq;
+        }
         if (row.kind?.startsWith('agent.') || row.kind?.startsWith('engineering.')) {
           const payload = typeof row.payload === 'string' ? JSON.parse(row.payload) : row.payload;
           setAgentEvents((old) => [...old, { kind: row.kind, ...payload }].slice(-12));
@@ -221,22 +243,12 @@ function App() {
       }
     });
     stream.addEventListener('done', () => stream.close());
-    return () => stream.close();
-  }, [active]);
+    return () => {
+      live = false;
+      stream.close();
+    };
+  }, [active, eventRetry]);
 
-  async function login(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      setBusy(true);
-      setSession(await post('/session', { token }));
-      setToken('');
-      setError('');
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setBusy(false);
-    }
-  }
   function reset() {
     setActive(null);
     setRevision(null);
@@ -464,61 +476,6 @@ function App() {
     current = board?.scenes[sceneIndex];
   const inProgress = !!activeJob && !finalStates.includes(activeJob.state);
 
-  if (session === undefined)
-    return (
-      <div className="boot">
-        <Loader2 className="spin" />
-        正在连接工作空间
-      </div>
-    );
-  if (!session)
-    return (
-      <main className="login">
-        <Logo />
-        <div className="login-card">
-          <div className="eyebrow">YOUR IDEAS, EXPLAINED.</div>
-          <h1>
-            开始你的
-            <br />
-            下一个好故事。
-          </h1>
-          <p>从源码或一个想法出发，创作可以看见、听见、继续编辑的讲解视频。</p>
-          <form onSubmit={login}>
-            <label>工作空间访问密钥</label>
-            <input
-              aria-label="工作空间访问密钥"
-              type="password"
-              autoComplete="current-password"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              placeholder="输入启动时生成的访问密钥"
-            />
-            {error && <div className="error">{error}</div>}
-            <button className="primary" disabled={busy}>
-              {busy ? <Loader2 className="spin" size={17} /> : <ArrowRight size={17} />}进入工作空间
-            </button>
-          </form>
-          <small>
-            首次启动请查看终端提示，或读取 .data/access-token。密钥不会保存在浏览器本地存储中。
-          </small>
-        </div>
-        <div className="login-art">
-          <div className="art-orbit" />
-          <div className="art-card art-one">
-            <FileCode2 />
-            <b>从内容出发</b>
-            <span>SOURCE & IDEAS</span>
-          </div>
-          <div className="art-card art-two">
-            <Film />
-            <b>让理解发生</b>
-            <span>STORY & MOTION</span>
-          </div>
-          <div className="art-dot" />
-        </div>
-      </main>
-    );
-
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -581,7 +538,7 @@ function App() {
             </div>
             <button
               aria-label="退出登录"
-              onClick={() => request('/session', { method: 'DELETE' }).then(() => setSession(null))}
+              onClick={() => onLogout().catch((e) => setError(e.message))}
             >
               <LogOut size={16} />
             </button>
@@ -1161,6 +1118,7 @@ function App() {
                   className="secondary"
                   onClick={() =>
                     post('/v1/jobs/' + active + '/retry', {})
+                      .then(() => setEventRetry((value) => value + 1))
                       .then(refresh)
                       .catch((e) => setError(e.message))
                   }
@@ -1731,6 +1689,109 @@ function App() {
         </div>
       )}
     </div>
+  );
+}
+
+// Authentication owns the workspace lifecycle: leaving a session unmounts every private
+// state/effect, so delayed requests cannot populate a different tenant's workspace.
+function App() {
+  const [session, setSession] = useState<any>(undefined);
+  const [token, setToken] = useState(''),
+    [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    // Local convenience: #token=<key> in the URL hash auto-logs in once.
+    // The fragment stays client-side; the backend still validates the key.
+    const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+    const prefill = hash.get('token');
+    if (prefill) {
+      history.replaceState(null, '', location.pathname + location.search);
+      post('/session', { token: prefill })
+        .then(setSession)
+        .catch(() => setSession(null));
+      return;
+    }
+    request('/session')
+      .then(setSession)
+      .catch(() => setSession(null));
+  }, []);
+  async function login(e: React.FormEvent) {
+    e.preventDefault();
+    try {
+      setBusy(true);
+      setSession(await post('/session', { token }));
+      setToken('');
+      setError('');
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  if (session === undefined)
+    return (
+      <div className="boot">
+        <Loader2 className="spin" />
+        正在连接工作空间
+      </div>
+    );
+  if (!session)
+    return (
+      <main className="login">
+        <Logo />
+        <div className="login-card">
+          <div className="eyebrow">YOUR IDEAS, EXPLAINED.</div>
+          <h1>
+            开始你的
+            <br />
+            下一个好故事。
+          </h1>
+          <p>从源码或一个想法出发，创作可以看见、听见、继续编辑的讲解视频。</p>
+          <form onSubmit={login}>
+            <label>工作空间访问密钥</label>
+            <input
+              aria-label="工作空间访问密钥"
+              type="password"
+              autoComplete="current-password"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              placeholder="输入启动时生成的访问密钥"
+            />
+            {error && <div className="error">{error}</div>}
+            <button className="primary" disabled={busy}>
+              {busy ? <Loader2 className="spin" size={17} /> : <ArrowRight size={17} />}进入工作空间
+            </button>
+          </form>
+          <small>
+            首次启动请查看终端提示，或读取 .data/access-token。密钥不会保存在浏览器本地存储中。
+          </small>
+        </div>
+        <div className="login-art">
+          <div className="art-orbit" />
+          <div className="art-card art-one">
+            <FileCode2 />
+            <b>从内容出发</b>
+            <span>SOURCE & IDEAS</span>
+          </div>
+          <div className="art-card art-two">
+            <Film />
+            <b>让理解发生</b>
+            <span>STORY & MOTION</span>
+          </div>
+          <div className="art-dot" />
+        </div>
+      </main>
+    );
+
+  return (
+    <Studio
+      key={session.tenant}
+      session={session}
+      onLogout={async () => {
+        await request('/session', { method: 'DELETE' });
+        setSession(null);
+      }}
+    />
   );
 }
 

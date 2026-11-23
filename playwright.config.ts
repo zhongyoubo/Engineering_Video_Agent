@@ -21,6 +21,9 @@ export default defineConfig({
     env: {
       EXPLAINER_DATA_DIR: '.test-data',
       EXPLAINER_API_TOKEN: 'e2e-only-not-a-production-key-123456',
+      EXPLAINER_TENANT_KEYS: JSON.stringify({
+        'e2e-second': 'e2e-second-tenant-only-test-key-123456',
+      }),
       EXPLAINER_ENABLE_SANDBOX: 'false',
       EXPLAINER_ALLOW_EXTERNAL_MODEL: 'false',
     },

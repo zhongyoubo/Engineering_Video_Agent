@@ -123,6 +123,7 @@ class RenderTools:
             args += ["--runtime", self.settings.native_agent_runtime]
         args += [self.settings.engineering_render_image, action]
         try:
+            process_failed = False
             try:
                 self.runner.run(
                     args,
@@ -130,6 +131,7 @@ class RenderTools:
                     env={"PATH": __import__("os").environ.get("PATH", "/usr/bin:/bin")},
                 )
             except ProcessError:
+                process_failed = True
                 if not (output / "result.json").is_file():
                     return {
                         "ok": False,
@@ -137,6 +139,12 @@ class RenderTools:
                         "diagnostic": "Container build/render failed without a valid receipt",
                     }
             result = read_receipt(output / "result.json", action)
+            if process_failed and result["ok"]:
+                return {
+                    "ok": False,
+                    "action": action,
+                    "diagnostic": "Container did not exit successfully; its success receipt cannot satisfy the tool gate",
+                }
             if result["ok"] and action == "preview":
                 frames = result.get("frames", [])
                 if not 1 <= len(frames) <= 128:

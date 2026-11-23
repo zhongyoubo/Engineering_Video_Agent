@@ -1,0 +1,30 @@
+{
+  "state": "PARTIAL",
+  "pipeline": "fixed trusted template compatibility fixture",
+  "media": {
+    "decode": "passed",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0,
+    "frames": 600,
+    "duration": 20.0
+  },
+  "voice_engines": [
+    "none"
+  ],
+  "alignment": "estimated_sentence",
+  "outputs": [
+    "alignment",
+    "cover",
+    "package",
+    "quality",
+    "script",
+    "subtitles",
+    "video"
+  ],
+  "video_sha256": "85fa9943101b2a29dd7682bce9c75284a1de87a7ed1fa7a85792a9f4419afda1",
+  "native_inference": false,
+  "image_model_inference": false,
+  "docker_deployment": false,
+  "human_listening": false
+}

@@ -1,5 +1,6 @@
 import os
 import signal
+import select
 import subprocess
 import threading
 import time
@@ -25,11 +26,18 @@ class Runner:
         )
         chunks, size, overflow = [], [0], threading.Event()
         callback_errors = []
+        stopping = threading.Event()
 
         def consume():
             pending = b""
-            while True:
-                chunk = proc.stdout.read1(4096)
+            while not stopping.is_set():
+                if os.name == "nt":
+                    chunk = proc.stdout.read1(4096)
+                else:
+                    # Poll the FD so an escaped process holding a pipe cannot block close().
+                    if not select.select([proc.stdout], [], [], 0.1)[0]:
+                        continue
+                    chunk = os.read(proc.stdout.fileno(), 4096)
                 if not chunk:
                     break
                 size[0] += len(chunk)
@@ -56,7 +64,9 @@ class Runner:
         reader.start()
         start = time.monotonic()
         try:
-            while proc.poll() is None:
+            # A leader may exit while descendants still own its output pipes. The deadline
+            # and cancellation guard apply until BOTH the process and its reader finish.
+            while proc.poll() is None or reader.is_alive():
                 self.guard()
                 if callback_errors:
                     raise ProcessError("Process event handler failed") from callback_errors[0]
@@ -75,16 +85,35 @@ class Runner:
                 raise ProcessError(f"Process failed ({proc.returncode}): {text[-2500:]}")
             return text
         finally:
-            if proc.poll() is None:
-                if os.name == "nt":
+            if os.name == "nt":
+                if proc.poll() is None:
                     subprocess.run(
                         ["taskkill", "/PID", str(proc.pid), "/T", "/F"],
                         stdout=subprocess.DEVNULL,
                         stderr=subprocess.DEVNULL,
                         timeout=10,
                     )
-                else:
+            else:
+                try:
+                    # Remotion closes its detached Chrome group in a SIGTERM handler.
+                    # Allow that cleanup before escalating, rather than immediately orphaning it.
+                    os.killpg(proc.pid, signal.SIGTERM)
+                    if proc.poll() is None:
+                        try:
+                            proc.wait(timeout=1)
+                        except subprocess.TimeoutExpired:
+                            pass
+                    else:
+                        reader.join(timeout=1)
+                except ProcessLookupError:
+                    pass
+                try:
                     os.killpg(proc.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            if proc.poll() is None:
                 proc.wait(timeout=10)
+            stopping.set()
+            reader.join(timeout=3)
             if proc.stdout:
                 proc.stdout.close()
