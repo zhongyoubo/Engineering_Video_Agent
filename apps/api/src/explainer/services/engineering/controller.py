@@ -30,6 +30,23 @@ class EngineeringController:
 
         props = json.loads((w.project / "props.json").read_text())
         refs = plan_material_refs(plan, props)
+        saved_refs = w.state.get("material_selection", {}).get("references", [])
+        if saved_refs:
+            from ...material_packs import material_resolver
+
+            resolve = material_resolver()
+            # Parent revisions may introduce a newer pack version. Planned versions win,
+            # while additional choices made during authoring survive checkpoint resume.
+            versions = {resolve(ref)[0].id: resolve(ref)[0].version for ref in refs}
+            refs = sorted(
+                set(refs)
+                | {
+                    ref
+                    for ref in saved_refs
+                    if resolve(ref)[0].id not in versions
+                    or versions[resolve(ref)[0].id] == resolve(ref)[0].version
+                }
+            )
         if refs or w.state.get("material_selection"):
             stage_materials(w, refs, self.guard)
         if w.state.get("finished") and all(

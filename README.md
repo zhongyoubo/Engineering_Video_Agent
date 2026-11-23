@@ -14,6 +14,8 @@
 PNG/GLB通过 `library_asset` 回执导入。选中依赖、授权、预览与来源随工程导出，
 素材变动会重新要求构建和审查。具体接入方式、版本和验证边界见
 [素材包设计与维护](docs/design/material-packs.md)。素材是创作词汇，Agent仍可按场景编写新素材。
+2026-11-24复查修复了续跑选材丢失、恢复记录覆盖、装载失败后的部分写入与GLB数值校验，
+并优化目录扫描、三维资源清理和界面容错，见[代码复查记录](docs/design/material-pack-review-20261124.md)。
 
 首批只是精选子集；PNG不会自动成为三维模型，也未实现任意对象文生三维。
 配置 `CHROME_EXECUTABLE` 后可运行 `.venv/bin/python scripts/verify_material_packs.py`，

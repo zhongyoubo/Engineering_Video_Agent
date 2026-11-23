@@ -36,11 +36,15 @@ export function MaterialBrowser() {
         signal: controller.signal,
       })
         .then((data) => {
+          if (controller.signal.aborted) return;
           setItems(data.items);
           setError('');
         })
         .catch((e) => {
-          if (!controller.signal.aborted) setError(e.message);
+          if (!controller.signal.aborted) {
+            setItems([]);
+            setError(e.message);
+          }
         })
         .finally(() => {
           if (!controller.signal.aborted) setLoading(false);
@@ -51,6 +55,16 @@ export function MaterialBrowser() {
       controller.abort();
     };
   }, [query, style, type]);
+  async function copyReference(item: Material) {
+    const ref = `library:${item.id}@${item.version}`;
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(ref);
+      setCopied(ref);
+    } catch {
+      setError('复制失败，请从下方引用文本复制。');
+    }
+  }
   return (
     <div className="library-page">
       <h1>素材库</h1>
@@ -61,6 +75,7 @@ export function MaterialBrowser() {
           <input
             aria-label="搜索素材"
             value={query}
+            maxLength={160}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="书本、终端、对话、模型…"
           />
@@ -118,15 +133,8 @@ export function MaterialBrowser() {
                 <p>{item.provenance}</p>
                 <code>SHA256 {item.source_sha256}</code>
               </details>
-              <button
-                onClick={() =>
-                  navigator.clipboard
-                    .writeText(`library:${item.id}@${item.version}`)
-                    .then(() => setCopied(item.id))
-                    .catch(() => setError('复制失败，请从下方引用文本复制。'))
-                }
-              >
-                {copied === item.id ? '已复制引用' : '复制引用'}
+              <button onClick={() => copyReference(item)}>
+                {copied === `library:${item.id}@${item.version}` ? '已复制引用' : '复制引用'}
               </button>
               <code className="material-ref">
                 library:{item.id}@{item.version}

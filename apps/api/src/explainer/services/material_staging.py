@@ -2,7 +2,7 @@
 
 import hashlib
 import json
-from ..material_packs import resolve_material, relative_file
+from ..material_packs import material_resolver, relative_file
 
 
 def plan_material_refs(plan, props):
@@ -29,14 +29,15 @@ def selection_files(refs, guard=lambda: None):
     if len(refs) > 64 or len(set(refs)) != len(refs):
         raise ValueError("Material selection exceeds its bounded unique reference list")
     staged, records, versions = {}, {}, {}
+    resolve = material_resolver() if refs else None
     for ref in sorted(refs):
         guard()
-        pack, item, files, stamp = resolve_material(ref)
+        pack, item, files, stamp = resolve(ref)
         if pack.id in versions and versions[pack.id] != pack.version:
             raise ValueError("Select one version per pack in a workspace")
         versions[pack.id] = pack.version
         if item.asset_type == "component":
-            for name in {item.entry, *item.dependencies}:
+            for name in sorted({item.entry, *item.dependencies}):
                 staged[f"src/vendor/{pack.id}/{name}"] = files[name].read_bytes()
         staged[f"public/library/{pack.id}/LICENSE.txt"] = files[pack.license_file].read_bytes()
         if item.preview:
@@ -67,6 +68,13 @@ def stage_materials(workspace, refs, guard=lambda: None):
     # Validate every destination before writing; no partial writes for an invalid path.
     for name in staged:
         checked_path(workspace, name)
+    existing = []
+    for name in ["src/vendor", "public/library"]:
+        root = checked_path(workspace, name)
+        for path in root.rglob("*") if root.exists() else []:
+            checked_path(workspace, str(path.relative_to(workspace.project)))
+            if path.is_file():
+                existing.append(path)
     before = workspace.fingerprint()
     try:
         for name, data in staged.items():
@@ -75,14 +83,9 @@ def stage_materials(workspace, refs, guard=lambda: None):
                 raise ValueError("Staged library paths cannot be symlinks")
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
-        for root in [workspace.project / "src/vendor", workspace.project / "public/library"]:
-            if root.is_symlink():
-                raise ValueError("Staged library directory cannot be a symlink")
-            for path in root.rglob("*") if root.exists() else []:
-                if path.is_symlink():
-                    raise ValueError("Staged library symlinks are forbidden")
-                if path.is_file() and str(path.relative_to(workspace.project)) not in staged:
-                    path.unlink()
+        for path in existing:
+            if str(path.relative_to(workspace.project)) not in staged:
+                path.unlink()
         workspace.state["material_selection"] = manifest
         props_path = workspace.project / "props.json"
         if props_path.is_file():
@@ -100,7 +103,11 @@ def stage_materials(workspace, refs, guard=lambda: None):
 
 def checked_path(workspace, name):
     relative_file(name)
-    if not (name.startswith("src/vendor/") or name.startswith("public/library/")):
+    if not (
+        name in {"src/vendor", "public/library"}
+        or name.startswith("src/vendor/")
+        or name.startswith("public/library/")
+    ):
         raise ValueError("Invalid material dependency path")
     path = workspace.project / name
     if any(p.is_symlink() for p in [path, *path.parents] if p.is_relative_to(workspace.project)):
@@ -108,27 +115,29 @@ def checked_path(workspace, name):
     return path
 
 
-def verify_staged_materials(workspace):
-    manifest = workspace.state.get("material_selection")
+def validated_selection(manifest):
     if manifest is None:
         manifest = dict(references=[], materials={}, files={})
     # Rebuild from reviewed pack refs, never trust a recovered digest/file list.
     staged, expected = selection_files(manifest.get("references", []))
     if manifest != expected:
         raise ValueError("Selected material manifest differs from reviewed packs")
+    return staged, expected
+
+
+def verify_staged_materials(workspace):
+    staged, manifest = validated_selection(workspace.state.get("material_selection"))
     props_path = workspace.project / "props.json"
     if props_path.is_file():
         props = json.loads(props_path.read_text())
-        if props.get("material_packs", expected) != expected:
+        if props.get("material_packs", manifest) != manifest:
             raise ValueError("Props material selection differs from workspace")
     for name, data in staged.items():
         path = checked_path(workspace, name)
         if not path.is_file() or path.read_bytes() != data:
             raise ValueError("Selected material bytes differ from their staged manifest")
     for name in ["src/vendor", "public/library"]:
-        root = workspace.project / name
-        if root.is_symlink():
-            raise ValueError("Material dependencies cannot be symlinks")
+        root = checked_path(workspace, name)
         for path in root.rglob("*") if root.exists() else []:
             if path.is_symlink() or (
                 path.is_file() and str(path.relative_to(workspace.project)) not in staged

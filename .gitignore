@@ -29,3 +29,4 @@ assets/library/packs/avocado/upstream/Models/Avocado/glTF-Binary/
 .verify-material-packs/
 
 .verify-material-packs-*.log
+.verify-material-review-*.log

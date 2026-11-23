@@ -140,12 +140,27 @@ def load_packs():
     return packs
 
 
-def resolve_material(ref):
+def material_resolver():
+    """One verified snapshot per operation; never a process-wide stale cache."""
+    index = {}
     for pack, directory, files, stamp in load_packs():
         for item in pack.items:
-            if ref == f"library:{item.id}@{pack.version}":
-                return pack, item, files, stamp
-    raise ValueError("Unknown versioned curated material reference")
+            ref = f"library:{item.id}@{pack.version}"
+            if ref in index:
+                raise ValueError("Duplicate versioned material reference")
+            index[ref] = (pack, item, files, stamp)
+
+    def resolve(ref):
+        try:
+            return index[ref]
+        except KeyError as exc:
+            raise ValueError("Unknown versioned curated material reference") from exc
+
+    return resolve
+
+
+def resolve_material(ref):
+    return material_resolver()(ref)
 
 
 def material_pack_entries():

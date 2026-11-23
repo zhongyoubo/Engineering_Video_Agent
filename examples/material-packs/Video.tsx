@@ -143,12 +143,14 @@ function Frame({ index, assets }: { index: number; assets: Record<string, string
       {index === 3 && (
         <>
           <div style={{ position: 'absolute', left: 170, top: 300, width: 800, height: 670 }}>
-            <LibraryModel
-              asset={assets.avocado}
-              angle={interpolate(f, [0, 110], [0, Math.PI * 1.5], { extrapolateRight: 'clamp' })}
-              width={800}
-              height={670}
-            />
+            <React.StrictMode>
+              <LibraryModel
+                asset={assets.avocado}
+                angle={interpolate(f, [0, 110], [0, Math.PI * 1.5], { extrapolateRight: 'clamp' })}
+                width={800}
+                height={670}
+              />
+            </React.StrictMode>
           </div>
           <div
             style={{ position: 'absolute', left: 1120, top: 440, fontSize: 42, lineHeight: 1.8 }}

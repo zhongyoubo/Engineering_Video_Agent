@@ -1,7 +1,7 @@
 {
   "materials": 14,
   "packs": 4,
-  "source_hash": "1272510506a5d106a4710a60d16ef18dd895171e79978451d3dc405d232e0f19",
+  "source_hash": "8d1209a4ba2cb5a78b57b806d809fb8d2ae758861c4951dc6c6ebee9737862d1",
   "selection": {
     "references": [
       "library:pack.avocado.model@1.0",
@@ -212,8 +212,8 @@
   },
   "assets": [
     "pack-1:bubble",
-    "pack-1:notebook",
     "pack-1:heart",
+    "pack-1:notebook",
     "pack-3:avocado"
   ],
   "media": {

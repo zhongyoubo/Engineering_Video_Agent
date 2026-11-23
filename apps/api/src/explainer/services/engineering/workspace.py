@@ -80,6 +80,12 @@ class Workspace:
         )
 
     def prepare(self, props, media_directory):
+        # A checkpoint is versioned evidence. Do not silently replace its pack identity
+        # with today's catalog before verifying it, or mutate files on invalid recovery.
+        if "material_selection" in self.state:
+            from ..material_staging import validated_selection
+
+            validated_selection(self.state["material_selection"])
         shutil.copytree(
             ROOT / "packages/engineering-template",
             self.project,

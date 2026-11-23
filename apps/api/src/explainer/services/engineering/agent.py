@@ -40,7 +40,7 @@ class NativeEngineeringAgent:
     def material_previews(self, library):
         """A bounded actual-image sheet, not names alone; no source imports/evaluation."""
         from PIL import Image, ImageDraw
-        from ...material_packs import resolve_material
+        from ...material_packs import material_resolver
 
         entries = [m for m in library["items"] if m.get("pack_id") and m.get("preview")][:64]
         if not entries:
@@ -48,8 +48,9 @@ class NativeEngineeringAgent:
         sheet = Image.new("RGB", (1200, 220 * ((len(entries) + 3) // 4)), "#edf1f1")
         draw = ImageDraw.Draw(sheet)
         metadata = []
+        resolve = material_resolver()
         for i, item in enumerate(entries):
-            pack, entry, files, stamp = resolve_material(f"library:{item['id']}@{item['version']}")
+            pack, entry, files, stamp = resolve(f"library:{item['id']}@{item['version']}")
             im = Image.open(files[entry.preview]).convert("RGBA")
             im.thumbnail((250, 170))
             x, y = (i % 4) * 300, (i // 4) * 220
@@ -196,13 +197,18 @@ class NativeEngineeringAgent:
                         "Declare every registered material in the project-wide asset requirements."
                     )
         allowed_images = {item["id"] for item in self.image_catalog}
+        binary_requests = [
+            r for shot in plan.shots for r in shot.asset_requirements if r.provider == "library_asset"
+        ]
+        if binary_requests:
+            from ...material_packs import material_resolver
+
+            resolve_binary = material_resolver()
         for shot in plan.shots:
             for req in shot.asset_requirements:
                 if req.provider == "library_asset":
-                    from ...material_packs import resolve_material
-
                     try:
-                        pack, item, files, stamp = resolve_material(req.library_ref)
+                        pack, item, files, stamp = resolve_binary(req.library_ref)
                     except ValueError as exc:
                         raise NativeOutputError("Choose the exact supplied library material version") from exc
                     if item.asset_type == "component":

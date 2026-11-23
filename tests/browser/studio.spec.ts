@@ -1,6 +1,38 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
+test('material discovery clears stale results on failure and handles unavailable clipboard', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.addInitScript(() =>
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true }),
+  );
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/');
+  await page.getByRole('button', { name: '素材库', exact: true }).click();
+  await page.getByLabel('素材风格').selectOption('soft3d');
+  await expect(page.locator('.material-card')).toHaveCount(3);
+  await page.locator('.material-card').first().getByRole('button', { name: '复制引用' }).click();
+  await expect(page.getByRole('alert')).toHaveText('复制失败，请从下方引用文本复制。');
+  expect(errors).toEqual([]);
+  await page.route('**/api/v1/material-library?**', (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: { message: '素材目录暂不可用' } }),
+    }),
+  );
+  await page.getByLabel('搜索素材').fill('temporary-error');
+  await expect(page.getByRole('alert')).toHaveText('素材目录暂不可用');
+  await expect(page.locator('.material-card')).toHaveCount(0);
+  await expect(page.getByLabel('搜索素材')).toHaveAttribute('maxlength', '160');
+});
+
 test('material library filters real previews, kinds and resolution limits', async ({
   page,
   context,

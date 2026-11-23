@@ -165,3 +165,11 @@ Verification:306 backend tests,16 UI flows, pure contracts, TypeScript/build, fo
 fixed16s/480-frame1080p30 compile/preview/render/export regression. Silent fixed fixture;
 native unseen-topic selection/creation, Docker/gVisor and professional listening remain
 separate deployment acceptance. No arbitrary generated-source host execution added.
+
+## Material pack review · 2026-11-24
+
+Fixed checkpoint selection/identity, preflight staging, strict GLB ranges, browser errors and
+repeated scans; strengthened model cleanup/draw/4K handling.8 pre-fix failures were reproduced.
+Final316 backend tests,17 UI flows, contracts/types/build/format/diff and fixed16s real material
+compile/preview/render/decode/export passed. See goals/2026-11-24-material-pack-review.md and
+docs/design/material-pack-review-20261124.md. No native/deployment/human listening claim.

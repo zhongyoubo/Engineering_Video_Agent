@@ -135,3 +135,11 @@ Remaining: broader curated object/character/scene collections, actual unseen-top
 selection/creation on configured isolated infrastructure, Lottie/video/adaptive 3D generation
 adapters, richer human quality acceptance. First collection does not imply full upstream
 libraries, arbitrary-topic generation or new image/native/TTS inference.
+
+## Material-pack correctness review · 2026-11-24
+
+Fixed lost runtime selection on resume, overwritten checkpoint pack identity, partial writes
+before prune-path rejection, invalid GLB numeric ranges and stale/error-prone browser discovery.
+Batch operations reuse a fresh verified index; model cleanup/readiness and4K pixel density
+were strengthened. 316 backend tests,17 browser flows and fixed16-second compile/render/export
+regression passed. See docs/design/material-pack-review-20261124.md for reproductions and limits.

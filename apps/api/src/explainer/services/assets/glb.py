@@ -4,6 +4,13 @@ import json
 import struct
 
 
+def integer(value, minimum=0, maximum=None):
+    # bool is an int subclass; floats and negative values must not bypass geometry budgets.
+    if type(value) is not int or value < minimum or (maximum is not None and value > maximum):
+        raise ValueError("Invalid GLB integer range")
+    return value
+
+
 def _validate_glb(data):
     if not 20 <= len(data) <= 12 * 1024 * 1024:
         raise ValueError("GLB byte budget exceeded")
@@ -40,24 +47,28 @@ def _validate_glb(data):
     ):
         raise ValueError("GLB geometry budget exceeded")
     buffers = doc.get("buffers", [])
-    if len(buffers) != 1 or "uri" in buffers[0] or not 0 < buffers[0]["byteLength"] <= len(chunks[1][1]):
+    if len(buffers) != 1 or "uri" in buffers[0]:
         raise ValueError("Models must embed their buffer")
+    buffer_length = integer(buffers[0]["byteLength"], 1, len(chunks[1][1]))
     for view in doc.get("bufferViews", []):
-        if (
-            view.get("buffer") != 0
-            or view.get("byteOffset", 0) < 0
-            or view.get("byteLength", 0) < 0
-            or view.get("byteOffset", 0) + view["byteLength"] > buffers[0]["byteLength"]
-        ):
+        start = integer(view.get("byteOffset", 0))
+        size = integer(view["byteLength"], 1)
+        if integer(view.get("buffer")) != 0 or start + size > buffer_length:
             raise ValueError("Invalid embedded GLB buffer range")
     for image in doc.get("images", []):
         if (
             "uri" in image
             or image.get("mimeType") not in {"image/png", "image/jpeg"}
-            or not 0 <= image.get("bufferView", -1) < len(doc.get("bufferViews", []))
+            or not 0 <= integer(image.get("bufferView", -1)) < len(doc.get("bufferViews", []))
         ):
             raise ValueError("GLB textures must be embedded PNG/JPEG")
-    if sum(a.get("count", 0) for a in doc.get("accessors", [])) > 2000000:
+    counts = []
+    for accessor in doc.get("accessors", []):
+        counts.append(integer(accessor["count"], 1, 2000000))
+        integer(accessor.get("byteOffset", 0))
+        if "bufferView" in accessor:
+            integer(accessor["bufferView"], 0, len(doc.get("bufferViews", [])) - 1)
+    if sum(counts) > 2000000:
         raise ValueError("GLB accessor budget exceeded")
     return dict(
         format="glb",
@@ -70,5 +81,5 @@ def _validate_glb(data):
 def validate_glb(data):
     try:
         return _validate_glb(data)
-    except (KeyError, TypeError, AttributeError, UnicodeError, struct.error) as exc:
+    except (KeyError, TypeError, AttributeError, UnicodeError, struct.error, RecursionError) as exc:
         raise ValueError("Malformed embedded GLB structure") from exc

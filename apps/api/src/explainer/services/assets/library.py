@@ -8,8 +8,8 @@ from .raster import canonical_png
 from .glb import validate_glb
 
 
-def library_identity(req):
-    pack, item, files, stamp = resolve_material(req.library_ref)
+def _identity(resolved):
+    pack, item, files, stamp = resolved
     if item.asset_type not in {"image", "model"}:
         raise ValueError("Source components use select_materials, not binary asset requests")
     return dict(
@@ -23,27 +23,36 @@ def library_identity(req):
     )
 
 
-def library_key(req):
+def library_identity(req):
+    return _identity(resolve_material(req.library_ref))
+
+
+def _key(req, identity):
     return hashlib.sha256(
-        json.dumps(["library-file-1", req.model_dump(), library_identity(req)], sort_keys=True).encode()
+        json.dumps(["library-file-1", req.model_dump(), identity], sort_keys=True).encode()
     ).hexdigest()
 
 
+def library_key(req):
+    return _key(req, library_identity(req))
+
+
 def library_receipt(req):
-    pack, item, files, stamp = resolve_material(req.library_ref)
-    identity = library_identity(req)
+    resolved = resolve_material(req.library_ref)
+    pack, item, files, stamp = resolved
+    identity = _identity(resolved)
     data = files[item.entry].read_bytes()
-    preview, _, _ = canonical_png(files[item.preview].read_bytes())
     if item.asset_type == "image":
         data, preview, meta = canonical_png(data, req.transparent)
         extension = "png"
     else:
         if req.transparent:
             raise ValueError("Model requests cannot require a PNG cutout")
+        preview, _, _ = canonical_png(files[item.preview].read_bytes())
         meta, extension = validate_glb(data), "glb"
     digest = hashlib.sha256(data).hexdigest()
     return dict(
-        request_hash=library_key(req),
+        request_hash=_key(req, identity),
         request=req.model_dump(),
         factory_version="library-file-1",
         sha256=digest,
