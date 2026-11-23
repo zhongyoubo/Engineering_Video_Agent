@@ -180,6 +180,7 @@ class Pipeline:
                     self.directory / "production-planning",
                     lambda kind, payload: self.db.event(self.job, kind, payload),
                 )
+                agent.load_image_catalog(self.db, self.store, self.tenant, self.revision["project_id"])
                 plan_document, board, agent_report = agent.plan()
                 production_plan = plan_document.model_dump()
                 from .planning import distribute
@@ -478,8 +479,14 @@ class Pipeline:
                     scene.cues = []
                 methods.append(method)
                 alignment_report[scene.id] = {"method": method, "words": words, "audio_id": a.get("audio_id")}
-            board = allocate(board, list(audio_index.values()), self.brief)
-            from .motion import compile_motion
+            from .motion import compile_motion, measured_event_budgets
+
+            board = allocate(
+                board,
+                list(audio_index.values()),
+                self.brief,
+                event_minimums=measured_event_budgets(board, alignment_report),
+            )
 
             for scene in board.scenes:
                 compile_motion(
@@ -553,6 +560,9 @@ class Pipeline:
             from .visuals import prepare_visual_assets
 
             prepare_visual_assets(board, public)
+            from .render_plan import build_render_plan
+
+            props["render_plan"] = build_render_plan(props, public)
             (directory / "props.json").write_text(encode(props))
             if self.brief.video_mode == "engineering":
                 from .engineering.integration import build_engineering_video
@@ -617,6 +627,11 @@ class Pipeline:
             report["voice_engine_requested"] = self.brief.voice
             report["voice_engines_actual"] = sorted({a.get("source_engine", a["engine"]) for a in audio})
             report["engineering_source"] = bool(rendered.get("engineering"))
+            report["creative_production"] = {
+                "scenes": [s.id for s in board.scenes if s.creation],
+                "events": sum(len(s.compiled_creative_events) for s in board.scenes),
+                "evidence": "source bindings and native sampled-frame review; not independent human certification",
+            }
             report["object_scenes"] = {
                 "scenes": [s.id for s in board.scenes if s.visual_scene],
                 "events": sum(len(s.compiled_object_events) for s in board.scenes),

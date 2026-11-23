@@ -1,0 +1,212 @@
+{
+  "$defs": {
+    "PackFile": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "maxLength": 240,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "code",
+            "image",
+            "model",
+            "preview",
+            "license",
+            "provenance"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "role"
+      ],
+      "title": "PackFile",
+      "type": "object"
+    },
+    "PackItem": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9_.-]{1,80}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "purpose": {
+          "maxLength": 500,
+          "minLength": 5,
+          "title": "Purpose",
+          "type": "string"
+        },
+        "asset_type": {
+          "enum": [
+            "component",
+            "image",
+            "model"
+          ],
+          "title": "Asset Type",
+          "type": "string"
+        },
+        "entry": {
+          "maxLength": 240,
+          "minLength": 1,
+          "title": "Entry",
+          "type": "string"
+        },
+        "symbol": {
+          "default": "",
+          "maxLength": 100,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preview"
+        },
+        "styles": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Styles",
+          "type": "array"
+        },
+        "subjects": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Subjects",
+          "type": "array"
+        },
+        "affordances": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Affordances",
+          "type": "array"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 16,
+          "title": "Parameters",
+          "type": "object"
+        },
+        "dependencies": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Dependencies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "purpose",
+        "asset_type",
+        "entry",
+        "styles",
+        "subjects"
+      ],
+      "title": "PackItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "version": {
+      "pattern": "^[a-zA-Z0-9_.-]{1,20}$",
+      "title": "Version",
+      "type": "string"
+    },
+    "origin": {
+      "maxLength": 500,
+      "minLength": 5,
+      "title": "Origin",
+      "type": "string"
+    },
+    "revision": {
+      "maxLength": 80,
+      "minLength": 7,
+      "title": "Revision",
+      "type": "string"
+    },
+    "license": {
+      "maxLength": 100,
+      "minLength": 2,
+      "title": "License",
+      "type": "string"
+    },
+    "license_file": {
+      "title": "License File",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/PackFile"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "title": "Files",
+      "type": "array"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/PackItem"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Items",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "origin",
+    "revision",
+    "license",
+    "license_file",
+    "files",
+    "items"
+  ],
+  "title": "MaterialPack",
+  "type": "object"
+}

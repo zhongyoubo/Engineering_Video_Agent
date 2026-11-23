@@ -1,5 +1,28 @@
 # Roadmap
 
+## Content-driven creative production · 2026-11-23
+
+New native plans require per-shot visual goals, free composition/palette, recognizable elements,
+source/image bindings and independent narration-bound custom motions. Authored SVG/Canvas/Three
+materials are checked, versioned, reviewed and exported with a creative manifest. General Three
+activation replaces the built-in-city-only assumption. Custom causal results enter continuous
+coverage and dedicated subject/composition/motion review. Kits remain optional vocabulary;
+legacy layout limits are scoped. Actual tests and provider preflight are recorded separately
+in goals/2026-11-23-creative-production.md. New-topic native/image/voice/isolation quality remains
+deployment acceptance; the earlier fixed sample does not establish that creative quality.
+
+## Spatial storytelling · 2026-11-23
+
+Implemented platform-owned SpatialCity/QuantityMatrix/NodeNetwork, deterministic 3D geometry
+and camera, registered-image repetition, stable graph identities and shortest-hop propagation.
+Added neon_horizon, bounded backend/TS contracts, protected modules/dependencies, native
+guidance/material declarations, source/asset hash integration and Studio parameter editing.
+Fixed asynchronous module capture readiness and selected software WebGL for city rendering.
+Verification and fixed 28-second sample: goals/2026-11-23-spatial-storytelling.md and
+docs/verification-spatial-scenes.json. The sample remains silent/estimated/30fps. General
+3D subjects, 60fps migration, real native unseen-topic generation, Docker deployment and
+professional voice/human playback acceptance remain separate work.
+
 The product is an engineering video Agent, with Codex/Claude Code as replaceable native reasoning engines. Status distinguishes code implementation, fixture verification and real infrastructure acceptance.
 
 | Milestone | Deliverables | Status |
@@ -50,3 +73,73 @@ checks exercise both render paths and eleven prototype shapes; see verification-
 HDMI revision reuses actual Edge narration/timing. Real native automatic asset generation,
 unseen-object quality, text-to-image/video adapters, broad camera/3D systems and human full
 watching/listening remain separate acceptance work. See goals/2026-11-18-object-scenes.md.
+
+## Semantic visual production · 2026-11-18
+
+Implemented typed semantic entities/state events/expectations, twelve trusted AI components,
+device-screen bindings, structured shot intents, mediated original SVG/companion-PNG assets,
+receipts/recovery/byte checks, shared scene renderer, dependency manifests, causal preview
+coverage and Studio editing. Validation evidence is recorded in the semantic implementation
+goal and docs/verification-semantic-scenes.json after actual checks.
+
+Remaining V5 work: real native unseen-topic acceptance, external image/video/3D adapters,
+general layer graphs and FFmpeg media backend, rendered-scene cache, advanced layout/OCR
+review and human full playback/listening. Dependency keys are not a rendered-video cache.
+
+Semantic review follow-up: repaired the isolated image's missing runtime dependency,
+canonical asset-cache recovery and atomic validation, unchanged-request gate preservation,
+presentation/runtime dependency hashing, and bounded receipts with actual clip-range checks.
+224 backend tests and 11 browser flows passed; real isolated Docker deployment still needs
+the target Worker. See goals/2026-11-18-semantic-review.md for executed media verification.
+
+## Project-owned illustrated production · 2026-11-18
+
+- Implemented: mediated configurable eva-image-1 gateway; authenticated immutable project PNG
+  catalogs and Studio upload; actual catalog previews in native planning/authoring; bounded
+  decoding/metadata stripping/transparency checks; durable raster receipts/recovery; provider
+  revision/idempotency scope; protected full-frame backgrounds, unframed artwork, per-shot
+  colors and measured transforms with causal review. Existing SVG receipt keys stay compatible.
+- Verification: see goals/2026-11-18-production-assets.md and
+  docs/verification-production-assets.json for executed commands and media results.
+- Still requires deployment: actual native/image-provider inference and Docker/gVisor acceptance.
+  The gateway adapter is implemented; a service implementing its contract is not bundled or
+  configured here. The fixed rendered dinner fixture reuses imported artwork and existing real
+  Edge audio. It is not new provider inference or human watching/listening certification.
+- Remaining broader work: generated video/3D backends, arbitrary layer/camera graphs, reusable
+  render cache, advanced layout/OCR review and unseen-topic quality acceptance.
+
+## Reference-production corrections · 2026-11-18
+
+Implemented global material identities and native request checks; complete paged code viewport
+and source-line bindings; measured event budgets with held result frames; shared protected
+theme tokens; declared asset-consumption/native binding review; Dial/BranchTree/MetricBar
+and integrated FlowReservoir/QueueFlow primitives; Studio parameter editing; fixed renderer
+and CI evidence. Latest semantic/image feature history is included in the main-targeted PR.
+
+Actual execution: goals/2026-11-18-reference-optimization.md and verification-reference-corrections.json.
+Remaining: real native/image/voice isolated deployment, broad unseen-topic quality, arbitrary
+layer/morph/camera graphs, richer calendar/chart/metaphor primitives, independent occlusion/OCR
+review and human full playback/listening. Strict impossible timing and invalid state/dependency
+plans are explicitly rejected; unrestricted pre-authoring replanning is not claimed.
+
+## Curated material packs · 2026-11-23
+
+Implemented 4 pinned licensed packs / 14 entries alongside the existing 34. Added actual
+preview discovery, style/subject/affordance/parameter metadata, Studio browsing, native preview
+sheets and search/select actions, protected selective source staging, canonical PNG/embedded
+GLB receipts, frame-driven LibraryModel, recovery, recursive dependency hashing and licensed
+standalone export. See docs/design/material-packs.md. Actual checks are recorded in the material
+pack execution goal and verification-material-packs.json after execution.
+
+Remaining: broader curated object/character/scene collections, actual unseen-topic native
+selection/creation on configured isolated infrastructure, Lottie/video/adaptive 3D generation
+adapters, richer human quality acceptance. First collection does not imply full upstream
+libraries, arbitrary-topic generation or new image/native/TTS inference.
+
+## Material-pack correctness review · 2026-11-24
+
+Fixed lost runtime selection on resume, overwritten checkpoint pack identity, partial writes
+before prune-path rejection, invalid GLB numeric ranges and stale/error-prone browser discovery.
+Batch operations reuse a fresh verified index; model cleanup/readiness and4K pixel density
+were strengthened. 316 backend tests,17 browser flows and fixed16-second compile/render/export
+regression passed. See docs/design/material-pack-review-20261124.md for reproductions and limits.

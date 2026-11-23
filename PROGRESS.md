@@ -54,3 +54,80 @@ WordBoundary timings. Both 121.1s/3633-frame 1080p and native-vector 4K videos d
 verification-object-scenes.json and verification-hdmi-object-scenes.json. Illustrations,
 not hardware/HDR/120Hz measurement; no real native inference or full human listening
 certification. Arbitrary photo/3D generation and unknown-subject quality remain open.
+
+
+## 2026-11-18 semantic production increment
+
+Implemented typed AI information/state scenes, twelve shared semantic components, local
+device-screen binding, structured shot intents, mediated original SVG/PNG assets and
+receipts/recovery/invalidation. Added per-event causal windows, exact expectation review,
+Studio editing and source/asset dependency evidence. README, architecture, contracts,
+authoring guide, user/API docs and Roadmap now describe implemented and remaining scope.
+
+Routine verification: 208 backend tests, Ruff, three TypeScript projects, production build,
+all 11 configured browser flows, format checks and six editorial contracts passed. See
+goals/2026-11-18-semantic-scenes.md and docs/verification-semantic-scenes.json for fixed
+render evidence and limitations. RenderPlan keys are not a rendered-scene cache; image/3D
+services and deployed native unseen-topic acceptance remain open.
+
+
+## 2026-11-18 semantic review follow-up
+
+Rechecked deployment/recovery/preview contracts and fixed the render image's missing local
+runtime module, canonical asset cache recovery and whole-batch validation, identical-request
+gate preservation, global presentation/runtime dependency hashes, and probed clip metadata
+matching its declared frame range. Receipt bytes stay bounded at 128 KiB.
+
+Verification: 224 backend tests, Ruff, three TypeScript projects, production build, all
+11 configured browser flows, format and six editorial checks passed. Details and media
+evidence are in goals/2026-11-18-semantic-review.md. Docker is absent; structural image
+packaging verification is not an actual isolated image build/run or native inference test.
+
+## Project-owned illustrated production
+
+Delivered configurable image gateway mediation, authenticated immutable project image catalogs
+and Studio uploads, actual image previews in native planning, durable canonical PNG receipts,
+recovery and legacy SVG-key compatibility, shared backgrounds/unframed artwork and measured
+transforms. Removed the automatic illustrative evidence footer. README, design, authoring,
+contracts, roadmap and dedicated acceptance scripts updated.
+
+Validation: 244 backend tests, 12 browser flows, TypeScript/Studio build and format passed.
+Real fixed Remotion verification: 70.9s / 2127 frames / 1080p, 8 registered imports, real reused
+Edge word timing, three causal transform changes, decoded video and editable project export.
+The fixed render is not native inference or image generation. Actual native/image/isolated
+acceptance is blocked by missing configured providers and Docker/gVisor; the deployment
+script exits explicitly. Evidence: docs/verification-production-assets.json.
+
+## Reference-production corrections
+
+Implemented the reference review's material collision, code truncation and tail-budget fixes;
+shared protected themes; reviewed material consumption; five parameter/rate mechanisms and
+Studio parameter editing. Updated documentation/contracts/catalog/CI and prepared integration
+of the previously stacked semantic/image commits toward main.
+
+Actual checks: 256 backend tests, 13 browser flows, pure rendering invariants, TypeScript,
+Studio build and format passed. Fixed 16-second/480-frame silent 1080p render, both theme
+previews and source export passed; line 24 is visible and focused. Native/image/Docker
+integration and full human viewing/listening remain unverified. See the task goal and
+verification-reference-corrections.json for exact evidence and limits.
+
+## Curated material packs · 2026-11-23
+
+Implemented4 pinned packs/14 new materials, Studio/native discovery with real previews,
+selective protected source staging, PNG/embedded-GLB receipts, capture readiness, full
+hash invalidation/recovery and licensed source export. Fixed still capture before async
+models drew; added object-region assertions. See goals/2026-11-23-material-packs.md,
+docs/design/material-packs.md and verification-material-packs.json.
+
+Verification:306 backend tests,16 UI flows, pure contracts, TypeScript/build, format and
+fixed16s/480-frame1080p30 compile/preview/render/export regression. Silent fixed fixture;
+native unseen-topic selection/creation, Docker/gVisor and professional listening remain
+separate deployment acceptance. No arbitrary generated-source host execution added.
+
+## Material pack review · 2026-11-24
+
+Fixed checkpoint selection/identity, preflight staging, strict GLB ranges, browser errors and
+repeated scans; strengthened model cleanup/draw/4K handling.8 pre-fix failures were reproduced.
+Final316 backend tests,17 UI flows, contracts/types/build/format/diff and fixed16s real material
+compile/preview/render/decode/export passed. See goals/2026-11-24-material-pack-review.md and
+docs/design/material-pack-review-20261124.md. No native/deployment/human listening claim.

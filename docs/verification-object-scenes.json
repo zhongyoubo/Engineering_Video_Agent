@@ -33,7 +33,7 @@
   },
   "fixture": "fixed platform-authored objects; estimated draft anchor timing; no TTS/native inference/hardware measurements",
   "objects": 11,
-  "source_hash": "ca43cfc87f3f52214eec2f28afa87cc1009a118f9fc14de4b9671de533b036f8",
-  "renderer_sha256": "b4f0922648cba022de9d204b147eb3bd8f3c6a5de3b5bce649526a6646dffebf",
+  "source_hash": "758fb27ce5071be99b133238215b1f6fc1b6590d88d8461b40f51efd76d085d5",
+  "renderer_sha256": "d32348b0137bb2b53701e248f97f677607c72478dbaf11d97b91d233d6b5c387",
   "human_full_playback_listening": false
 }

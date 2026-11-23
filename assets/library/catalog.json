@@ -3,11 +3,11 @@
   "items": [
     {
       "id": "design.editorial_warm",
-      "version": "1.1",
+      "version": "1.2",
       "name": "暖白讲解风格",
       "kind": "design",
       "purpose": "统一暖白底、深青主体、红色强调与版式留白。",
-      "source": "packages/engineering-template/src/motion-kit.tsx",
+      "source": "packages/engineering-template/src/theme.tsx",
       "symbol": "designPacks.editorial_warm",
       "provenance": "项目内原创 React/SVG 代码；参考视频用于分析，没有提取其画面或音轨。",
       "rights": "沿用项目源码使用条款；不包含参考视频素材的使用授权。",
@@ -16,11 +16,11 @@
     },
     {
       "id": "design.workspace_tech",
-      "version": "1.1",
+      "version": "1.2",
       "name": "科技工作台风格",
       "kind": "design",
       "purpose": "统一蓝白背景、青色强调与软件工程界面表达。",
-      "source": "packages/engineering-template/src/motion-kit.tsx",
+      "source": "packages/engineering-template/src/theme.tsx",
       "symbol": "designPacks.workspace_tech",
       "provenance": "项目内原创 React/SVG 代码；参考视频用于分析，没有提取其画面或音轨。",
       "rights": "沿用项目源码使用条款；不包含参考视频素材的使用授权。",
@@ -42,12 +42,12 @@
     },
     {
       "id": "visual.code_scan",
-      "version": "1.1",
+      "version": "1.2",
       "name": "代码扫描",
       "kind": "visual",
-      "purpose": "沿真实源码逐行扫描，关联侧边问题或解释清单。",
-      "source": "packages/engineering-template/src/motion-kit.tsx",
-      "symbol": "MotionScene",
+      "purpose": "按原始行号换行、分页、扫描并定位代码问题，不静默截断正文。",
+      "source": "packages/engineering-template/src/code-view.tsx",
+      "symbol": "CodeViewport",
       "provenance": "项目内原创 React/SVG 代码；参考视频用于分析，没有提取其画面或音轨。",
       "rights": "沿用项目源码使用条款；不包含参考视频素材的使用授权。",
       "readiness": "implemented",
@@ -390,6 +390,58 @@
       "rights": "Apache-2.0。",
       "readiness": "implemented",
       "verification": "固定9秒场景已在两条路径实际渲染，验证11类对象、屏幕变化与三种提示音混入；见 docs/verification-object-scenes.json。不是原生推理、硬件或完整人工视听认证。"
+    },
+    {
+      "id": "visual.parameter_mechanisms",
+      "version": "1.0",
+      "name": "共享参数与流量机制",
+      "kind": "visual",
+      "purpose": "组合拨盘、分支、指标、存量与队列，使用同一参数和流入流出状态解释变化。",
+      "source": "packages/engineering-template/src/mechanism-kit.tsx",
+      "symbol": "MechanismPanel",
+      "provenance": "项目内原创参数化 React/SVG，不使用参考视频画面或音轨。",
+      "rights": "沿用项目源码使用条款。",
+      "readiness": "implemented",
+      "verification": "纯函数与真实固定渲染检查；不代表实际供应商或人工视听认证。"
+    },
+    {
+      "id": "visual.spatial_storytelling",
+      "version": "1.0",
+      "name": "城市空间、数量矩阵与节点传播",
+      "kind": "visual",
+      "purpose": "用可重复的三维城市相机、注册画面矩阵和保持身份的节点网络解释空间、数量及影响传播。",
+      "source": "packages/engineering-template/src/spatial-kit.tsx",
+      "symbol": "SpatialPanel",
+      "provenance": "项目原创确定性 Three/React/SVG；城市静帧由同一三维场景渲染，不复用参考视频。",
+      "rights": "沿用项目源码使用条款；依赖遵循各自许可证。",
+      "readiness": "implemented",
+      "verification": "纯状态、结构、界面与固定渲染分别记录；不代表原生模型、通用场景生成或人工视听认证。"
+    },
+    {
+      "id": "design.neon_horizon",
+      "version": "1.0",
+      "name": "霓虹空间风格",
+      "kind": "design",
+      "purpose": "以深夜蓝紫、青色连接与暖色高亮组织城市、数量和空间关系。",
+      "source": "packages/engineering-template/src/theme.tsx",
+      "symbol": "designPacks.neon_horizon",
+      "provenance": "项目原创共享主题代码；不复用参考视频素材。",
+      "rights": "沿用项目源码使用条款。",
+      "readiness": "implemented",
+      "verification": "固定空间样片、类型和界面参数检查；不代表完整人工视听认证。"
+    },
+    {
+      "id": "capability.authored_scenes",
+      "version": "1.0",
+      "name": "按内容创作素材、场景与动作",
+      "kind": "visual",
+      "purpose": "原生Agent按主题编写任意对象的SVG/Canvas/Three源码素材，以自由场景与旁白锚定动作解释内容。",
+      "source": "packages/engineering-template/src/creative-kit.ts",
+      "symbol": "creativeProgress",
+      "provenance": "项目原创源码创作契约与通用时间工具；不含固定主题模板或原生质量认证。",
+      "rights": "沿用项目源码使用条款。",
+      "readiness": "implemented",
+      "verification": "源码/素材绑定、时序、恢复导出、预览覆盖和审查门禁有测试；新主题实际原生创作仍需部署验收。"
     }
   ]
 }

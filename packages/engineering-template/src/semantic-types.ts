@@ -1,0 +1,105 @@
+export type SemanticComponent =
+  | 'PromptInput'
+  | 'Conversation'
+  | 'TokenSequence'
+  | 'ContextWindow'
+  | 'DocumentChunks'
+  | 'RetrievalResults'
+  | 'ModelBoundary'
+  | 'ToolCall'
+  | 'TaskState'
+  | 'EvidenceStack'
+  | 'ApprovalGate'
+  | 'CodeWorkspace'
+  | 'AssetImage'
+  | 'Dial'
+  | 'BranchTree'
+  | 'MetricBar'
+  | 'FlowReservoir'
+  | 'QueueFlow'
+  | 'SpatialCity'
+  | 'QuantityMatrix'
+  | 'NodeNetwork';
+export type SemanticState =
+  | 'pending'
+  | 'running'
+  | 'succeeded'
+  | 'failed'
+  | 'awaiting_confirmation'
+  | 'rejected'
+  | 'cancelled';
+export type SemanticItem = { text: string; detail: string; active: boolean };
+export type SpatialSpec = {
+  seed: number;
+  count: number;
+  columns: number;
+  camera_radius: number;
+  camera_height: number;
+  orbit_degrees: number;
+  source_node: number;
+  effect_parameter_id?: string | null;
+  asset_keys: string[];
+};
+export type SemanticEntity = {
+  id: string;
+  component: SemanticComponent;
+  title: string;
+  text: string;
+  items: SemanticItem[];
+  state: SemanticState;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  bind_to?: string | null;
+  asset_key?: string | null;
+  image_style?: 'panel' | 'artwork';
+  image_fit?: 'contain' | 'cover';
+  opacity?: number;
+  scale?: number;
+  rotation?: number;
+  parameter_id?: string | null;
+  inflow_id?: string | null;
+  outflow_id?: string | null;
+  capacity?: number;
+  spatial?: SpatialSpec | null;
+  immersive?: boolean;
+  provenance: 'illustrative' | 'observed';
+  evidence_ids: string[];
+};
+export type SemanticEvent = {
+  id: string;
+  target: string;
+  action: 'transition' | 'replace' | 'append' | 'select' | 'highlight' | 'transform' | 'parameter';
+  anchor: { phrase: string; occurrence: number; edge: 'start' | 'end'; offset_ms: number };
+  duration_ms: number;
+  depends_on: string[];
+  value?: number | null;
+  x?: number | null;
+  y?: number | null;
+  opacity?: number | null;
+  scale?: number | null;
+  rotation?: number | null;
+  from_state?: SemanticState | null;
+  to_state?: SemanticState | null;
+  text?: string | null;
+  items: SemanticItem[];
+  selected?: number | null;
+};
+export type CompiledSemanticEvent = SemanticEvent & {
+  start_frame: number;
+  end_frame: number;
+  timing_source: 'measured_words' | 'estimated_draft';
+};
+export type SemanticScene = {
+  schema_version: '1.0';
+  viewer_question: string;
+  background_color?: string | null;
+  background_asset_key?: string | null;
+  title_color?: string | null;
+  show_heading?: boolean;
+  parameters?: { id: string; minimum: number; maximum: number; initial: number; unit: string }[];
+  entities: SemanticEntity[];
+  events: SemanticEvent[];
+  expectations: { id: string; event_id: string; visible_result: string }[];
+};

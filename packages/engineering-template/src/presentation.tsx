@@ -7,8 +7,9 @@ import {
   staticFile,
   useCurrentFrame,
 } from 'remotion';
+import { ThemeProvider } from './theme';
 import type { Scene, VideoProps } from './contracts';
-import { ObjectScene } from './scene-objects';
+import { SceneRenderer } from './semantic-kit';
 
 export function PublicationCard({
   headline,
@@ -166,44 +167,47 @@ export function PublicationThumbnail(props: VideoProps) {
       .catch(cancelRender);
   }, [handle, props.fontSrc]);
   return (
-    <AbsoluteFill
-      style={{
-        width: 1920,
-        height: 1080,
-        fontFamily: 'PublicationNoto, sans-serif',
-        transform: `scale(${(props.width || 1920) / 1920})`,
-        transformOrigin: 'top left',
-      }}
-    >
-      {props.scenes[0]?.visual_scene ? (
-        <>
-          <ObjectScene
-            scene={props.scenes[0]}
-            frameOverride={Math.max(0, props.scenes[0].frames - 15)}
-            titleOverride={props.cover?.headline || props.title}
+    <ThemeProvider pack={props.design_pack}>
+      <AbsoluteFill
+        style={{
+          width: 1920,
+          height: 1080,
+          fontFamily: 'PublicationNoto, sans-serif',
+          transform: `scale(${(props.width || 1920) / 1920})`,
+          transformOrigin: 'top left',
+        }}
+      >
+        {props.scenes[0]?.visual_scene || props.scenes[0]?.semantic_scene ? (
+          <>
+            <SceneRenderer
+              assets={props.generated_assets}
+              scene={props.scenes[0]}
+              frameOverride={Math.max(0, props.scenes[0].frames - 15)}
+              titleOverride={props.cover?.headline || props.title}
+            />
+            {props.cover?.subtitle && (
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 100,
+                  bottom: 85,
+                  fontSize: 30,
+                  color: '#294b56',
+                }}
+              >
+                {props.cover.subtitle}
+              </div>
+            )}
+          </>
+        ) : (
+          <PublicationCard
+            headline={props.cover?.headline || props.title}
+            subtitle={props.cover?.subtitle}
+            brand={props.creator_brand}
+            warm={props.design_pack === 'editorial_warm'}
           />
-          {props.cover?.subtitle && (
-            <div
-              style={{
-                position: 'absolute',
-                left: 100,
-                bottom: 85,
-                fontSize: 30,
-                color: '#294b56',
-              }}
-            >
-              {props.cover.subtitle}
-            </div>
-          )}
-        </>
-      ) : (
-        <PublicationCard
-          headline={props.cover?.headline || props.title}
-          subtitle={props.cover?.subtitle}
-          brand={props.creator_brand}
-          warm={props.design_pack === 'editorial_warm'}
-        />
-      )}
-    </AbsoluteFill>
+        )}
+      </AbsoluteFill>
+    </ThemeProvider>
   );
 }

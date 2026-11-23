@@ -28,6 +28,9 @@ def check_font(board, font):
         for s in board.scenes
         if s.visual_scene
     )
+    from ..semantics import semantic_text
+
+    text += "".join(semantic_text(scene) for scene in board.scenes)
     if "\ufffd" in text:
         raise EngineeringError("Text contains Unicode replacement characters")
     with TTFont(font) as face:
@@ -185,10 +188,21 @@ def build_engineering_video(pipeline, board, content, manifest, props, public, p
     def emit(kind, payload):
         p.db.event(p.job, kind, payload)
 
+    from ..assets.project_images import resolve_image
+
     agent = NativeEngineeringAgent(p.settings, p.runner, content, p.brief, manifest, w.root / "agent", emit)
+    agent.load_image_catalog(p.db, p.store, p.tenant, p.revision["project_id"])
     tools = RenderTools(p.settings, p.runner)
     controller = EngineeringController(
-        w, agent, tools, persist, emit, p.guard, p.settings.engineering_max_steps
+        w,
+        agent,
+        tools,
+        persist,
+        emit,
+        p.guard,
+        p.settings.engineering_max_steps,
+        resolve_image=lambda id: resolve_image(p.db, p.store, p.tenant, p.revision["project_id"], id),
+        asset_scope=p.tenant + ":" + p.revision["id"],
     )
     result = controller.run(production_plan)
     archive = w.root / "remotion-project.zip"

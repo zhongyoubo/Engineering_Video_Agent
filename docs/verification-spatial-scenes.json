@@ -1,0 +1,44 @@
+{
+  "source_hash": "295f646eae348b93f5bc8fbd73142f15f3de804e28002284fb84cb0535150f01",
+  "video_sha256": "bfe185aa3b43deec13864192f35d18fc3b804eeded79d2064472add0bd6ebdf6",
+  "media": {
+    "decode": "passed",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0,
+    "frames": 840,
+    "duration": 28.0
+  },
+  "scenes": 4,
+  "frames": 840,
+  "seconds": 28.0,
+  "per_scene_pixel_difference": {
+    "city": 74.42127625656414,
+    "quantity": 94.85045105026256,
+    "network": 10.802720367591897,
+    "propagation": 22.369782445611403
+  },
+  "assets": [
+    "quantity:city-view-1",
+    "quantity:city-view-2",
+    "quantity:city-view-3"
+  ],
+  "city_still_hashes": [
+    "83bb9f448b0f1204b12f3ccd25f27a3dba78ef07605e4e259a5b18f464b920ac",
+    "83cec488d1ad8ba45a829a203c3103e78f11e003d2f5514cd144b2966e35d245",
+    "7131821364a51dd62a8748c9b2867ea907ceec1153b7933c0505d7d6fcca4c09"
+  ],
+  "registered_artwork_hashes": [
+    "98df1557474cbe3b548eb32e3b7265c5bce68368db7e477c1f291553eca2e895",
+    "8a04b5358547e4e9dff2d583145d6e3fb315c6745f5734cff29ed6384bbc7eda",
+    "127c1600eacdc9b07b8086fc741b96d124f62ddcbedad21d28528d6dfbe04742"
+  ],
+  "gl": "swangle",
+  "native_inference": false,
+  "image_model_inference": false,
+  "audio": "none",
+  "timing": "estimated_draft",
+  "human_playback_and_listening": false,
+  "isolation": "fixed platform verifier only; no Docker deployment claim",
+  "note": "original geometry and rendered stills; no reference-video image or audio reused"
+}

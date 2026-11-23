@@ -145,6 +145,11 @@ def test_native_planning_carries_guidance_and_rejects_missing_strategy(settings,
     from explainer.adapters.native_contract import DesignedScene
 
     brief, board, content = sample("tutorial")
+    from conftest import fixture_creation
+    from explainer.creative_scene import CreativeScene
+
+    for scene in board.scenes:
+        scene.creation = CreativeScene.model_validate(fixture_creation())
     design = {
         "protocol": "1.0",
         "scenes": [{k: s.model_dump()[k] for k in DesignedScene.model_fields} for s in board.scenes],
@@ -273,6 +278,11 @@ def production_fixture():
 
     brief, board, content = sample("tutorial")
     brief.agent_engine = "codex"
+    from conftest import fixture_creation
+    from explainer.creative_scene import CreativeScene
+
+    for scene in board.scenes:
+        scene.creation = CreativeScene.model_validate(fixture_creation())
     plan = ProductionPlan(
         objective="Teach the audience to prepare an API request",
         story_arc=["Prepare", "Do", "Check"],

@@ -2,7 +2,9 @@ from enum import Enum
 from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from .specs import RenderProfile, VoiceSpec, SceneSpec, CompiledEvent
+from .semantic_scene import SemanticScene, CompiledSemanticEvent
 from .visual_scene import VisualScene, CompiledObjectEvent
+from .creative_scene import CreativeScene, CompiledCreativeEvent
 from .editorial import (
     EditorialBrief,
     EditorialPlan,
@@ -52,7 +54,7 @@ class Brief(StrictModel):
     quality_profile: Literal["professional", "draft"] = "professional"
     render_profile: RenderProfile = Field(default_factory=RenderProfile)
     voice_spec: VoiceSpec = Field(default_factory=VoiceSpec)
-    design_pack: Literal["editorial_warm", "workspace_tech"] = "workspace_tech"
+    design_pack: Literal["editorial_warm", "workspace_tech", "neon_horizon"] = "workspace_tech"
     presentation_profile: PresentationProfile = "creator"
     editorial: EditorialBrief = Field(default_factory=EditorialBrief)
     creator_brand: str = Field(default="", max_length=80)
@@ -173,6 +175,10 @@ class Scene(StrictModel):
     compiled_events: list[CompiledEvent] = Field(default_factory=list, max_length=24)
     visual_scene: VisualScene | None = None
     compiled_object_events: list[CompiledObjectEvent] = Field(default_factory=list, max_length=32)
+    semantic_scene: SemanticScene | None = None
+    compiled_semantic_events: list[CompiledSemanticEvent] = Field(default_factory=list, max_length=16)
+    creation: CreativeScene | None = None
+    compiled_creative_events: list[CompiledCreativeEvent] = Field(default_factory=list, max_length=24)
     role: SceneRole = "content"
     message: str = Field(default="", max_length=500)
     viewer_question: str = Field(default="", max_length=500)
@@ -180,6 +186,49 @@ class Scene(StrictModel):
 
     @model_validator(mode="after")
     def validate_object_scene(self):
+        if self.creation:
+            import re
+
+            text = re.sub(r"[\W_]+", "", self.narration).lower()
+            for event in self.creation.events:
+                phrase = re.sub(r"[\W_]+", "", event.anchor.phrase).lower()
+                position = -1
+                if not phrase:
+                    raise ValueError("Creative anchors must contain spoken characters")
+                for _ in range(event.anchor.occurrence):
+                    position = text.find(phrase, position + 1)
+                    if position < 0:
+                        raise ValueError("Creative anchor phrase is missing from narration")
+        if self.motion:
+            count = len(self.code.split("\n"))
+            if any((f.end_line or f.line) > count for f in self.motion.code_focus):
+                raise ValueError("Code focus references a missing source line")
+        if self.semantic_scene:
+            import re
+
+            if self.motion or self.diagram:
+                raise ValueError("Semantic scene cannot use legacy diagram/motion simultaneously")
+            if self.visual_scene and any(e.immersive for e in self.semantic_scene.entities):
+                raise ValueError("Immersive spatial scenes require a separate shot from physical objects")
+            objects = {o.id: o for o in self.visual_scene.objects} if self.visual_scene else {}
+            for e in self.semantic_scene.entities:
+                if e.bind_to and (
+                    e.bind_to not in objects
+                    or objects[e.bind_to].kind not in {"tv", "monitor", "laptop", "phone"}
+                ):
+                    raise ValueError("Semantic screen binding requires a display device")
+            for event in self.semantic_scene.events:
+
+                def clean(t):
+                    return re.sub(r"[\W_]+", "", t).lower()
+
+                phrase, text, position = clean(event.anchor.phrase), clean(self.narration), -1
+                if not phrase:
+                    raise ValueError("Semantic anchors must contain spoken characters")
+                for _ in range(event.anchor.occurrence):
+                    position = text.find(phrase, position + 1)
+                    if position < 0:
+                        raise ValueError("Semantic anchor phrase is missing from narration")
         if self.visual_scene:
             import re
 
@@ -212,7 +261,7 @@ class StoryboardIR(StrictModel):
     fps: Literal[30] = 30
     width: Literal[1920, 3840] = 1920
     height: Literal[1080, 2160] = 1080
-    design_pack: Literal["editorial_warm", "workspace_tech"] = "workspace_tech"
+    design_pack: Literal["editorial_warm", "workspace_tech", "neon_horizon"] = "workspace_tech"
     presentation_profile: PresentationProfile = "creator"
     creator_brand: str = Field(default="", max_length=80)
     cover: CoverSpec | None = None

@@ -1,7 +1,7 @@
 {
   "fixture": "fixed repository-authored silent draft; no native inference or TTS",
-  "source_hash": "975cf419ae8e379cb7b4dd53bf008275d8f66a8f0d48fc0cfe267e462e7309d7",
-  "compatibility_source_hash": "684417fd3921afbc29868d26ea7f45ee130778dcb2608074f1d045a9670ba358",
+  "source_hash": "4609d39c8431464dc14890697b54b55b9a003450d64d7707425d8a045982d57e",
+  "compatibility_source_hash": "4279cda72eb1844608be27751a430650ba8a4b7eb88c7aea4cc4efcae3c12c33",
   "engineering_media": {
     "decode": "passed",
     "width": 1920,

@@ -1,0 +1,47 @@
+{
+  "fixture": "Fixed authored data; not native inference or actual business execution",
+  "source_hash": "befa7af23afc1ed3c7e84f6173a5804eea06ee2faecfa81aac2f006628f3ba50",
+  "semantic_renderer_sha256": "d9bfc28c0d42cde263c96e0705b79a1295fa0bfd72ce092c38fa085fc4d28da1",
+  "engineering": {
+    "decode": "passed",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0,
+    "frames": 600,
+    "duration": 20.0
+  },
+  "compatibility": {
+    "decode": "passed",
+    "width": 3840,
+    "height": 2160,
+    "fps": 30.0,
+    "frames": 600,
+    "duration": 20.0
+  },
+  "asset_receipt": [
+    {
+      "id": "knowledge",
+      "request_hash": "9e0df5b375fcdaddaa3fb5d6b7e0f7fc43b3809a5de93b33cee6c3f7324862bf",
+      "sha256": "813398c96034672d5f796bc5dafe4e3c048248da151ab0cc7b396acc2d8ed785",
+      "filename": "generated/813398c96034672d5f796bc5dafe4e3c048248da151ab0cc7b396acc2d8ed785.svg",
+      "factory_version": "component-svg-2",
+      "width": 1200,
+      "height": 377,
+      "format": "svg",
+      "font": "embedded original Noto subset",
+      "provenance": "original platform code-drawn illustrative document; no actual system execution",
+      "preview_filename": "generated/813398c96034672d5f796bc5dafe4e3c048248da151ab0cc7b396acc2d8ed785.preview.png",
+      "preview_sha256": "4d62e2ee76419d36d510026ed785e66830f01eeb40fdef6213b130d822f6205b"
+    }
+  ],
+  "measured_tts": false,
+  "full_human_listening": false,
+  "tool_result_pixel_difference": [
+    8.46360229276896,
+    6.6743606701940035,
+    5.906194885361552
+  ],
+  "late_confirmation_preview": "covered",
+  "continuous_clips": 9,
+  "clip_metadata_vs_declared_ranges": "all passed"
+}

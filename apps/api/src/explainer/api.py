@@ -17,6 +17,10 @@ from .adapters.base import MANIFESTS
 from .adapters.native_agent import capability as native_capability
 from .content_taxonomy import taxonomy_options
 from .visual_scene import visual_scene_guidance
+from .semantic_scene import semantic_guidance
+from .creative_scene import creative_guidance
+from .api_materials import register_material_routes
+from .services.assets.image_service import configured as image_service_configured
 from .config import ROOT, get_settings
 from .db import Database, encode, uid
 from .domain import CreateProject, CreateVideo, ForkRevision, CreateEngineeringVideo
@@ -197,6 +201,14 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
         "material_library": material_library(),
         "content_taxonomy": taxonomy_options(),
         "visual_scene_toolkit": visual_scene_guidance(),
+        "semantic_scene_toolkit": semantic_guidance(),
+        "creative_production": creative_guidance(),
+        "asset_factory": {
+            "library_asset": True,
+            "component_svg": True,
+            "project_image": True,
+            "image_service": image_service_configured(settings),
+        },
         "model": bool(settings.model_url and settings.model_name and settings.allow_external_model),
         "model_name": settings.model_name if settings.allow_external_model else "local-template",
         "voice": {
@@ -217,7 +229,7 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
             "engineering_endpoint": "/api/v3/videos",
             "legacy_endpoint": "/api/v1/videos",
             "resolutions": ["1080p", "4k"],
-            "design_packs": ["editorial_warm", "workspace_tech"],
+            "design_packs": ["editorial_warm", "workspace_tech", "neon_horizon"],
             "motion_patterns": ["overview", "code_scan", "compare", "graph", "capacity", "queue", "depth"],
         },
         "scheduler": settings.scheduler,
@@ -226,8 +238,25 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
 
 
 @app.get("/api/v1/material-library")
-def get_material_library(tenant_id=Depends(tenant)):
-    return material_library()
+def get_material_library(query: str = "", style: str = "", asset_type: str = "", tenant_id=Depends(tenant)):
+    from .services.materials import search_materials
+
+    if len(query) > 160 or len(style) > 60 or asset_type not in {"", "component", "image", "model"}:
+        raise HTTPException(422, "Invalid material filters")
+    return search_materials(query, style, asset_type)
+
+
+@app.get("/api/v1/material-library/{material_id}/preview")
+def material_preview(material_id: str, version: str, tenant_id=Depends(tenant)):
+    from .material_packs import resolve_material
+
+    try:
+        pack, item, files, stamp = resolve_material(f"library:{material_id}@{version}")
+        if not item.preview:
+            raise ValueError("No preview")
+    except ValueError as exc:
+        raise HTTPException(404, "Material preview not found") from exc
+    return FileResponse(files[item.preview], media_type="image/png")
 
 
 @app.get("/api/v1/content-taxonomy")
@@ -561,6 +590,8 @@ async def fork_revision(
         old = {s.id: s for s in old_board.scenes} if old_board else {}
         for scene in board.scenes:
             prior = old.get(scene.id)
+            if not prior or scene.creation != prior.creation:
+                scene.compiled_creative_events = []
             if prior and prior.locked and scene.model_dump() != prior.model_dump():
                 unlocking_only = not scene.locked and scene.model_dump(
                     exclude={"locked"}
@@ -582,6 +613,8 @@ async def fork_revision(
                 scene.audio_id, scene.cues = None, []
                 scene.compiled_events = []
                 scene.compiled_object_events = []
+                scene.compiled_semantic_events = []
+                scene.compiled_creative_events = []
     brief.mode = "automatic" if body.auto_render else "storyboard"
     return await schedule(
         settings,
@@ -758,6 +791,8 @@ def asset(asset_id: str, download: bool = False, tenant_id=Depends(tenant), deps
         content_disposition_type="attachment" if download else "inline",
     )
 
+
+register_material_routes(app, dependencies)
 
 static = ROOT / "apps/studio/dist"
 if static.exists():

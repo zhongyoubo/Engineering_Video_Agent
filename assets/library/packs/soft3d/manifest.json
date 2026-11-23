@@ -1,0 +1,133 @@
+{
+  "id": "soft3d",
+  "version": "1.0",
+  "origin": "https://github.com/realvjy/3dicons",
+  "revision": "8884d59e68a7bae0e0e2163af5b6c2ad992c01c8",
+  "license": "CC0-1.0",
+  "license_file": "LICENSE.txt",
+  "files": [
+    {
+      "path": "ADAPTATIONS.md",
+      "sha256": "fdaf4b64d7844a1d15794aff545f0d2543a82d3dd939db67a927527535c3af0d",
+      "role": "provenance"
+    },
+    {
+      "path": "LICENSE.txt",
+      "sha256": "36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673",
+      "role": "license"
+    },
+    {
+      "path": "images/bubble.png",
+      "sha256": "1945c4856ba10228a12afbf381248b06ea379f0e83f1e90e2580ebe685e66813",
+      "role": "image"
+    },
+    {
+      "path": "images/heart.png",
+      "sha256": "2935fd660993caca9cdbcedfa8923d085aae3be32c8d8de364c699ef07440908",
+      "role": "image"
+    },
+    {
+      "path": "images/notebook.png",
+      "sha256": "f4661d7668e3de4a0a7431b98772c16728de82095beea5607ea697bead104da4",
+      "role": "image"
+    },
+    {
+      "path": "previews/bubble.png",
+      "sha256": "1945c4856ba10228a12afbf381248b06ea379f0e83f1e90e2580ebe685e66813",
+      "role": "preview"
+    },
+    {
+      "path": "previews/heart.png",
+      "sha256": "2935fd660993caca9cdbcedfa8923d085aae3be32c8d8de364c699ef07440908",
+      "role": "preview"
+    },
+    {
+      "path": "previews/notebook.png",
+      "sha256": "6a85b4a36c4f0348a1d44665edf39529ab4eaa2651828fb756fdb15900e4652c",
+      "role": "preview"
+    }
+  ],
+  "items": [
+    {
+      "id": "pack.soft3d.notebook",
+      "name": "立体书本",
+      "purpose": "透明背景 PNG；原始 1000×1000px。适合书本/知识隐喻；二维图片，不能当作三维模型旋转。",
+      "asset_type": "image",
+      "entry": "images/notebook.png",
+      "preview": "previews/notebook.png",
+      "styles": [
+        "soft3d",
+        "立体插画"
+      ],
+      "subjects": [
+        "书本",
+        "知识",
+        "学习"
+      ],
+      "affordances": [
+        "入场",
+        "平移",
+        "缩放",
+        "透明叠加"
+      ],
+      "parameters": {
+        "native_size": "1000×1000",
+        "rotation": "仅二维旋转"
+      }
+    },
+    {
+      "id": "pack.soft3d.heart",
+      "name": "立体爱心",
+      "purpose": "透明背景 PNG；原始 132×120px。适合小尺寸点缀，禁止冒充高分辨率主视觉。",
+      "asset_type": "image",
+      "entry": "images/heart.png",
+      "preview": "previews/heart.png",
+      "styles": [
+        "soft3d",
+        "立体插画"
+      ],
+      "subjects": [
+        "爱心",
+        "喜欢",
+        "反馈"
+      ],
+      "affordances": [
+        "入场",
+        "平移",
+        "缩放",
+        "透明叠加"
+      ],
+      "parameters": {
+        "native_size": "132×120",
+        "rotation": "仅二维旋转"
+      }
+    },
+    {
+      "id": "pack.soft3d.bubble",
+      "name": "立体对话气泡",
+      "purpose": "透明背景 PNG；原始 293×240px。适合小尺寸点缀，禁止冒充高分辨率主视觉。",
+      "asset_type": "image",
+      "entry": "images/bubble.png",
+      "preview": "previews/bubble.png",
+      "styles": [
+        "soft3d",
+        "立体插画"
+      ],
+      "subjects": [
+        "对话",
+        "问答",
+        "聊天"
+      ],
+      "affordances": [
+        "入场",
+        "平移",
+        "缩放",
+        "透明叠加"
+      ],
+      "parameters": {
+        "native_size": "293×240",
+        "rotation": "仅二维旋转"
+      }
+    }
+  ]
+}

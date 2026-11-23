@@ -1,6 +1,64 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
+test('material discovery clears stale results on failure and handles unavailable clipboard', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.addInitScript(() =>
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true }),
+  );
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/');
+  await page.getByRole('button', { name: '素材库', exact: true }).click();
+  await page.getByLabel('素材风格').selectOption('soft3d');
+  await expect(page.locator('.material-card')).toHaveCount(3);
+  await page.locator('.material-card').first().getByRole('button', { name: '复制引用' }).click();
+  await expect(page.getByRole('alert')).toHaveText('复制失败，请从下方引用文本复制。');
+  expect(errors).toEqual([]);
+  await page.route('**/api/v1/material-library?**', (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: { message: '素材目录暂不可用' } }),
+    }),
+  );
+  await page.getByLabel('搜索素材').fill('temporary-error');
+  await expect(page.getByRole('alert')).toHaveText('素材目录暂不可用');
+  await expect(page.locator('.material-card')).toHaveCount(0);
+  await expect(page.getByLabel('搜索素材')).toHaveAttribute('maxlength', '160');
+});
+
+test('material library filters real previews, kinds and resolution limits', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByRole('button', { name: '素材库', exact: true }).click();
+  await page.getByLabel('素材风格').selectOption('soft3d');
+  await expect(page.locator('.material-card')).toHaveCount(3);
+  const book = page.locator('.material-card').filter({ hasText: '立体书本' });
+  await expect(book.getByRole('img', { name: '立体书本' })).toBeVisible();
+  await expect
+    .poll(() => book.locator('img').evaluate((img: HTMLImageElement) => img.naturalWidth))
+    .toBeGreaterThan(0);
+  await expect(page.getByText(/原始 132×120px/)).toBeVisible();
+  await page.getByLabel('素材风格').selectOption('');
+  await page.getByLabel('素材类型').selectOption('model');
+  await expect(page.locator('.material-card')).toHaveCount(1);
+  await expect(page.getByRole('heading', { name: '牛油果三维模型' })).toBeVisible();
+  await page.getByLabel('搜索素材').fill('不存在的对象');
+  await expect(page.locator('.material-card')).toHaveCount(0);
+  await expect(page.getByText('0 项素材', { exact: true })).toBeVisible();
+});
+
 test('4K design settings and editable motion survive a revision fork', async ({
   page,
   context,
@@ -396,4 +454,339 @@ test('a saved object scene renders devices and preserves editable actions across
   expect(payload.storyboard.scenes[0].visual_scene.sound_enabled).toBe(true);
   await expect(page.getByLabel('对象标注：screen')).toHaveValue('客厅电视', { timeout: 30000 });
   expect(fork.revision_id).toBeTruthy();
+});
+
+test('semantic screen content follows a device and preserves editable state across versions', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  const submitted = page.waitForResponse(
+    (r) => r.url().endsWith('/api/v1/videos') && r.request().method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const created = await (await submitted).json();
+  await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
+  const original = await (
+    await context.request.get('/api/v1/revisions/' + created.revision_id)
+  ).json();
+  const scene = original.storyboard.scenes[0];
+  scene.diagram = null;
+  scene.motion = null;
+  scene.visual_scene = {
+    purpose: '具体手机屏幕绑定语义确认内容',
+    setting: 'studio',
+    objects: [
+      {
+        id: 'phone',
+        kind: 'phone',
+        label: '操作确认',
+        x: 930,
+        y: 30,
+        width: 220,
+        height: 460,
+        screen: 'black',
+      },
+    ],
+    connections: [],
+    events: [],
+  };
+  scene.semantic_scene = {
+    viewer_question: '关键操作由谁确认？',
+    entities: [
+      {
+        id: 'gate',
+        component: 'ApprovalGate',
+        title: '风险通知',
+        text: '发送给项目负责人',
+        state: 'awaiting_confirmation',
+        bind_to: 'phone',
+        items: [{ text: '按既定权限执行', detail: '发送前确认' }],
+      },
+    ],
+    events: [],
+    expectations: [],
+  };
+  const response = await context.request.post('/api/v1/revisions/' + original.id + '/fork', {
+    data: {
+      expected_version: original.version,
+      storyboard: original.storyboard,
+      auto_render: false,
+    },
+  });
+  expect(response.status()).toBe(202);
+  await page.reload();
+  await page.getByRole('button', { name: '视频与版本' }).click();
+  await page.locator('.video-card').first().click();
+  const panel = page.locator('[data-semantic-entity="gate"]');
+  await expect(panel).toBeVisible({ timeout: 30000 });
+  await expect(panel).toContainText('等待确认');
+  const screen = page.locator('[data-object-id="phone"] [data-device-surface="screen"]');
+  const a = await panel.boundingBox(),
+    b = await screen.boundingBox();
+  expect(a && b).toBeTruthy();
+  expect(Math.abs(a!.width - b!.width)).toBeLessThan(2);
+  expect(Math.abs(a!.height - b!.height)).toBeLessThan(2);
+  await page.getByRole('button', { name: '音画时间轴', exact: true }).click();
+  await expect(page.getByLabel('语义场景时间轴')).toContainText('phone.screen');
+  await page.getByLabel('语义标题：gate').fill('发送前确认');
+  const saved = page.waitForRequest((r) => r.url().endsWith('/fork') && r.method() === 'POST');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  expect((await saved).postDataJSON().storyboard.scenes[0].semantic_scene.entities[0].title).toBe(
+    '发送前确认',
+  );
+  await expect(page.getByLabel('语义标题：gate')).toHaveValue('发送前确认', { timeout: 30000 });
+  const capabilities = await (await context.request.get('/api/v1/capabilities')).json();
+  expect(capabilities.semantic_scene_toolkit.components).toContain('ToolCall');
+  expect(capabilities.asset_factory.image_service).toBe(false);
+});
+
+test('engineering uploads project images before requesting native production', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  // A real small raster (not a forged content-type or a mocked upload response).
+  const encoded = await page.evaluate(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 96;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = '#eb4b37';
+    ctx.fillRect(0, 0, 128, 96);
+    return canvas.toDataURL('image/png').split(',')[1];
+  });
+  await page.getByLabel('项目图片素材').setInputFiles({
+    name: 'tomato.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(encoded, 'base64'),
+  });
+  const imageUploaded = page.waitForResponse(
+    (r) =>
+      r.url().includes('/api/v3/projects/') &&
+      r.url().endsWith('/images') &&
+      r.request().method() === 'POST',
+  );
+  const submitted = page.waitForRequest(
+    (r) => r.url().endsWith('/api/v3/videos') && r.method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const upload = await imageUploaded;
+  expect(upload.status()).toBe(201);
+  const material = await upload.json();
+  expect(material.provenance).toBe('user_import');
+  const request = (await submitted).postDataJSON();
+  const catalog = await context.request.get(`/api/v3/projects/${request.project_id}/images`);
+  expect((await catalog.json()).items.map((x: { id: string }) => x.id)).toContain(material.id);
+  await expect(page.getByText(/原生 Agent 未就绪/)).toBeVisible({ timeout: 30000 });
+});
+
+test('shared mechanism parameters update the rendered SVG and persist across versions', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  const submitted = page.waitForResponse(
+    (r) => r.url().endsWith('/api/v1/videos') && r.request().method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const created = await (await submitted).json();
+  await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
+  const original = await (
+    await context.request.get('/api/v1/revisions/' + created.revision_id)
+  ).json();
+  const scene = original.storyboard.scenes[0];
+  scene.diagram = null;
+  scene.motion = null;
+  scene.visual_scene = null;
+  scene.semantic_scene = {
+    viewer_question: '强度如何带动分支与指标？',
+    parameters: [{ id: 'strength', minimum: 0, maximum: 1, initial: 0.2, unit: '' }],
+    entities: [
+      {
+        id: 'dial',
+        component: 'Dial',
+        title: '强度',
+        parameter_id: 'strength',
+        width: 600,
+        height: 400,
+      },
+    ],
+    events: [],
+    expectations: [],
+  };
+  const response = await context.request.post('/api/v1/revisions/' + original.id + '/fork', {
+    data: {
+      expected_version: original.version,
+      storyboard: original.storyboard,
+      auto_render: false,
+    },
+  });
+  expect(response.status()).toBe(202);
+  await page.reload();
+  await page.getByRole('button', { name: '视频与版本' }).click();
+  await page.locator('.video-card').first().click();
+  const dial = page.locator('[data-mechanism="Dial"]');
+  await expect(dial).toHaveAttribute('data-parameter-value', '0.2', { timeout: 30000 });
+  await page.getByRole('button', { name: '音画时间轴', exact: true }).click();
+  await page.getByLabel('机制参数：strength').fill('0.8');
+  await expect(dial).toHaveAttribute('data-parameter-value', '0.8');
+  const saved = page.waitForRequest((r) => r.url().endsWith('/fork') && r.method() === 'POST');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  expect(
+    (await saved).postDataJSON().storyboard.scenes[0].semantic_scene.parameters[0].initial,
+  ).toBe(0.8);
+  await expect(page.getByLabel('机制参数：strength')).toHaveValue('0.8', { timeout: 30000 });
+});
+
+test('spatial network parameters move actual nodes and persist across revisions', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('设计体系').selectOption('neon_horizon');
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  const submitted = page.waitForResponse(
+    (r) => r.url().endsWith('/api/v1/videos') && r.request().method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const created = await (await submitted).json();
+  await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
+  const original = await (
+    await context.request.get('/api/v1/revisions/' + created.revision_id)
+  ).json();
+  expect(original.storyboard.design_pack).toBe('neon_horizon');
+  const scene = original.storyboard.scenes[0];
+  scene.diagram = null;
+  scene.motion = null;
+  scene.visual_scene = null;
+  scene.semantic_scene = {
+    viewer_question: '位置改变后联系是否保留？',
+    show_heading: false,
+    parameters: [{ id: 'strength', minimum: 0, maximum: 1, initial: 0.2, unit: '' }],
+    entities: [
+      {
+        id: 'network',
+        component: 'NodeNetwork',
+        title: '强度',
+        parameter_id: 'strength',
+        width: 1920,
+        height: 1080,
+        immersive: true,
+        spatial: { seed: 17, count: 48, columns: 8 },
+      },
+    ],
+    events: [],
+    expectations: [],
+  };
+  const response = await context.request.post('/api/v1/revisions/' + original.id + '/fork', {
+    data: {
+      expected_version: original.version,
+      storyboard: original.storyboard,
+      auto_render: false,
+    },
+  });
+  expect(response.status()).toBe(202);
+  await page.reload();
+  await page.getByRole('button', { name: '视频与版本' }).click();
+  await page.locator('.video-card').first().click();
+  const dial = page.locator('[data-spatial-component="NodeNetwork"]');
+  await expect(dial).toHaveAttribute('data-spatial-progress', '0.2000', { timeout: 30000 });
+  await page.getByRole('button', { name: '音画时间轴', exact: true }).click();
+  const firstNode = dial.locator('[data-network-node="node-0"] circle').first();
+  const before = await firstNode.getAttribute('cx');
+  await page.getByLabel('机制参数：strength').fill('0.8');
+  await expect(firstNode).not.toHaveAttribute('cx', before!);
+  await expect(dial.locator('[data-network-node]')).toHaveCount(48);
+  await expect(dial.locator('[data-network-edge]')).toHaveCount(96);
+  await expect(dial).toHaveAttribute('data-spatial-progress', '0.8000');
+  const saved = page.waitForRequest((r) => r.url().endsWith('/fork') && r.method() === 'POST');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  expect(
+    (await saved).postDataJSON().storyboard.scenes[0].semantic_scene.parameters[0].initial,
+  ).toBe(0.8);
+  await expect(page.getByLabel('机制参数：strength')).toHaveValue('0.8', { timeout: 30000 });
+});
+
+test('creative scene design stays visible and persists without executing authored source in Studio', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  const submitted = page.waitForResponse(
+    (r) => r.url().endsWith('/api/v1/videos') && r.request().method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const created = await (await submitted).json();
+  await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
+  const original = await (
+    await context.request.get('/api/v1/revisions/' + created.revision_id)
+  ).json();
+  const scene = original.storyboard.scenes[0];
+  scene.creation = {
+    visual_goal: '通过翻开书本、抽出纸页说明资料如何被取用',
+    composition: '书本在左侧展开，右侧留出纸页移动和文字空间',
+    palette: ['#efb85d', '#305a67'],
+    techniques: ['svg'],
+    scene_source: 'src/scenes/Library.tsx',
+    elements: [
+      {
+        id: 'book',
+        role: 'subject',
+        description: '有书脊和分层纸页的立体书本素材',
+        implementation: 'source',
+        source_file: 'src/assets/Book.tsx',
+      },
+    ],
+    events: [],
+  };
+  const response = await context.request.post('/api/v1/revisions/' + original.id + '/fork', {
+    data: {
+      expected_version: original.version,
+      storyboard: original.storyboard,
+      auto_render: false,
+    },
+  });
+  expect(response.status()).toBe(202);
+  await page.reload();
+  await page.getByRole('button', { name: '视频与版本' }).click();
+  await page.locator('.video-card').first().click();
+  await page.getByRole('button', { name: '音画时间轴', exact: true }).click();
+  const design = page.getByRole('region', { name: '画面创作设计' });
+  await expect(design).toContainText('通过翻开书本');
+  await expect(design).toContainText('有书脊和分层纸页');
+  await expect(page.getByLabel('视觉表达')).toBeDisabled();
+  const saved = page.waitForRequest((r) => r.url().endsWith('/fork') && r.method() === 'POST');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  expect((await saved).postDataJSON().storyboard.scenes[0].creation.scene_source).toBe(
+    'src/scenes/Library.tsx',
+  );
 });

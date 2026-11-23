@@ -4,7 +4,9 @@ from pydantic import Field
 from ..domain import StrictModel, Scene, SceneType, StoryboardIR, Diagram
 from ..specs import SceneSpec
 from ..editorial import SceneRole, ViewerDisclosure, EditorialPlan
+from ..semantic_scene import SemanticScene
 from ..visual_scene import VisualScene
+from ..creative_scene import CreativeScene
 
 
 class DesignedScene(StrictModel):
@@ -21,6 +23,8 @@ class DesignedScene(StrictModel):
     diagram: Diagram | None
     motion: SceneSpec | None = None
     visual_scene: VisualScene | None = None
+    semantic_scene: SemanticScene | None = None
+    creation: CreativeScene | None = None
     role: SceneRole = "content"
     message: str = Field(default="", max_length=500)
     viewer_question: str = Field(default="", max_length=500)
@@ -60,6 +64,10 @@ def validate_design(payload, content, brief):
     for item in result.scenes:
         if set(item.claim_ids) - claim_ids or set(item.evidence_ids) - evidence_ids:
             raise ValueError("Native Agent returned unknown evidence references")
+        if item.semantic_scene and any(
+            set(entity.evidence_ids) - evidence_ids for entity in item.semantic_scene.entities
+        ):
+            raise ValueError("Semantic entity returned unknown evidence references")
         if content.kind == "source" and not (item.claim_ids or item.evidence_ids):
             raise ValueError("Source explanations must reference supplied evidence")
         scenes.append(

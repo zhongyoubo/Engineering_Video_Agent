@@ -1,1 +1,28 @@
-{"name":"engineering-video-project","version":"3.0.0","private":true,"type":"module","scripts":{"check":"tsc --noEmit","preview":"node render.mjs . preview","render":"node render.mjs . final"},"dependencies":{"@remotion/bundler":"4.0.538","@remotion/renderer":"4.0.538","remotion":"4.0.538","react":"19.2.0","react-dom":"19.2.0"},"devDependencies":{"typescript":"5.9.3","@types/react":"19.2.2","@types/react-dom":"19.2.2","@types/node":"22.15.3"}}
+{
+  "name": "engineering-video-project",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "preview": "node render.mjs . preview",
+    "render": "node render.mjs . final"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.538",
+    "@remotion/renderer": "4.0.538",
+    "remotion": "4.0.538",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "three": "0.181.1",
+    "@react-three/fiber": "9.4.0",
+    "@remotion/three": "4.0.538"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "@types/node": "22.15.3",
+    "@types/three": "0.181.0"
+  }
+}

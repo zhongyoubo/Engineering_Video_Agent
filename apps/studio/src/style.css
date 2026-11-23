@@ -1593,3 +1593,67 @@ nav button span {
   font-size: 10px;
   color: #8b9aaa;
 }
+
+.material-filters {
+  display: flex;
+  gap: 20px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+.material-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 170px;
+}
+.material-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 20px;
+}
+.material-card {
+  padding: 20px;
+  min-width: 0;
+}
+.material-preview {
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #edf1f1;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.material-preview img {
+  max-width: 100%;
+  max-height: 148px;
+  object-fit: contain;
+}
+.material-card p,
+.material-card code {
+  overflow-wrap: anywhere;
+}
+.material-card p {
+  line-height: 1.65;
+}
+.material-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+.material-tags span {
+  border-radius: 12px;
+  padding: 3px 9px;
+  background: #eef2f2;
+  font-size: 12px;
+}
+.material-card small {
+  display: block;
+  margin-bottom: 12px;
+}
+.material-ref {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+}

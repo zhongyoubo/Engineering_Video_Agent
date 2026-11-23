@@ -29,3 +29,50 @@ turn every noun into a graph box or keyword-routed device template. scene-object
 platform-owned and protected like motion-kit.tsx. Unsupported subjects may use authored
 SVG/TSX under the existing isolation; do not fake an image-generation service or hardware
 measurements. Fixed platform fixtures alone may run through verify_object_scenes.py.
+
+Semantic production: read docs/design/semantic-production.md. semantic-kit.tsx and
+semantic-types.ts are protected platform code. Software concepts use semantic entities
+and explicit causal results, selected semantically rather than by keywords. Fixed
+verify_semantic_scenes.py alone may host-render its fixed reviewed platform dispatcher;
+never substitute arbitrary uploaded/model TSX. Preserve native source authoring, isolation,
+voice truth, tenant checkpoints, asset provenance and complete source-hash review gates.
+
+Project-owned illustrated production: read docs/design/project-owned-visual-production.md.
+Image services run only through mediated Worker tools; project-image IDs require both tenant
+and project membership. Retain bounded canonical PNG receipts and preserve legacy SVG keys.
+The explicitly reviewed verify_production_assets.py may host-render only its fixed repository
+source/storyboard and hash-pinned media; it is not native/image inference or an arbitrary
+source runner. Real unseen-topic acceptance uses verify_image_production_deployment.py on
+configured isolated infrastructure. Record this work in goals/2026-11-18-production-assets.md.
+
+Reference corrections: read docs/design/reference-production-corrections.md. Preserve global
+asset identities, complete code visibility, measured event budgets, native material-binding
+review and numeric flow conservation. theme.tsx, code-view.tsx and mechanism-kit.tsx are
+protected. verify_reference_mechanisms.py and verify_visual_contracts.cjs execute ONLY fixed
+reviewed repository data/modules; never accept user/model source/path arguments or enable a
+host fallback. Record execution in goals/2026-11-18-reference-optimization.md.
+
+Spatial storytelling: read docs/design/spatial-storytelling.md. spatial-kit.tsx and
+spatial-state.ts are protected platform modules. Preserve frame-driven 3D readiness, stable
+node/edge identity, bounded shared parameters and registered matrix-asset binding review.
+verify_spatial_scenes.py may host-render only the existing fixed reviewed repository
+dispatcher and fixed bounded scene data; it accepts no source/path arguments. This exception
+never permits user/model code or native-provider host execution. Record results in
+goals/2026-11-23-spatial-storytelling.md as well as the main execution goal. Keep 30fps,
+estimated draft timing and absent native/TTS/deployment certification explicit.
+
+Content-driven creation: read docs/design/content-driven-creation.md. New engineering plans
+require Scene.creation; historical plans may omit it. SVG/Canvas/Three source artwork is
+authored in the ordinary isolated project, never executed by the application or Studio.
+Protect creative-kit.ts/creative-types.ts. Preserve custom causal timing/held results, coverage,
+source/image binding, creative manifests and dedicated review. Existing components are optional
+vocabulary, never the creative ceiling or a topic keyword router. Fixed helper tests do not
+establish real native creativity. Record goals/2026-11-23-creative-production.md and the main goal.
+
+Curated material packs: read docs/design/material-packs.md. Pack selection resolves only
+reviewed hash-pinned offline manifests, protects src/vendor and library-model.tsx, retains
+licenses and invalidates all source/preview/review gates on changes. Binary PNG/GLB requests
+use canonical receipts; GLB is embedded, not a remote loader or 3D generation service.
+verify_material_packs.py may host-render ONLY its fixed reviewed examples/material-packs/Video.tsx
+and curated repository media. It accepts no arguments; never use it for uploaded/model source.
+Record results in goals/2026-11-23-material-packs.md and the main execution goal.

@@ -1,3 +1,11 @@
+import type {
+  SemanticScene,
+  CompiledSemanticEvent,
+} from '../../engineering-template/src/semantic-types';
+import type {
+  CreativeScene,
+  CompiledCreativeEvent,
+} from '../../engineering-template/src/creative-types';
 export type SceneObjectKind =
   | 'tv'
   | 'monitor'
@@ -168,6 +176,7 @@ export type Scene = {
     schema_version: '4.0';
     purpose: string;
     layout?: 'grid' | 'fan';
+    code_focus?: { element_id: string; line: number; end_line?: number | null }[];
     chapter: string;
     pattern: 'overview' | 'code_scan' | 'compare' | 'graph' | 'capacity' | 'queue' | 'depth';
     elements: { id: string; label: string }[];
@@ -187,6 +196,10 @@ export type Scene = {
     end_frame: number;
     timing_source: string;
   }[];
+  semantic_scene?: SemanticScene | null;
+  compiled_semantic_events?: CompiledSemanticEvent[];
+  creation?: CreativeScene | null;
+  compiled_creative_events?: CompiledCreativeEvent[];
   visual_scene?: VisualScene | null;
   compiled_object_events?: CompiledObjectEvent[];
   diagram?: Diagram | null;
@@ -216,10 +229,15 @@ export type Storyboard = {
   fps: 30;
   width: 1920 | 3840;
   height: 1080 | 2160;
-  design_pack?: 'editorial_warm' | 'workspace_tech';
+  design_pack?: 'editorial_warm' | 'workspace_tech' | 'neon_horizon';
   motion_review_required?: boolean;
   total_frames: number;
   notices: string[];
   audio_alignment: 'estimated_sentence' | 'native_words' | 'forced_words' | 'mixed' | 'none';
 };
-export type VideoProps = Storyboard & { fontSrc?: string; assetBase?: string; preview?: boolean };
+export type VideoProps = Storyboard & {
+  generated_assets?: Record<string, string>;
+  fontSrc?: string;
+  assetBase?: string;
+  preview?: boolean;
+};

@@ -1,0 +1,129 @@
+{
+  "$defs": {
+    "CueAnchor": {
+      "additionalProperties": false,
+      "properties": {
+        "phrase": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Phrase",
+          "type": "string"
+        },
+        "occurrence": {
+          "default": 1,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "edge": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "title": "Edge",
+          "type": "string"
+        },
+        "offset_ms": {
+          "default": 0,
+          "maximum": 2000,
+          "minimum": -2000,
+          "title": "Offset Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "CueAnchor",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "target": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Target",
+      "type": "string"
+    },
+    "channel": {
+      "default": "state",
+      "pattern": "^[a-zA-Z0-9_-]{1,40}$",
+      "title": "Channel",
+      "type": "string"
+    },
+    "anchor": {
+      "$ref": "#/$defs/CueAnchor"
+    },
+    "duration_ms": {
+      "default": 1200,
+      "maximum": 4000,
+      "minimum": 100,
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "before": {
+      "maxLength": 500,
+      "minLength": 5,
+      "title": "Before",
+      "type": "string"
+    },
+    "change": {
+      "maxLength": 500,
+      "minLength": 5,
+      "title": "Change",
+      "type": "string"
+    },
+    "after": {
+      "maxLength": 500,
+      "minLength": 5,
+      "title": "After",
+      "type": "string"
+    },
+    "depends_on": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Depends On",
+      "type": "array"
+    },
+    "start_frame": {
+      "minimum": 0,
+      "title": "Start Frame",
+      "type": "integer"
+    },
+    "end_frame": {
+      "exclusiveMinimum": 0,
+      "title": "End Frame",
+      "type": "integer"
+    },
+    "timing_source": {
+      "enum": [
+        "measured_words",
+        "estimated_draft"
+      ],
+      "title": "Timing Source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "target",
+    "anchor",
+    "before",
+    "change",
+    "after",
+    "start_frame",
+    "end_frame",
+    "timing_source"
+  ],
+  "title": "CompiledCreativeEvent",
+  "type": "object"
+}

@@ -1,0 +1,36 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "element_id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Element Id",
+      "type": "string"
+    },
+    "line": {
+      "maximum": 1401,
+      "minimum": 1,
+      "title": "Line",
+      "type": "integer"
+    },
+    "end_line": {
+      "anyOf": [
+        {
+          "maximum": 1401,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "End Line"
+    }
+  },
+  "required": [
+    "element_id",
+    "line"
+  ],
+  "title": "CodeFocus",
+  "type": "object"
+}

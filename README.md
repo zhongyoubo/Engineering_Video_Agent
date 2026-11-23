@@ -2,9 +2,46 @@
 
 面向知识与技术内容创作者，把主题、资料或项目源码，制作成有清晰主张、依据和观众收益的视频。原生 Agent 完成内容策划、脚本与视觉设计，编写真实 Remotion/React/TSX 工程，通过构建、试渲染、审查与修复后交付成片和完整源码。
 
-本版在 V3 工程闭环上增加 V4 视觉制作能力：1080p/4K 输出规格、两套设计体系、七类图解积木、十一类可组合对象、接口与信号/状态动效、旁白短语驱动的动效事件、连续镜头预览、实际波形、版本差异和可选 MCP。Agent 仍可自由编写镜头与组件，不受这些积木限制。旧模板方式作为显式兼容入口保留。
+本版在 V3 工程闭环上增加 V4 及后续视觉制作能力：1080p/4K 输出规格、三套设计体系、七类图解积木、十一类可组合对象、接口与信号/状态动效、空间/数量/网络组件、旁白短语驱动的动效事件、连续镜头预览、实际波形、版本差异和可选 MCP。Agent 仍可自由编写镜头与组件，不受这些积木限制。旧模板方式作为显式兼容入口保留。
+
+## 素材与动效接入 · 2026-11-23
+
+工作台新增“素材库”：可按对象、风格和素材类型检索，查看真实预览、参数、来源与适用尺寸。
+首批接入4个精选包/14项：8个Phosphor双色矢量对象、3张3dicons透明立体插画、
+2个适配的Remotion文字动效、1个可旋转的牛油果GLB。加上原有34项，共48项目录条目。
+
+原生Agent能看到素材预览拼图，并通过 `search_materials` / `select_materials` 按需装载源码；
+PNG/GLB通过 `library_asset` 回执导入。选中依赖、授权、预览与来源随工程导出，
+素材变动会重新要求构建和审查。具体接入方式、版本和验证边界见
+[素材包设计与维护](docs/design/material-packs.md)。素材是创作词汇，Agent仍可按场景编写新素材。
+2026-11-24复查修复了续跑选材丢失、恢复记录覆盖、装载失败后的部分写入与GLB数值校验，
+并优化目录扫描、三维资源清理和界面容错，见[代码复查记录](docs/design/material-pack-review-20261124.md)。
+
+首批只是精选子集；PNG不会自动成为三维模型，也未实现任意对象文生三维。
+配置 `CHROME_EXECUTABLE` 后可运行 `.venv/bin/python scripts/verify_material_packs.py`，
+完成固定无声16秒样片的编译、预览、渲染和导出回归。
 
 ## 从这里开始
+
+工程创作能力：新工程策划要求逐镜头给出具体对象、素材来源、自由构图、配色及动作的前后结果。
+原生 Agent 可按主题编写 `src/assets` 中的 SVG/Canvas/Three 源码素材与 `src/scenes` 镜头，
+结合已配置的生图服务、项目图片或真实页面；内置积木按表达需要选用。自定义动效进入实测旁白
+编排、连续预览和逐项审查；源码素材的哈希与绑定随 `creative-manifest.json` 导出。
+自定义三维场景可启用软件 WebGL。详见[按内容创作素材、场景和动效](docs/design/content-driven-creation.md)。
+
+新主题真实创作验收：`scripts/verify_engineering_deployment.py --provider codex --creative --topic '<主题>'`。
+需要原生模型凭据与隔离渲染环境；本环境缺少这些配置，未宣称完成该项实测。
+
+2026-11-23 新增空间与数量表达：`SpatialCity` 提供真实三维城市和镜头环绕，
+`QuantityMatrix` 把注册图片变成可计数矩阵，`NodeNetwork` 保留节点身份并沿连接传播影响。
+三者复用共享参数、旁白锚点、素材回执、审查和工程导出链路，支持新增的 `neon_horizon`
+夜景风格。不是任意主题的三维素材自动生成器。用法和验证范围见
+[空间叙事设计](docs/design/spatial-storytelling.md)。
+
+固定 28 秒无声视觉样片：设置 `CHROME_EXECUTABLE` 后运行
+`.venv/bin/python scripts/verify_spatial_scenes.py`，输出位于 `.verify-spatial-scenes/`。
+它验证固定平台组件的真实构建、连续预览、完整渲染和素材复用；时间轴为草稿估算，
+不代表原生模型、图像模型、专业配音或 Docker/gVisor 部署验收。当前工程仍为 30fps。
 
 - **AGENTS.md**：工程协作、执行和验收规则（标准文件名，不创建 Windows 上冲突的大小写副本）。
 - **Roadmap.md**：里程碑、实际完成情况与待部署验收。
@@ -77,7 +114,7 @@ API 可增加 `render_profile: {"resolution":"4k","fps":30}`、`design_pack: "ed
 
 ## 自有素材库、独立封面与 Ming 配音
 
-`assets/library/catalog.json` 提供 30 项带版本、来源和校验指纹的代码/字体素材，`GET /api/v1/material-library` 和工作台“环境与能力”可查看；原生策划可选用并记录 `library:<id>@<version>`。详见 `docs/design/material-library-and-speech-cn.md`。
+`assets/library/catalog.json` 提供 34 项带版本、来源和校验指纹的代码/字体素材，`GET /api/v1/material-library` 和工作台“环境与能力”可查看；原生策划可选用并记录 `library:<id>@<version>`。详见 `docs/design/material-library-and-speech-cn.md`。
 
 `scripts/verify_project_bookends.py` 为已有自测片补独立 3 秒封面和 4 秒结束页，校验正文指纹后复用，实际生成 71.23 秒 4K 影片，并保留原正文与合成工程。它不重新配音，仍是 Edge 云希。Ming 的新参考音色与种子参数仅完成协议验证；真实服务、音质和对齐仍需验收。
 
@@ -125,3 +162,62 @@ Studio 可查看对象与动作、修改标注/旁白锚点及提示音开关；
 详见 [对象场景设计](docs/design/object-scenes.md)、[固定样例](examples/object-scenes/) 和
 [实际验证](docs/verification-object-scenes.json)。固定场景检查覆盖两条路径的屏幕状态变化、
 十一类对象与真实提示音混入；示意动画不代表 HDMI 硬件、120Hz/HDR 或音质实测。
+
+## AI 语义场景与受控素材制作
+
+新增目标输入、对话、Token、上下文、文档片段、检索结果、模型边界、工具调用、任务状态、
+证据、操作确认和代码界面等十二类语义组件。`Scene.semantic_scene` 描述对象、真实旁白锚点、
+状态变化与可见结果；可以单独组成镜头，也可以用 `bind_to` 绑定到电视、显示器、电脑或
+手机屏幕。状态标题、按钮和标注读取同一份状态。旧对象、图解和分镜继续兼容。
+
+原生工程动作新增 `request_assets` / `inspect_asset`：实际制作带中文字体的原创文档 SVG、
+同输入 PNG 预览和来源/哈希记录，支持任务检查点恢复、去重、取消及版本失效。原生 Agent
+仍需编写真实工程、隔离构建并看图审核。当前素材制作器为受控代码绘制，尚未接入照片、
+视频或 3D 生成服务；不会把本对话可用的生图工具冒充项目已接入的能力。
+
+预览按关键语义事件采样动作前、中、后，并覆盖镜头后半段的确认与结果。工作台可编辑
+标题/旁白锚点，查看绑定和每段连续预览。RenderPlan 统一登记素材与依赖；目前只有依赖
+指纹，没有实现镜头视频缓存或通用 FFmpeg 合成后端。
+
+详见 [语义场景设计](docs/design/semantic-production.md)、[固定样例](examples/semantic-scenes/)
+和 `scripts/verify_semantic_scenes.py`。固定样例验证与真实原生模型自动创作验收分别记录。
+
+复查修复了隔离渲染镜像遗漏运行依赖、恢复后素材缓存不一致、重复请求清除已有审核等问题。
+素材恢复先校验整批数据；画面发生变化才失效审核。镜头依赖同时覆盖主题/字体等全局设置，
+连续预览会核对实际帧数、帧率与声明范围。拉取本次更新后需重建工程渲染镜像；当前环境的
+本地渲染与镜像文件检查不等于 Docker 部署验收。
+
+## 项目内插画与独立元素制作
+
+现已把图片素材接入工程：原生 Agent 可通过受控 `request_assets` 调用管理员配置的图片网关，
+或复用本项目上传的 PNG。创建页支持参考图片/透明元素上传；策划与编排阶段会收到实际素材
+预览。素材有来源、哈希、尺寸、透明度和恢复记录，进入同一 Remotion 构建、预览、审查与导出。
+
+`semantic_scene.background_asset_key` 支持整幅场景插画；`AssetImage.image_style=artwork`
+支持无边框独立元素；`transform` 根据真实旁白时间戳实现移动、显隐、缩放和旋转。底色与标题
+颜色可按镜头设置。仍需原生 Agent 根据表达目的设计具体对象、场景与结果，不按主题关键词套模板。
+
+图片服务使用文档规定的 `eva-image-1` 网关协议，需要实际部署并配置 `.env.example` 中的
+`EXPLAINER_IMAGE_SERVICE_*`。它不是 ChatGPT 对话生图工具的直接接入，也不是内置图片模型；
+未配置时明确失败。已有素材走项目上传入口，报告记录为导入，不能算本次图片生成。
+详细协议、限制和复现见 [工程素材制作设计](docs/design/project-owned-visual-production.md)。
+
+固定晚餐案例检查：`scripts/verify_production_assets.py --media-directory <固定素材目录>`；
+真实原生 Agent＋图片模型＋隔离渲染验收：
+`scripts/verify_image_production_deployment.py --provider codex --voice edge`（需要已部署服务并消耗额度）。
+实际运行结果与未验收项见 `goals/2026-11-18-production-assets.md`。
+
+## 参考片复核后的工程修正
+
+已补上跨镜头素材 ID 一致性检查、完整代码分页与源行定位、按实测动效结束时间预留结果帧，
+并统一语义组件、场景、字幕和缩略图的主题入口。生成素材还需要绑定镜头并通过可见性审查，
+不能只凭素材回执认定成片已使用它。
+
+新增五种可组合图形：拨盘、分支树、指标条、存量容器、队列。多个图形可以共用一个参数；
+容器/队列按流入与处理速率逐帧计算存量、已处理量和溢出。Studio 可修改初始参数并保存版本。
+原生 Agent 仍按内容语义选择与编排，保留自由 TSX 与隔离运行。
+
+运行 `npm run test:visual` 检查渲染函数；运行 `scripts/verify_reference_mechanisms.py`
+可生成 16 秒无配音固定验证片。它是原创工程图解检查，不是一次真实原生模型自动制作。
+实现、约束与剩余事项见 [参考效果工程修正](docs/design/reference-production-corrections.md)。
+本轮交付采用面向 `main` 的整合 PR；未合并之前，默认分支不会自动包含这些增强。

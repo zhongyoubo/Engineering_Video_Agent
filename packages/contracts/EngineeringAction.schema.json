@@ -1,5 +1,180 @@
 {
   "$defs": {
+    "AssetRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "purpose": {
+          "maxLength": 400,
+          "minLength": 5,
+          "title": "Purpose",
+          "type": "string"
+        },
+        "provider": {
+          "default": "component_svg",
+          "enum": [
+            "component_svg",
+            "image_service",
+            "project_image",
+            "library_asset"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SemanticItem"
+          },
+          "maxItems": 8,
+          "title": "Items",
+          "type": "array"
+        },
+        "image_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 2500,
+              "minLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Prompt"
+        },
+        "size": {
+          "default": "landscape",
+          "enum": [
+            "landscape",
+            "portrait",
+            "square"
+          ],
+          "title": "Size",
+          "type": "string"
+        },
+        "transparent": {
+          "default": false,
+          "title": "Transparent",
+          "type": "boolean"
+        },
+        "project_asset_id": {
+          "anyOf": [
+            {
+              "pattern": "^mat_[a-f0-9]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Asset Id"
+        },
+        "library_ref": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "pattern": "^library:pack\\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Library Ref"
+        }
+      },
+      "required": [
+        "id",
+        "purpose",
+        "provider",
+        "title",
+        "items",
+        "image_prompt",
+        "size",
+        "transparent",
+        "project_asset_id",
+        "library_ref"
+      ],
+      "title": "AssetRequirement",
+      "type": "object"
+    },
+    "MaterialQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "default": "",
+          "maxLength": 160,
+          "title": "Query",
+          "type": "string"
+        },
+        "style": {
+          "default": "",
+          "maxLength": 60,
+          "title": "Style",
+          "type": "string"
+        },
+        "asset_type": {
+          "default": "",
+          "enum": [
+            "",
+            "component",
+            "image",
+            "model"
+          ],
+          "title": "Asset Type",
+          "type": "string"
+        }
+      },
+      "title": "MaterialQuery",
+      "type": "object",
+      "required": [
+        "query",
+        "style",
+        "asset_type"
+      ]
+    },
+    "SemanticItem": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "maxLength": 180,
+          "title": "Detail",
+          "type": "string"
+        },
+        "active": {
+          "default": false,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text",
+        "detail",
+        "active"
+      ],
+      "title": "SemanticItem",
+      "type": "object"
+    },
     "SourceEdit": {
       "additionalProperties": false,
       "properties": {
@@ -71,11 +246,41 @@
           "title": "Motion Continuity",
           "type": "integer"
         },
+        "semantic_expectations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 128,
+          "title": "Semantic Expectations",
+          "type": "array"
+        },
+        "asset_expectations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 256,
+          "title": "Asset Expectations",
+          "type": "array"
+        },
+        "asset_visibility": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Asset Visibility",
+          "type": "integer"
+        },
+        "semantic_accuracy": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Semantic Accuracy",
+          "type": "integer"
+        },
         "inspected_motion_frames": {
           "items": {
             "type": "string"
           },
-          "maxItems": 32,
+          "maxItems": 96,
           "title": "Inspected Motion Frames",
           "type": "array"
         },
@@ -127,6 +332,35 @@
           "minimum": 0,
           "title": "Causal Motion",
           "type": "integer"
+        },
+        "creation_expectations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1536,
+          "title": "Creation Expectations",
+          "type": "array"
+        },
+        "subject_fidelity": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Subject Fidelity",
+          "type": "integer"
+        },
+        "scene_composition": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Scene Composition",
+          "type": "integer"
+        },
+        "creative_motion": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Creative Motion",
+          "type": "integer"
         }
       },
       "required": [
@@ -137,6 +371,10 @@
         "issues",
         "inspected_frames",
         "motion_continuity",
+        "semantic_expectations",
+        "asset_expectations",
+        "asset_visibility",
+        "semantic_accuracy",
         "inspected_motion_frames",
         "content_focus",
         "cover_promise",
@@ -144,7 +382,11 @@
         "viewer_presentation",
         "purpose_fulfillment",
         "object_fidelity",
-        "causal_motion"
+        "causal_motion",
+        "creation_expectations",
+        "subject_fidelity",
+        "scene_composition",
+        "creative_motion"
       ],
       "title": "VisualReview",
       "type": "object"
@@ -158,7 +400,11 @@
         "build",
         "render_preview",
         "review",
-        "finish"
+        "finish",
+        "request_assets",
+        "inspect_asset",
+        "search_materials",
+        "select_materials"
       ],
       "title": "Action",
       "type": "string"
@@ -186,13 +432,59 @@
           "type": "null"
         }
       ]
+    },
+    "asset_requests": {
+      "items": {
+        "$ref": "#/$defs/AssetRequirement"
+      },
+      "maxItems": 8,
+      "title": "Asset Requests",
+      "type": "array"
+    },
+    "asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Asset Id"
+    },
+    "material_query": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MaterialQuery"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "material_refs": {
+      "items": {
+        "maxLength": 120,
+        "pattern": "^library:pack\\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Material Refs",
+      "type": "array"
     }
   },
   "required": [
     "action",
     "summary",
     "files",
-    "review"
+    "review",
+    "asset_requests",
+    "asset_id",
+    "material_query",
+    "material_refs"
   ],
   "title": "EngineeringAction",
   "type": "object"

@@ -1,10 +1,17 @@
 """Provider-neutral engineering contracts. All edits are mediated source files."""
 
-from typing import Literal
+from typing import Annotated, Literal
 from pydantic import Field, model_validator
 from ...domain import StrictModel
 from ...adapters.native_contract import AgentDesign
 from ...editorial import EditorialPlan
+from ...semantic_scene import VisualIntent, AssetRequirement
+
+
+class MaterialQuery(StrictModel):
+    query: str = Field(default="", max_length=160)
+    style: str = Field(default="", max_length=60)
+    asset_type: Literal["", "component", "image", "model"] = ""
 
 
 class MotionShot(StrictModel):
@@ -12,6 +19,8 @@ class MotionShot(StrictModel):
     visual: str = Field(min_length=10, max_length=1500)
     movement: str = Field(min_length=10, max_length=1500)
     assets: list[str] = Field(max_length=20)
+    intent: VisualIntent | None = None
+    asset_requirements: list[AssetRequirement] = Field(default_factory=list, max_length=8)
 
 
 class ProductionPlan(StrictModel):
@@ -31,6 +40,14 @@ class ProductionPlan(StrictModel):
             raise ValueError("Every scene requires exactly one visual and motion design")
         if self.storyboard.editorial is not None and self.storyboard.editorial != self.editorial:
             raise ValueError("Storyboard editorial must be null or match the production-plan editorial")
+        requirements = {}
+        for shot in self.shots:
+            for request in shot.asset_requirements:
+                if request.id in requirements and requirements[request.id] != request:
+                    raise ValueError(
+                        "Asset IDs are project-wide; different shot materials require different IDs"
+                    )
+                requirements[request.id] = request
         return self
 
 
@@ -47,7 +64,11 @@ class VisualReview(StrictModel):
     issues: list[str] = Field(max_length=30)
     inspected_frames: list[str] = Field(min_length=1, max_length=128)
     motion_continuity: int = Field(default=0, ge=0, le=5)
-    inspected_motion_frames: list[str] = Field(default_factory=list, max_length=32)
+    semantic_expectations: list[str] = Field(default_factory=list, max_length=128)
+    asset_expectations: list[str] = Field(default_factory=list, max_length=256)
+    asset_visibility: int = Field(default=0, ge=0, le=5)
+    semantic_accuracy: int = Field(default=0, ge=0, le=5)
+    inspected_motion_frames: list[str] = Field(default_factory=list, max_length=96)
     content_focus: int = Field(default=0, ge=0, le=5)
     cover_promise: int = Field(default=0, ge=0, le=5)
     opening_closing: int = Field(default=0, ge=0, le=5)
@@ -55,16 +76,48 @@ class VisualReview(StrictModel):
     purpose_fulfillment: int = Field(default=0, ge=0, le=5)
     object_fidelity: int = Field(default=0, ge=0, le=5)
     causal_motion: int = Field(default=0, ge=0, le=5)
+    creation_expectations: list[str] = Field(default_factory=list, max_length=1536)
+    subject_fidelity: int = Field(default=0, ge=0, le=5)
+    scene_composition: int = Field(default=0, ge=0, le=5)
+    creative_motion: int = Field(default=0, ge=0, le=5)
 
 
 class EngineeringAction(StrictModel):
-    action: Literal["write_files", "build", "render_preview", "review", "finish"]
+    action: Literal[
+        "write_files",
+        "build",
+        "render_preview",
+        "review",
+        "finish",
+        "request_assets",
+        "inspect_asset",
+        "search_materials",
+        "select_materials",
+    ]
     summary: str = Field(min_length=1, max_length=300)
     files: list[SourceEdit] = Field(max_length=30)
     review: VisualReview | None
+    asset_requests: list[AssetRequirement] = Field(default_factory=list, max_length=8)
+    asset_id: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
+    material_query: MaterialQuery | None = None
+    material_refs: list[
+        Annotated[str, Field(pattern=r"^library:pack\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$", max_length=120)]
+    ] = Field(default_factory=list, max_length=64)
 
     @model_validator(mode="after")
     def coherent_action(self):
+        if (self.action == "search_materials") != (self.material_query is not None):
+            raise ValueError("Material queries belong only to search_materials")
+        if self.action != "select_materials" and self.material_refs:
+            raise ValueError("Material references belong only to select_materials")
+        if len(set(self.material_refs)) != len(self.material_refs):
+            raise ValueError("Material references must be unique")
+        if (self.action == "request_assets") != bool(self.asset_requests):
+            raise ValueError("Asset requests belong only to request_assets actions")
+        if len({r.id for r in self.asset_requests}) != len(self.asset_requests):
+            raise ValueError("Asset request IDs must be unique")
+        if (self.action == "inspect_asset") != bool(self.asset_id):
+            raise ValueError("Asset inspection requires an ID")
         if self.action == "write_files" and not self.files:
             raise ValueError("write_files requires source edits")
         if self.action != "write_files" and self.files:

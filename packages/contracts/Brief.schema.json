@@ -336,7 +336,8 @@
       "default": "workspace_tech",
       "enum": [
         "editorial_warm",
-        "workspace_tech"
+        "workspace_tech",
+        "neon_horizon"
       ],
       "title": "Design Pack",
       "type": "string"

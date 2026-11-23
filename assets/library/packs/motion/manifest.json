@@ -1,0 +1,85 @@
+{
+  "id": "motion",
+  "version": "1.0",
+  "origin": "https://github.com/lifeprompt-team/remotion-scenes",
+  "revision": "02c7a84241da7010b5f59c420b0110aafd1d6f0d",
+  "license": "MIT",
+  "license_file": "LICENSE.txt",
+  "files": [
+    {
+      "path": "ADAPTATIONS.md",
+      "sha256": "dd6912abe6c75443833d0ff687b70cfb88f0da07aa9dd96a56072875faf84fc9",
+      "role": "provenance"
+    },
+    {
+      "path": "LICENSE.txt",
+      "sha256": "93a22c496702fa837deedfa7357907f41e022d2b926d4568012b691e4de57855",
+      "role": "license"
+    },
+    {
+      "path": "MotionText.tsx",
+      "sha256": "2ab08898393fbb1d730d8bd7ea763a5fe4b803bdba710a15023ef278f9a1ed05",
+      "role": "code"
+    }
+  ],
+  "items": [
+    {
+      "id": "pack.motion.typewriter",
+      "name": "逐字输入",
+      "purpose": "逐字输入，透明底、可换文本和配色；按帧确定性播放，结束保留结果。",
+      "asset_type": "component",
+      "entry": "MotionText.tsx",
+      "symbol": "PackTypewriter",
+      "styles": [
+        "typography",
+        "文字动效"
+      ],
+      "subjects": [
+        "提示词",
+        "终端",
+        "观点",
+        "标题"
+      ],
+      "affordances": [
+        "逐字输入",
+        "结果停留"
+      ],
+      "parameters": {
+        "text": "必填文本",
+        "startFrame": "镜头局部起始帧",
+        "fontSize": "字号",
+        "color": "文字颜色",
+        "accent": "强调颜色"
+      }
+    },
+    {
+      "id": "pack.motion.kinetic",
+      "name": "弹性文字入场",
+      "purpose": "弹性文字入场，透明底、可换文本和配色；按帧确定性播放，结束保留结果。",
+      "asset_type": "component",
+      "entry": "MotionText.tsx",
+      "symbol": "PackKinetic",
+      "styles": [
+        "typography",
+        "文字动效"
+      ],
+      "subjects": [
+        "提示词",
+        "终端",
+        "观点",
+        "标题"
+      ],
+      "affordances": [
+        "错峰弹性入场",
+        "结果停留"
+      ],
+      "parameters": {
+        "text": "必填文本",
+        "startFrame": "镜头局部起始帧",
+        "fontSize": "字号",
+        "color": "文字颜色",
+        "accent": "强调颜色"
+      }
+    }
+  ]
+}

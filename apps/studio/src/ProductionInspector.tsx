@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { Scene } from '@explainer/video';
+import { designPacks } from '../../../packages/engineering-template/src/theme';
 import { media, request } from './api';
 
 export function ProductionInspector({
@@ -54,7 +55,15 @@ export function ProductionInspector({
       live = false;
     };
   }, [revision.id, revision.outputs?.audio_analysis, revision.outputs?.motion_previews]);
-  const clip = clips.find((c) => c.scene_id === scene.id);
+  const activeTheme =
+    designPacks[
+      revision?.brief?.design_pack === 'neon_horizon'
+        ? 'neon_horizon'
+        : revision?.brief?.design_pack === 'editorial_warm'
+          ? 'editorial_warm'
+          : 'workspace_tech'
+    ];
+  const sceneClips = clips.filter((c) => c.scene_id === scene.id);
   const update = (motion: NonNullable<Scene['motion']>) => onEdit({ motion, compiled_events: [] });
   const updateVisual = (patch: Partial<NonNullable<Scene['visual_scene']>>) =>
     onEdit({ visual_scene: { ...scene.visual_scene!, ...patch }, compiled_object_events: [] });
@@ -62,6 +71,145 @@ export function ProductionInspector({
     <div className="production-inspector">
       <h3>镜头与音画时间轴</h3>
       <p className="subtle">只展示实际产物。修改后请另存版本；共享组件变化仍需全片复审。</p>
+      {scene.creation && (
+        <section aria-label="画面创作设计">
+          <h4>画面、素材与动作</h4>
+          <p>{scene.creation.visual_goal}</p>
+          <p>{scene.creation.composition}</p>
+          {scene.creation.elements.map((element) => (
+            <p key={element.id}>{element.description}</p>
+          ))}
+          {scene.creation.events.map((event) => (
+            <p key={event.id}>
+              {event.before} → {event.change} → {event.after}
+            </p>
+          ))}
+          <p className="subtle">
+            {scene.compiled_creative_events?.length
+              ? scene.compiled_creative_events.every((e) => e.timing_source === 'measured_words')
+                ? '动作已按实际旁白时间编排'
+                : '动作时间为草稿估计'
+              : '自定义画面由工程渲染后预览'}
+          </p>
+        </section>
+      )}
+      {scene.semantic_scene && (
+        <div aria-label="语义场景时间轴">
+          <h4>信息、状态与可见结果</h4>
+          <p>{scene.semantic_scene.viewer_question}</p>
+          <label>
+            画面底色
+            <input
+              aria-label="语义画面底色"
+              type="color"
+              value={scene.semantic_scene.background_color || activeTheme.background}
+              disabled={disabled}
+              onChange={(event) =>
+                onEdit({
+                  semantic_scene: {
+                    ...scene.semantic_scene!,
+                    background_color: event.target.value,
+                  },
+                  compiled_semantic_events: [],
+                })
+              }
+            />
+          </label>
+          {(scene.semantic_scene.parameters || []).map((parameter) => (
+            <label key={parameter.id}>
+              参数 {parameter.id} {parameter.unit}
+              <input
+                aria-label={'机制参数：' + parameter.id}
+                type="number"
+                min={parameter.minimum}
+                max={parameter.maximum}
+                step="any"
+                value={parameter.initial}
+                disabled={disabled}
+                onChange={(event) => {
+                  const value = Number(event.target.value);
+                  if (
+                    !Number.isFinite(value) ||
+                    value < parameter.minimum ||
+                    value > parameter.maximum
+                  )
+                    return;
+                  onEdit({
+                    semantic_scene: {
+                      ...scene.semantic_scene!,
+                      parameters: scene.semantic_scene!.parameters!.map((p) =>
+                        p.id === parameter.id ? { ...p, initial: value } : p,
+                      ),
+                    },
+                    compiled_semantic_events: [],
+                  });
+                }}
+              />
+            </label>
+          ))}
+          <p>插画背景：{scene.semantic_scene.background_asset_key || '无'}</p>
+          {scene.semantic_scene.entities.map((entity) => (
+            <label key={entity.id}>
+              {entity.component}
+              {entity.bind_to ? ' → ' + entity.bind_to + '.screen' : ''}
+              <input
+                aria-label={'语义标题：' + entity.id}
+                value={entity.title}
+                disabled={disabled}
+                maxLength={60}
+                onChange={(event) =>
+                  onEdit({
+                    semantic_scene: {
+                      ...scene.semantic_scene!,
+                      entities: scene.semantic_scene!.entities.map((e) =>
+                        e.id === entity.id ? { ...e, title: event.target.value } : e,
+                      ),
+                    },
+                    compiled_semantic_events: [],
+                  })
+                }
+              />
+            </label>
+          ))}
+          {scene.semantic_scene.events.map((e) => (
+            <label key={e.id}>
+              {e.action} · {e.target}
+              {e.action === 'transform' &&
+                ` → x:${e.x ?? '保持'} y:${e.y ?? '保持'} 透明度:${e.opacity ?? '保持'} 缩放:${e.scale ?? '保持'}`}
+              <input
+                aria-label={'语义旁白：' + e.id}
+                value={e.anchor.phrase}
+                disabled={disabled}
+                onChange={(event) =>
+                  onEdit({
+                    semantic_scene: {
+                      ...scene.semantic_scene!,
+                      events: scene.semantic_scene!.events.map((v) =>
+                        v.id === e.id
+                          ? { ...v, anchor: { ...v.anchor, phrase: event.target.value } }
+                          : v,
+                      ),
+                    },
+                    compiled_semantic_events: [],
+                  })
+                }
+              />
+            </label>
+          ))}
+          <ul>
+            {scene.semantic_scene.expectations.map((e) => (
+              <li key={e.id}>{e.visible_result}</li>
+            ))}
+          </ul>
+          <p>
+            {scene.compiled_semantic_events?.length
+              ? scene.compiled_semantic_events.every((e) => e.timing_source === 'measured_words')
+                ? '真实旁白时间戳'
+                : '草稿估计时间'
+              : '保存后编译语义动作'}
+          </p>
+        </div>
+      )}
       {scene.visual_scene && (
         <div aria-label="对象场景时间轴">
           <h4>对象、动作与结果</h4>
@@ -136,14 +284,20 @@ export function ProductionInspector({
         </div>
       )}
       {loadError && <p role="alert">{loadError}</p>}
-      {clip?.asset_id ? (
-        <video
-          key={clip.asset_id}
-          src={media(clip.asset_id)}
-          controls
-          preload="metadata"
-          style={{ width: '100%' }}
-        />
+      {sceneClips.length ? (
+        sceneClips.map((clip) => (
+          <div key={clip.asset_id}>
+            <p>
+              连续预览：{clip.start_frame}–{clip.end_frame} 帧
+            </p>
+            <video
+              src={media(clip.asset_id)}
+              controls
+              preload="metadata"
+              style={{ width: '100%' }}
+            />
+          </div>
+        ))
       ) : (
         <p>连续预览：未生成 / 未验证</p>
       )}
@@ -178,11 +332,19 @@ export function ProductionInspector({
       ) : (
         <p>实际波形：未生成 / 未验证</p>
       )}
+      {(scene.motion?.code_focus || []).map((focus) => (
+        <p key={focus.element_id}>
+          代码定位：{focus.element_id} → 第 {focus.line}
+          {focus.end_line ? `–${focus.end_line}` : ''} 行
+        </p>
+      ))}
       <label>
         视觉表达
         <select
           aria-label="视觉表达"
-          disabled={disabled || Boolean(scene.visual_scene)}
+          disabled={
+            disabled || Boolean(scene.visual_scene || scene.semantic_scene || scene.creation)
+          }
           value={scene.visual_scene ? 'objects' : scene.motion?.pattern || ''}
           onChange={(e) => {
             if (!e.target.value) return;
@@ -192,6 +354,7 @@ export function ProductionInspector({
               chapter: scene.motion?.chapter || '',
               purpose: scene.motion?.purpose || '解释当前镜头的核心机制',
               pattern: e.target.value as any,
+              code_focus: e.target.value === 'code_scan' ? scene.motion?.code_focus || [] : [],
               layout: e.target.value === 'overview' ? scene.motion?.layout || 'grid' : 'grid',
               elements: scene.motion?.elements || [
                 { id: 'input', label: '输入' },

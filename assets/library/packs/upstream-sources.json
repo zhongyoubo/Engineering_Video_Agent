@@ -1,0 +1,162 @@
+[
+  {
+    "pack": "phosphor",
+    "repo": "phosphor-icons/core",
+    "revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+    "path": "LICENSE",
+    "sha256": "b5b1f1da112d18ea2147decfd48ddc1bf2b5aeb6c265381579340e95b15a2bb2",
+    "bytes": 1071
+  },
+  {
+    "pack": "phosphor",
+    "repo": "phosphor-icons/core",
+    "revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+    "path": "assets/duotone/book-open-duotone.svg",
+    "sha256": "114456d637f78d1a748ef70768d3635c8f927fdfeed095a4ca9ded6f975ab8f5",
+    "bytes": 519
+  },
+  {
+    "pack": "phosphor",
+    "repo": "phosphor-icons/core",
+    "revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+    "path": "assets/duotone/brain-duotone.svg",
+    "sha256": "21c4456e71486b819599cc5feecde1451dc172c82f40ae10f8469f434567979b",
+    "bytes": 1032
+  },
+  {
+    "pack": "phosphor",
+    "repo": "phosphor-icons/core",
+    "revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+    "path": "assets/duotone/robot-duotone.svg",
+    "sha256": "7674bf6dd6c2a4f09bbf3989e915e17edd9804c45e14d0a95edadc5505fda1b3",
+    "bytes": 720
+  },
+  {
+    "pack": "phosphor",
+    "repo": "phosphor-icons/core",
+    "revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+    "path": "assets/duotone/terminal-duotone.svg",
+    "sha256": "2783fd04f98d8d7bdeae8589f37dc20297bbc3c8db3cc5bf64b10735460bbedd",
+    "bytes": 308
+  },
+  {
+    "pack": "phosphor",
+    "repo": "phosphor-icons/core",
+    "revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+    "path": "assets/duotone/folder-duotone.svg",
+    "sha256": "13b80de6bee262ba8d1e1230d9926b1f3df1e25b91430a4d9c2c36e8a456c820",
+    "bytes": 385
+  },
+  {
+    "pack": "phosphor",
+    "repo": "phosphor-icons/core",
+    "revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+    "path": "assets/duotone/magnifying-glass-duotone.svg",
+    "sha256": "7a840ea2341e75cf1d9187e07223be4501d6c6078a064a4097be07c1b3a52fb6",
+    "bytes": 316
+  },
+  {
+    "pack": "phosphor",
+    "repo": "phosphor-icons/core",
+    "revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+    "path": "assets/duotone/gear-duotone.svg",
+    "sha256": "844f6e041e4622283f651e76882c784af0627f950a6a2536e923b12e4ae5e590",
+    "bytes": 2632
+  },
+  {
+    "pack": "phosphor",
+    "repo": "phosphor-icons/core",
+    "revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+    "path": "assets/duotone/monitor-duotone.svg",
+    "sha256": "93d85c4c8cc8014c2a83ff4c0ac176166c99f12b5948d22807aacfd3925c6088",
+    "bytes": 450
+  },
+  {
+    "pack": "soft3d",
+    "repo": "realvjy/3dicons",
+    "revision": "8884d59e68a7bae0e0e2163af5b6c2ad992c01c8",
+    "path": "LICENSE",
+    "sha256": "36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673",
+    "bytes": 6555
+  },
+  {
+    "pack": "soft3d",
+    "repo": "realvjy/3dicons",
+    "revision": "8884d59e68a7bae0e0e2163af5b6c2ad992c01c8",
+    "path": "static/notebook-dynamic-00.png",
+    "sha256": "795d7e0bb49759e59287254271fc5507335edfab13ed79d7c6ed497e54bcef67",
+    "bytes": 220231
+  },
+  {
+    "pack": "soft3d",
+    "repo": "realvjy/3dicons",
+    "revision": "8884d59e68a7bae0e0e2163af5b6c2ad992c01c8",
+    "path": "static/heart.png",
+    "sha256": "1d2573259b83031ffac1de983e953cc1376a9d706f9256fd86af9bf0d5938c0c",
+    "bytes": 13959
+  },
+  {
+    "pack": "soft3d",
+    "repo": "realvjy/3dicons",
+    "revision": "8884d59e68a7bae0e0e2163af5b6c2ad992c01c8",
+    "path": "static/bubble.png",
+    "sha256": "d4677a926285569c4860d37d50741784130c09898d99b0dbbd9203831ff2672c",
+    "bytes": 45551
+  },
+  {
+    "pack": "motion",
+    "repo": "lifeprompt-team/remotion-scenes",
+    "revision": "02c7a84241da7010b5f59c420b0110aafd1d6f0d",
+    "path": "LICENSE",
+    "sha256": "93a22c496702fa837deedfa7357907f41e022d2b926d4568012b691e4de57855",
+    "bytes": 1072
+  },
+  {
+    "pack": "motion",
+    "repo": "lifeprompt-team/remotion-scenes",
+    "revision": "02c7a84241da7010b5f59c420b0110aafd1d6f0d",
+    "path": "src/scenes/TextAnimations/TextTypewriter.tsx",
+    "sha256": "98142df41b64b3c69584602055c876eb5c9ec3e8830204ae7cbb6acfb8c47f5d",
+    "bytes": 2384
+  },
+  {
+    "pack": "motion",
+    "repo": "lifeprompt-team/remotion-scenes",
+    "revision": "02c7a84241da7010b5f59c420b0110aafd1d6f0d",
+    "path": "src/scenes/TextAnimations/TextKinetic.tsx",
+    "sha256": "78e5e0a9da9fe2378e72d66591756b4265e0d834674661d79e3217e35ce59989",
+    "bytes": 2151
+  },
+  {
+    "pack": "avocado",
+    "repo": "KhronosGroup/glTF-Sample-Assets",
+    "revision": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+    "path": "Models/Avocado/LICENSE.md",
+    "sha256": "56357fc8277990d763480c4207551cd1f4d58451c6ea5f16d9fdb7d2fa7eb00c",
+    "bytes": 769
+  },
+  {
+    "pack": "avocado",
+    "repo": "KhronosGroup/glTF-Sample-Assets",
+    "revision": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+    "path": "Models/Avocado/README.md",
+    "sha256": "076b9fbb0bd7ccf39a3dcba838544331dfa71186014c24141929fbcb3e2a507e",
+    "bytes": 969
+  },
+  {
+    "pack": "avocado",
+    "repo": "KhronosGroup/glTF-Sample-Assets",
+    "revision": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+    "path": "Models/Avocado/glTF-Binary/Avocado.glb",
+    "sha256": "ccc9c3ce56423720b09399c2351537207cd5a65f859f9e6e2f30922762f3abd4",
+    "bytes": 8110040
+  },
+  {
+    "pack": "avocado",
+    "repo": "KhronosGroup/glTF-Sample-Assets",
+    "revision": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+    "path": "Models/Avocado/screenshot/screenshot.jpg",
+    "sha256": "e054be44df4b4f6ff99cf3467d78951b32557e6b6816a2a28af422db1abd98b4",
+    "bytes": 3414
+  }
+]

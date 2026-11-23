@@ -1,3 +1,4 @@
+import { MaterialBrowser } from './MaterialBrowser';
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Player } from '@remotion/player';
@@ -99,7 +100,7 @@ function App() {
   const [projects, setProjects] = useState<Project[]>([]),
     [jobs, setJobs] = useState<Job[]>([]),
     [caps, setCaps] = useState<any>(null);
-  const [view, setView] = useState<'create' | 'library' | 'settings'>('create'),
+  const [view, setView] = useState<'create' | 'library' | 'materials' | 'settings'>('create'),
     [inputMode, setInputMode] = useState<'prompt' | 'source' | 'git'>('prompt');
   const [title, setTitle] = useState(''),
     [prompt, setPrompt] = useState(''),
@@ -128,6 +129,7 @@ function App() {
   const [runtime, setRuntime] = useState('none'),
     [entry, setEntry] = useState(''),
     [real, setReal] = useState(false);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [file, setFile] = useState<File | null>(null),
     [busy, setBusy] = useState(false),
     [active, setActive] = useState<string | null>(null);
@@ -256,12 +258,30 @@ function App() {
       setError('描述一下你希望讲解的内容');
       return;
     }
+    if (
+      videoMode === 'engineering' &&
+      (imageFiles.length > 24 || imageFiles.some((f) => f.size > 12 * 1024 * 1024))
+    ) {
+      setError('图片最多 24 张，每张不得超过 12 MB');
+      return;
+    }
     setBusy(true);
     setError('');
     try {
       const actions = JSON.parse(actionText);
       if (!Array.isArray(actions)) throw new Error('演示动作必须是 JSON 数组');
       const project = await post('/v1/projects', { name: title });
+      if (videoMode === 'engineering') {
+        for (const image of imageFiles) {
+          const material = new FormData();
+          material.append('file', image);
+          material.append('title', image.name.replace(/\.png$/i, '').slice(0, 60) || '图片素材');
+          await request('/v3/projects/' + project.id + '/images', {
+            method: 'POST',
+            body: material,
+          });
+        }
+      }
       let input_id = null;
       if (inputMode === 'source' && file) {
         const form = new FormData();
@@ -518,6 +538,13 @@ function App() {
             视频与版本<span>{jobs.length}</span>
           </button>
           <button
+            className={view === 'materials' ? 'active' : ''}
+            onClick={() => setView('materials')}
+          >
+            <BookOpen size={18} />
+            素材库
+          </button>
+          <button
             className={view === 'settings' ? 'active' : ''}
             onClick={() => setView('settings')}
           >
@@ -569,9 +596,11 @@ function App() {
             <b>
               {view === 'library'
                 ? '视频与版本'
-                : view === 'settings'
-                  ? '环境与能力'
-                  : '创作工作台'}
+                : view === 'materials'
+                  ? '素材库'
+                  : view === 'settings'
+                    ? '环境与能力'
+                    : '创作工作台'}
             </b>
           </div>
           <span className="connected">
@@ -688,6 +717,23 @@ function App() {
                       </span>
                     </button>
                   </>
+                )}
+                {videoMode === 'engineering' && (
+                  <div>
+                    <label>参考图片与独立素材（可选）</label>
+                    <input
+                      aria-label="项目图片素材"
+                      type="file"
+                      accept="image/png"
+                      multiple
+                      disabled={busy}
+                      onChange={(e) => setImageFiles(Array.from(e.target.files || []))}
+                    />
+                    <p className="subtle">
+                      PNG，每张最多 12 MB，最多 24 张；使用透明图可单独编排元素动作。
+                    </p>
+                    {imageFiles.length > 0 && <p>{imageFiles.map((f) => f.name).join('、')}</p>}
+                  </div>
                 )}
                 <label>
                   {inputMode === 'prompt' ? '你想讲解什么？' : '希望重点讲解什么？（可选）'}
@@ -816,6 +862,7 @@ function App() {
                   onChange={(e) => setDesignPack(e.target.value)}
                 >
                   <option value="workspace_tech">工作台技术风格</option>
+                  <option value="neon_horizon">霓虹空间风格</option>
                   <option value="editorial_warm">暖色图解风格</option>
                 </select>
                 {videoMode === 'engineering' && (
@@ -1501,6 +1548,7 @@ function App() {
             </div>
           </div>
         )}
+        {view === 'materials' && <MaterialBrowser />}
         {view === 'library' && (
           <div className="library-page">
             <div className="page-title">
