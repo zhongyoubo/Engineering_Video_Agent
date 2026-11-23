@@ -1,6 +1,9 @@
 // Platform-owned, bounded causal coverage. Never discard a late semantic event.
 export function reviewWindows(scene, fps) {
-  const events = scene.compiled_semantic_events || [];
+  const events = [
+    ...(scene.compiled_semantic_events || []),
+    ...(scene.compiled_creative_events || []),
+  ].sort((a, b) => a.start_frame - b.start_frame);
   if (!events.length) {
     const event =
       scene.compiled_object_events?.find((e) => ['play', 'sound', 'signal'].includes(e.action)) ||
@@ -20,7 +23,7 @@ export function reviewWindows(scene, fps) {
   return windows;
 }
 export function causalFrames(scene) {
-  return (scene.compiled_semantic_events || [])
+  return [...(scene.compiled_semantic_events || []), ...(scene.compiled_creative_events || [])]
     .flatMap((e) => [
       Math.max(0, e.start_frame - 1),
       Math.floor((e.start_frame + e.end_frame) / 2),

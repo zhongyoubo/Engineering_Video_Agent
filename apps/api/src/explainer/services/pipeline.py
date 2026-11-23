@@ -627,6 +627,11 @@ class Pipeline:
             report["voice_engine_requested"] = self.brief.voice
             report["voice_engines_actual"] = sorted({a.get("source_engine", a["engine"]) for a in audio})
             report["engineering_source"] = bool(rendered.get("engineering"))
+            report["creative_production"] = {
+                "scenes": [s.id for s in board.scenes if s.creation],
+                "events": sum(len(s.compiled_creative_events) for s in board.scenes),
+                "evidence": "source bindings and native sampled-frame review; not independent human certification",
+            }
             report["object_scenes"] = {
                 "scenes": [s.id for s in board.scenes if s.visual_scene],
                 "events": sum(len(s.compiled_object_events) for s in board.scenes),

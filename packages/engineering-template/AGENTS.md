@@ -12,3 +12,6 @@ This is an editable Remotion engineering project. Read README.md, production-pla
   declared parameters; QuantityMatrix keys must resolve registered bundled assets. Immersive
   spatial shots require one entity, no physical stage and show_heading=false. Camera and
   network changes must use compiled frame-driven events; never introduce wall-clock motion.
+- Creation scenes author their specified material/scene modules and implement compiled_creative_events
+  with protected creative-kit.ts. Kits are optional. Preserve identities, registered keys, source
+  hashes and visible causal results. Technique three enables software WebGL for any Three subject.

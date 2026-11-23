@@ -52,9 +52,11 @@ def compile_motion(scene, words, fps, allow_estimated=False):
     from .visuals import compile_visual_scene
 
     from .semantics import compile_semantics
+    from .creative import compile_creative
 
     candidate = scene.model_copy(deep=True)
     try:
+        compile_creative(candidate, words, fps, allow_estimated)
         compile_semantics(candidate, words, fps, allow_estimated)
         compile_visual_scene(candidate, words, fps, allow_estimated)
         legacy = [
@@ -71,11 +73,13 @@ def compile_motion(scene, words, fps, allow_estimated=False):
             )
         ]
     except ValueError:
+        scene.compiled_creative_events = []
         scene.compiled_semantic_events = []
         scene.compiled_object_events = []
         scene.compiled_events = []
         raise
     scene.compiled_semantic_events = candidate.compiled_semantic_events
+    scene.compiled_creative_events = candidate.compiled_creative_events
     scene.compiled_object_events = candidate.compiled_object_events
     scene.compiled_events = legacy
 
@@ -91,6 +95,7 @@ def measured_event_budgets(board, alignment):
             *(scene.motion.events if scene.motion else []),
             *(scene.visual_scene.events if scene.visual_scene else []),
             *(scene.semantic_scene.events if scene.semantic_scene else []),
+            *(scene.creation.events if scene.creation else []),
         ]
         resolved = resolve_events(scene, events, words, board.fps, enforce_budget=False)
         budgets[scene.id] = max((last + 1 for _, _, last, _ in resolved), default=0)

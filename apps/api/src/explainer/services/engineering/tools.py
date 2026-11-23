@@ -217,7 +217,10 @@ class RenderTools:
                         raise EngineeringError("Continuous previews must cover every scene")
                     for scene in props["scenes"]:
                         relevant = [c for c in clips if c.get("scene_id") == scene["id"]]
-                        for event in scene.get("compiled_semantic_events", []):
+                        for event in [
+                            *scene.get("compiled_semantic_events", []),
+                            *scene.get("compiled_creative_events", []),
+                        ]:
                             before = scene["start_frame"] + max(0, event["start_frame"] - 1)
                             after = scene["start_frame"] + min(scene["frames"] - 1, event["end_frame"] + 1)
                             if not any(

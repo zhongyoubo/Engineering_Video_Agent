@@ -6,6 +6,7 @@ from ..specs import SceneSpec
 from ..editorial import SceneRole, ViewerDisclosure, EditorialPlan
 from ..semantic_scene import SemanticScene
 from ..visual_scene import VisualScene
+from ..creative_scene import CreativeScene
 
 
 class DesignedScene(StrictModel):
@@ -23,6 +24,7 @@ class DesignedScene(StrictModel):
     motion: SceneSpec | None = None
     visual_scene: VisualScene | None = None
     semantic_scene: SemanticScene | None = None
+    creation: CreativeScene | None = None
     role: SceneRole = "content"
     message: str = Field(default="", max_length=500)
     viewer_question: str = Field(default="", max_length=500)

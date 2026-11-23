@@ -31,3 +31,24 @@ def client(settings, monkeypatch):
 @pytest.fixture
 def headers():
     return {"Authorization": "Bearer " + "a" * 32}
+
+
+def fixture_creation():
+    """Data-only valid creative plan, not model inference or rendered artwork."""
+    return dict(
+        visual_goal="Make the subject and its visible relationship understandable",
+        composition="Place the visible subject centrally with adequate reading space",
+        palette=["#17354b", "#f4efe5"],
+        techniques=["svg"],
+        scene_source="src/Video.tsx",
+        elements=[
+            dict(
+                id="subject",
+                role="subject",
+                description="A recognizable subject in this explicit protocol fixture",
+                implementation="source",
+                source_file="src/Video.tsx",
+            )
+        ],
+        events=[],
+    )

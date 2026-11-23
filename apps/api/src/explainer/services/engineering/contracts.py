@@ -70,6 +70,10 @@ class VisualReview(StrictModel):
     purpose_fulfillment: int = Field(default=0, ge=0, le=5)
     object_fidelity: int = Field(default=0, ge=0, le=5)
     causal_motion: int = Field(default=0, ge=0, le=5)
+    creation_expectations: list[str] = Field(default_factory=list, max_length=1536)
+    subject_fidelity: int = Field(default=0, ge=0, le=5)
+    scene_composition: int = Field(default=0, ge=0, le=5)
+    creative_motion: int = Field(default=0, ge=0, le=5)
 
 
 class EngineeringAction(StrictModel):

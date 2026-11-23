@@ -18,6 +18,7 @@ from .adapters.native_agent import capability as native_capability
 from .content_taxonomy import taxonomy_options
 from .visual_scene import visual_scene_guidance
 from .semantic_scene import semantic_guidance
+from .creative_scene import creative_guidance
 from .api_materials import register_material_routes
 from .services.assets.image_service import configured as image_service_configured
 from .config import ROOT, get_settings
@@ -201,6 +202,7 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
         "content_taxonomy": taxonomy_options(),
         "visual_scene_toolkit": visual_scene_guidance(),
         "semantic_scene_toolkit": semantic_guidance(),
+        "creative_production": creative_guidance(),
         "asset_factory": {
             "component_svg": True,
             "project_image": True,
@@ -570,6 +572,8 @@ async def fork_revision(
         old = {s.id: s for s in old_board.scenes} if old_board else {}
         for scene in board.scenes:
             prior = old.get(scene.id)
+            if not prior or scene.creation != prior.creation:
+                scene.compiled_creative_events = []
             if prior and prior.locked and scene.model_dump() != prior.model_dump():
                 unlocking_only = not scene.locked and scene.model_dump(
                     exclude={"locked"}
@@ -592,6 +596,7 @@ async def fork_revision(
                 scene.compiled_events = []
                 scene.compiled_object_events = []
                 scene.compiled_semantic_events = []
+                scene.compiled_creative_events = []
     brief.mode = "automatic" if body.auto_render else "storyboard"
     return await schedule(
         settings,

@@ -24,8 +24,9 @@ def test_material_catalogue_is_authenticated_and_reports_provenance(client, head
     r = client.get("/api/v1/material-library", headers=headers)
     assert r.status_code == 200
     library = r.json()
-    assert len(library["items"]) == 33 and len(library["revision"]) == 64
+    assert len(library["items"]) == 34 and len(library["revision"]) == 64
     by_id = {x["id"]: x for x in library["items"]}
+    assert by_id["capability.authored_scenes"]["symbol"] == "creativeProgress"
     assert by_id["design.neon_horizon"]["symbol"] == "designPacks.neon_horizon"
     assert (
         "neon_horizon"
@@ -64,6 +65,10 @@ def production_plan():
     opening = {**design["scenes"][0], "id": "opening", "type": "title", "role": "opening"}
     closing = {**design["scenes"][0], "id": "closing", "type": "summary", "role": "closing"}
     design["scenes"] = [opening, *design["scenes"], closing]
+    from conftest import fixture_creation
+
+    for scene in design["scenes"]:
+        scene["creation"] = fixture_creation()
     return ProductionPlan(
         editorial={
             "strategy": {

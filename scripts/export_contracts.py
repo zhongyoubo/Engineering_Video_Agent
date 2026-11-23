@@ -23,6 +23,7 @@ from explainer.specs import (
 
 from explainer.semantic_scene import SemanticScene, SemanticEntity, SemanticEvent, CompiledSemanticEvent, VisualIntent, AssetRequirement, SemanticParameter
 from explainer.spatial_scene import SpatialSpec
+from explainer.creative_scene import CreativeScene, CreativeElement, CreativeEvent, CompiledCreativeEvent
 from explainer.visual_scene import VisualScene, SceneObject, ObjectPort, SceneConnection, ObjectEvent, CompiledObjectEvent
 
 from explainer.editorial import EditorialBrief, EditorialPlan, CoverSpec, ViewerDisclosure, ContentStrategy, NarrativeBeat
@@ -32,6 +33,7 @@ directory = ROOT / "packages/contracts"
 for model in [
     Brief,
     SpatialSpec,
+    CreativeScene, CreativeElement, CreativeEvent, CompiledCreativeEvent,
     SemanticScene, SemanticEntity, SemanticEvent, CompiledSemanticEvent, VisualIntent, AssetRequirement, SemanticParameter,
     VisualScene,
     SceneObject,

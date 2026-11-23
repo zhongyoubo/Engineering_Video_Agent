@@ -1,4 +1,5 @@
 import { reviewWindows, causalFrames } from './review-plan.mjs';
+import { requiresWebGL } from './render-capabilities.mjs';
 import { bundle } from '@remotion/bundler';
 import { openBrowser, selectComposition, renderStill, renderMedia } from '@remotion/renderer';
 import { execFileSync } from 'node:child_process';
@@ -14,10 +15,7 @@ const props = JSON.parse(readFileSync(resolve(project, 'props.json'), 'utf8'));
 if (!Number.isInteger(props.total_frames) || props.total_frames < 1 || props.total_frames > 27000)
   throw Error('Invalid frame budget');
 if (!existsSync(resolve(project, 'public/noto.otf'))) throw Error('Required Chinese font missing');
-const hasSpatialCity = props.scenes.some((s) =>
-  s.semantic_scene?.entities?.some((e) => e.component === 'SpatialCity'),
-);
-const chromiumOptions = hasSpatialCity ? { gl: 'swangle' } : {};
+const chromiumOptions = requiresWebGL(props) ? { gl: 'swangle' } : {};
 let browser;
 try {
   execFileSync(

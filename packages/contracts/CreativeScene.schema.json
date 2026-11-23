@@ -1,0 +1,255 @@
+{
+  "$defs": {
+    "CreativeElement": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "subject",
+            "environment",
+            "prop",
+            "annotation",
+            "camera"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 800,
+          "minLength": 10,
+          "title": "Description",
+          "type": "string"
+        },
+        "implementation": {
+          "enum": [
+            "source",
+            "asset",
+            "capture",
+            "kit"
+          ],
+          "title": "Implementation",
+          "type": "string"
+        },
+        "source_file": {
+          "anyOf": [
+            {
+              "maxLength": 240,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source File"
+        },
+        "asset_key": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Key"
+        }
+      },
+      "required": [
+        "id",
+        "role",
+        "description",
+        "implementation"
+      ],
+      "title": "CreativeElement",
+      "type": "object"
+    },
+    "CreativeEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "target": {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "title": "Target",
+          "type": "string"
+        },
+        "channel": {
+          "default": "state",
+          "pattern": "^[a-zA-Z0-9_-]{1,40}$",
+          "title": "Channel",
+          "type": "string"
+        },
+        "anchor": {
+          "$ref": "#/$defs/CueAnchor"
+        },
+        "duration_ms": {
+          "default": 1200,
+          "maximum": 4000,
+          "minimum": 100,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "before": {
+          "maxLength": 500,
+          "minLength": 5,
+          "title": "Before",
+          "type": "string"
+        },
+        "change": {
+          "maxLength": 500,
+          "minLength": 5,
+          "title": "Change",
+          "type": "string"
+        },
+        "after": {
+          "maxLength": 500,
+          "minLength": 5,
+          "title": "After",
+          "type": "string"
+        },
+        "depends_on": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Depends On",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "target",
+        "anchor",
+        "before",
+        "change",
+        "after"
+      ],
+      "title": "CreativeEvent",
+      "type": "object"
+    },
+    "CueAnchor": {
+      "additionalProperties": false,
+      "properties": {
+        "phrase": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Phrase",
+          "type": "string"
+        },
+        "occurrence": {
+          "default": 1,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "edge": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "title": "Edge",
+          "type": "string"
+        },
+        "offset_ms": {
+          "default": 0,
+          "maximum": 2000,
+          "minimum": -2000,
+          "title": "Offset Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "CueAnchor",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "visual_goal": {
+      "maxLength": 800,
+      "minLength": 10,
+      "title": "Visual Goal",
+      "type": "string"
+    },
+    "composition": {
+      "maxLength": 1200,
+      "minLength": 10,
+      "title": "Composition",
+      "type": "string"
+    },
+    "palette": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 2,
+      "title": "Palette",
+      "type": "array"
+    },
+    "techniques": {
+      "items": {
+        "enum": [
+          "svg",
+          "canvas",
+          "three",
+          "images",
+          "screen",
+          "diagram"
+        ],
+        "type": "string"
+      },
+      "maxItems": 6,
+      "minItems": 1,
+      "title": "Techniques",
+      "type": "array"
+    },
+    "scene_source": {
+      "maxLength": 240,
+      "minLength": 5,
+      "title": "Scene Source",
+      "type": "string"
+    },
+    "elements": {
+      "items": {
+        "$ref": "#/$defs/CreativeElement"
+      },
+      "maxItems": 24,
+      "minItems": 1,
+      "title": "Elements",
+      "type": "array"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/CreativeEvent"
+      },
+      "maxItems": 24,
+      "title": "Events",
+      "type": "array"
+    }
+  },
+  "required": [
+    "visual_goal",
+    "composition",
+    "palette",
+    "techniques",
+    "scene_source",
+    "elements"
+  ],
+  "title": "CreativeScene",
+  "type": "object"
+}

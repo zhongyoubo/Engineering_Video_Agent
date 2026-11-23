@@ -429,6 +429,19 @@
       "rights": "沿用项目源码使用条款。",
       "readiness": "implemented",
       "verification": "固定空间样片、类型和界面参数检查；不代表完整人工视听认证。"
+    },
+    {
+      "id": "capability.authored_scenes",
+      "version": "1.0",
+      "name": "按内容创作素材、场景与动作",
+      "kind": "visual",
+      "purpose": "原生Agent按主题编写任意对象的SVG/Canvas/Three源码素材，以自由场景与旁白锚定动作解释内容。",
+      "source": "packages/engineering-template/src/creative-kit.ts",
+      "symbol": "creativeProgress",
+      "provenance": "项目原创源码创作契约与通用时间工具；不含固定主题模板或原生质量认证。",
+      "rights": "沿用项目源码使用条款。",
+      "readiness": "implemented",
+      "verification": "源码/素材绑定、时序、恢复导出、预览覆盖和审查门禁有测试；新主题实际原生创作仍需部署验收。"
     }
   ]
 }

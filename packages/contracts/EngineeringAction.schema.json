@@ -281,6 +281,35 @@
           "minimum": 0,
           "title": "Causal Motion",
           "type": "integer"
+        },
+        "creation_expectations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1536,
+          "title": "Creation Expectations",
+          "type": "array"
+        },
+        "subject_fidelity": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Subject Fidelity",
+          "type": "integer"
+        },
+        "scene_composition": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Scene Composition",
+          "type": "integer"
+        },
+        "creative_motion": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Creative Motion",
+          "type": "integer"
         }
       },
       "required": [
@@ -302,7 +331,11 @@
         "viewer_presentation",
         "purpose_fulfillment",
         "object_fidelity",
-        "causal_motion"
+        "causal_motion",
+        "creation_expectations",
+        "subject_fidelity",
+        "scene_composition",
+        "creative_motion"
       ],
       "title": "VisualReview",
       "type": "object"

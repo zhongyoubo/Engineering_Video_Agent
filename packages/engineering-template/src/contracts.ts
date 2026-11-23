@@ -1,4 +1,5 @@
 import type { SemanticScene, CompiledSemanticEvent } from './semantic-types';
+import type { CreativeScene, CompiledCreativeEvent } from './creative-types';
 export type SceneObjectKind =
   | 'tv'
   | 'monitor'
@@ -191,6 +192,8 @@ export type Scene = {
   }[];
   semantic_scene?: SemanticScene | null;
   compiled_semantic_events?: CompiledSemanticEvent[];
+  creation?: CreativeScene | null;
+  compiled_creative_events?: CompiledCreativeEvent[];
   visual_scene?: VisualScene | null;
   compiled_object_events?: CompiledObjectEvent[];
   diagram?: Diagram | null;

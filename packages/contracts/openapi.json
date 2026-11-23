@@ -1375,6 +1375,94 @@
         ],
         "title": "CodeFocus"
       },
+      "CompiledCreativeEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+            "title": "Id"
+          },
+          "target": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+            "title": "Target"
+          },
+          "channel": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,40}$",
+            "title": "Channel",
+            "default": "state"
+          },
+          "anchor": {
+            "$ref": "#/components/schemas/CueAnchor"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "maximum": 4000.0,
+            "minimum": 100.0,
+            "title": "Duration Ms",
+            "default": 1200
+          },
+          "before": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Before"
+          },
+          "change": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Change"
+          },
+          "after": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "After"
+          },
+          "depends_on": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "title": "Depends On"
+          },
+          "start_frame": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Start Frame"
+          },
+          "end_frame": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "End Frame"
+          },
+          "timing_source": {
+            "type": "string",
+            "enum": [
+              "measured_words",
+              "estimated_draft"
+            ],
+            "title": "Timing Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "target",
+          "anchor",
+          "before",
+          "change",
+          "after",
+          "start_frame",
+          "end_frame",
+          "timing_source"
+        ],
+        "title": "CompiledCreativeEvent"
+      },
       "CompiledEvent": {
         "properties": {
           "id": {
@@ -1945,6 +2033,218 @@
           "brief"
         ],
         "title": "CreateVideo"
+      },
+      "CreativeElement": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+            "title": "Id"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "subject",
+              "environment",
+              "prop",
+              "annotation",
+              "camera"
+            ],
+            "title": "Role"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 800,
+            "minLength": 10,
+            "title": "Description"
+          },
+          "implementation": {
+            "type": "string",
+            "enum": [
+              "source",
+              "asset",
+              "capture",
+              "kit"
+            ],
+            "title": "Implementation"
+          },
+          "source_file": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 240
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source File"
+          },
+          "asset_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]{1,60}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Key"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "description",
+          "implementation"
+        ],
+        "title": "CreativeElement"
+      },
+      "CreativeEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+            "title": "Id"
+          },
+          "target": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+            "title": "Target"
+          },
+          "channel": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,40}$",
+            "title": "Channel",
+            "default": "state"
+          },
+          "anchor": {
+            "$ref": "#/components/schemas/CueAnchor"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "maximum": 4000.0,
+            "minimum": 100.0,
+            "title": "Duration Ms",
+            "default": 1200
+          },
+          "before": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Before"
+          },
+          "change": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Change"
+          },
+          "after": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "After"
+          },
+          "depends_on": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "title": "Depends On"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "target",
+          "anchor",
+          "before",
+          "change",
+          "after"
+        ],
+        "title": "CreativeEvent"
+      },
+      "CreativeScene": {
+        "properties": {
+          "visual_goal": {
+            "type": "string",
+            "maxLength": 800,
+            "minLength": 10,
+            "title": "Visual Goal"
+          },
+          "composition": {
+            "type": "string",
+            "maxLength": 1200,
+            "minLength": 10,
+            "title": "Composition"
+          },
+          "palette": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 2,
+            "title": "Palette"
+          },
+          "techniques": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "svg",
+                "canvas",
+                "three",
+                "images",
+                "screen",
+                "diagram"
+              ]
+            },
+            "type": "array",
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Techniques"
+          },
+          "scene_source": {
+            "type": "string",
+            "maxLength": 240,
+            "minLength": 5,
+            "title": "Scene Source"
+          },
+          "elements": {
+            "items": {
+              "$ref": "#/components/schemas/CreativeElement"
+            },
+            "type": "array",
+            "maxItems": 24,
+            "minItems": 1,
+            "title": "Elements"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/CreativeEvent"
+            },
+            "type": "array",
+            "maxItems": 24,
+            "title": "Events"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "visual_goal",
+          "composition",
+          "palette",
+          "techniques",
+          "scene_source",
+          "elements"
+        ],
+        "title": "CreativeScene"
       },
       "Cue": {
         "properties": {
@@ -3060,6 +3360,24 @@
             "type": "array",
             "maxItems": 16,
             "title": "Compiled Semantic Events"
+          },
+          "creation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CreativeScene"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "compiled_creative_events": {
+            "items": {
+              "$ref": "#/components/schemas/CompiledCreativeEvent"
+            },
+            "type": "array",
+            "maxItems": 24,
+            "title": "Compiled Creative Events"
           },
           "role": {
             "type": "string",

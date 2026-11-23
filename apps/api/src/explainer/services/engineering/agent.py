@@ -2,6 +2,7 @@
 
 from ...semantic_scene import semantic_guidance
 from ...spatial_scene import spatial_asset_keys
+from ...creative_scene import creative_asset_keys, creative_guidance
 from pydantic import ValidationError
 from ...adapters.native_agent import native_plan, NativeOutputError
 from ...adapters.native_contract import validate_design
@@ -82,27 +83,29 @@ class NativeEngineeringAgent:
                 "content_guidance": planning_guidance(self.brief),
                 "visual_scene_toolkit": visual_scene_guidance(),
                 "semantic_scene_toolkit": semantic_guidance(),
+                "creative_production": creative_guidance(),
                 "asset_capabilities": self.asset_capabilities(),
                 "project_image_catalog": self.image_catalog,
                 "material_library": library,
                 "material_usage": "Choose materials by explanatory purpose; record selected entries as library:<id>@<version> in shot.assets. Custom TSX remains allowed. Unverified assets need actual rendering/review. Reference footage is not reusable material.",
                 "visual_constraints": {
-                    "max_elements": PATTERN_ELEMENT_LIMITS,
-                    "max_label_characters": PATTERN_LABEL_LIMITS,
-                    "layout": "grid or fan; fan is available only for overview",
+                    "scope": "Only the explicitly selected legacy motion/diagram spec; custom creative source is not restricted to these layouts or subject types",
+                    "legacy_max_elements": PATTERN_ELEMENT_LIMITS,
+                    "legacy_max_label_characters": PATTERN_LABEL_LIMITS,
+                    "layout": "Author a suitable free composition. Grid/fan restrictions belong only to legacy motion specs",
                     "overflow": "Split into multiple scenes or author custom TSX; never silently discard elements or text",
                 },
                 "instruction": EDITORIAL_INSTRUCTION
                 + " Create full fluent narration, art direction and per-scene visual/motion treatment. Prefer recognizable objects and causal actions when explaining concrete devices, mechanisms or situations. Use visual_scene for supported objects; custom SVG/TSX remains available for unsupported subjects. Define initial state, action, visible result, real ports and distinct video/audio/control signals, not boxes containing object names. Choose varied treatments by explanatory need. Anchor events to narration phrases. Use supplied real UI captures. All source assertions require supplied evidence IDs.",
             },
             frames=self.catalog_frames,
-            validate=lambda candidate: self.prepare_plan(candidate, library),
+            validate=lambda candidate: self.prepare_plan(candidate, library, require_creation=True),
         )
         report = {**report, "material_library_revision": library["revision"]}
-        board = self.prepare_plan(plan, library)
+        board = self.prepare_plan(plan, library, require_creation=True)
         return plan, board, report
 
-    def prepare_plan(self, plan, library):
+    def prepare_plan(self, plan, library, require_creation=False):
         try:
             validate_material_references(plan, library)
         except ValueError as exc:
@@ -121,6 +124,27 @@ class NativeEngineeringAgent:
             raise EditorialError("新创作者策划必须解析表达目的、讲述对象、观众与表现形式，并给出叙事结构。")
         declared = {r.id for shot in plan.shots for r in shot.asset_requirements}
         for scene in board.scenes:
+            if require_creation and scene.creation is None:
+                raise NativeOutputError(
+                    "Design a concrete creation plan for every engineering scene; stock components alone are not a creative plan."
+                )
+            if scene.creation:
+                from .workspace import source_path, EngineeringError
+
+                for path in [
+                    scene.creation.scene_source,
+                    *[e.source_file for e in scene.creation.elements if e.source_file],
+                ]:
+                    try:
+                        source_path(path)
+                    except EngineeringError as exc:
+                        raise NativeOutputError(
+                            "Creative files must be editable authored source paths"
+                        ) from exc
+                if creative_asset_keys(scene.model_dump()) - declared:
+                    raise NativeOutputError(
+                        "Declare every creative image in the project-wide asset requirements."
+                    )
             if scene.semantic_scene:
                 references = {e.asset_key for e in scene.semantic_scene.entities if e.asset_key}
                 references.update(key for e in scene.semantic_scene.entities for key in spatial_asset_keys(e))
@@ -156,6 +180,9 @@ class NativeEngineeringAgent:
         return board
 
     def decide(self, workspace, plan):
+        import json
+
+        current_props = json.loads((workspace.project / "props.json").read_text())
         instructions = (ROOT / "docs/design/authoring-contract.md").read_text()
         frames = [
             *self.catalog_frames,
@@ -179,10 +206,14 @@ class NativeEngineeringAgent:
             EngineeringAction,
             {
                 "phase": "engineering-loop",
+                "creative_production": creative_guidance(),
+                "current_scene_creation": {
+                    s["id"]: s["creation"] for s in current_props.get("scenes", []) if s.get("creation")
+                },
                 "contract": instructions,
                 "production_plan": plan,
                 "current_hash": workspace.fingerprint(),
-                "semantic_contract": "Compose semantic_scene with SceneRenderer from ./semantic-kit in authored source. It uses software concepts and bound device surfaces; Root owns audio/captions. State changes require measured events and explicit expectations. SpatialCity uses frame-driven 3D camera/instances; QuantityMatrix consumes registered spatial.asset_keys; NodeNetwork preserves node identities/edges and propagates by graph hops using spatial.effect_parameter_id. Use bounded spatial data and shared parameter_id; an immersive spatial shot has one entity, show_heading=false and no physical object stage. Choose by explanatory need, never keyword routing. Declare every spatial.asset_keys key in asset_requirements and review every scene:key binding. Use request_assets for original SVG documents; inspect_asset validates its bytes and metadata. Reference the request ID in AssetImage.asset_key; props.generated_assets is platform-owned. Use only advertised asset_capabilities. Request image_service for recognizable illustrations and transparent cutouts; use project_image only with catalog IDs. No provider substitution. Compose background_asset_key and unframed AssetImage artwork plus measured transform events; retain provenance in reports without unsolicited in-film demo notices. Review every scene_id:expectation_id and score semantic_accuracy >=4 against actual before/during/after frames, not decorative pixels.",
+                "semantic_contract": "When using semantic_scene, compose SceneRenderer from ./semantic-kit. Free authored SVG/Canvas/Three scenes instead implement props.scenes[].creation with their own source assets and compiled_creative_events; no kit wrapper is mandatory. It uses software concepts and bound device surfaces; Root owns audio/captions. State changes require measured events and explicit expectations. SpatialCity uses frame-driven 3D camera/instances; QuantityMatrix consumes registered spatial.asset_keys; NodeNetwork preserves node identities/edges and propagates by graph hops using spatial.effect_parameter_id. Use bounded spatial data and shared parameter_id; an immersive spatial shot has one entity, show_heading=false and no physical object stage. Choose by explanatory need, never keyword routing. Declare every spatial.asset_keys key in asset_requirements and review every scene:key binding. Use request_assets for original SVG documents; inspect_asset validates its bytes and metadata. Reference the request ID in AssetImage.asset_key; props.generated_assets is platform-owned. Use only advertised asset_capabilities. Request image_service for recognizable illustrations and transparent cutouts; use project_image only with catalog IDs. No provider substitution. Compose background_asset_key and unframed AssetImage artwork plus measured transform events; retain provenance in reports without unsolicited in-film demo notices. Review every scene_id:expectation_id and score semantic_accuracy >=4 against actual before/during/after frames, not decorative pixels.",
                 "asset_capabilities": self.asset_capabilities(),
                 "project_image_catalog": self.image_catalog,
                 "asset_review_contract": "Review every scene_id:asset_key background/element binding visible in actual frames. Score asset_visibility >=4, name all asset_expectations; generated receipts alone are not consumption. Use globally unique asset IDs; repeated IDs require identical requests.",

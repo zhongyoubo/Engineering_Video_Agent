@@ -23,3 +23,4 @@
 - [Project-owned illustrated production](project-owned-visual-production.md): configured image gateway, authenticated PNG imports, retained receipts, measured element transforms and actual acceptance boundaries.
 - [Reference-production corrections](reference-production-corrections.md): global asset identity, complete code view, measured tail budgets, shared themes, parameter/flow mechanisms and stronger consumption review.
 - [Spatial storytelling](spatial-storytelling.md): procedural 3D city/camera, registered-image quantity matrices, stable networks/propagation, software WebGL and fixed 28-second verification.
+- [Content-driven creation](content-driven-creation.md): free artwork/scene/motion contracts, source materials, generic Three, causal review and new-topic acceptance.

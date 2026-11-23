@@ -81,6 +81,7 @@ function TrustedVideo(props: VideoProps) {
           <Sequence key={scene.id} from={scene.start_frame} durationInFrames={scene.frames}>
             {!scene.visual_scene &&
               !scene.semantic_scene &&
+              !scene.creation &&
               (props.presentation_profile || 'creator') === 'creator' &&
               (scene.role === 'opening' || scene.role === 'closing') && (
                 <Bookend scene={scene} props={props} />

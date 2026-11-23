@@ -1,0 +1,52 @@
+{
+  "base_commit": "0d1583e9d993bdf5e179f3fa67e2561caf12f8a0",
+  "backend_tests": 288,
+  "browser_tests": 15,
+  "checks": {
+    "ruff": "passed",
+    "typescript": "passed",
+    "studio_build": "passed",
+    "format": "passed",
+    "visual_contracts": "passed",
+    "spatial_contracts": "passed",
+    "creative_contracts": "passed",
+    "renderer_copy_dependencies": "passed"
+  },
+  "new_native_topic_acceptance": {
+    "result": "blocked",
+    "provider": "codex",
+    "creative_requested": true,
+    "docker_available": false,
+    "credential_configured": false,
+    "provider_enabled": false,
+    "actual_native_inference": false,
+    "reason": "Requires configured native provider and isolated renderer; no host or fixed-fixture fallback"
+  },
+  "actual_new_native_inference": false,
+  "actual_new_authored_video_render": false,
+  "human_visual_and_listening_certification": false,
+  "production_source_hashes": {
+    "apps/api/src/explainer/adapters/native_contract.py": "fdb9fccaea2d3d42422a085105216bf14992e3b8ab02445a1ba3dc78357f1e9b",
+    "apps/api/src/explainer/api.py": "089a7585df039ff3361dcceb55b4160b6ae040f91ddfc22f0ecd744585551b37",
+    "apps/api/src/explainer/creative_scene.py": "927f2fb67b4cf0dc58db41549c84084a04b870c43467541135e52e7eed1bc90a",
+    "apps/api/src/explainer/domain.py": "79aee69a88a41fa939530f8091fec94c8a6fb07f2b30b7b0f92671ccd88625f9",
+    "apps/api/src/explainer/services/assets/usage.py": "582dc53dacce1e017a3d36f5f54c8ea1255b9042166cbf4b85e7a6a9158112a4",
+    "apps/api/src/explainer/services/creative.py": "935449fb67f0b8eaa02d77eab3bff86185a08b75ba8fc6c4430fc7839b2c0557",
+    "apps/api/src/explainer/services/engineering/agent.py": "1f81fc92bda8bdfac6feaa7127a923a0ec0fc5358b842695816db41849bee283",
+    "apps/api/src/explainer/services/engineering/contracts.py": "6bb0da391e6f5cd920dae1ff8b8ffecbf56dfdb1648f3786e397cfe8b30e8bb2",
+    "apps/api/src/explainer/services/engineering/controller.py": "8b01fcdb03ffe3b6b04d471b6fe0d8885c4dc4e909b6f897ed1f6c11a04d6458",
+    "apps/api/src/explainer/services/engineering/tools.py": "d27f3595c883dea6005d670271616f8d378bbf34934510d9129c76a2515d9df6",
+    "apps/api/src/explainer/services/engineering/workspace.py": "d16e2f7d2cbfb5bfcf9bdedb2c17e768af2a1c6f3fc0910001cdf367b8833924",
+    "apps/api/src/explainer/services/motion.py": "b80a249b6886fad0d9bf066a5f93e689d4d91039c061c06a86e78159d7e22c44",
+    "apps/api/src/explainer/services/pipeline.py": "b0c6bfbfc4ba7ba6152f19e750b38373ef397b77db0351e96fc6894f6971a2ea",
+    "apps/api/src/explainer/services/render_plan.py": "d7048edb350a74f41bc86409035cbb027eeed83192c13c1af044a55458b42fe6",
+    "packages/engineering-template/render-capabilities.mjs": "9f6cb6a2b8119dd16d68763fdc97e91d51a1a87d8332e387fb66a55f0fe76f7e",
+    "packages/engineering-template/render.mjs": "8002d97367f590d93cac9d7f759a13b41bb0c2cbfe329cfeb4104048100db474",
+    "packages/engineering-template/review-plan.mjs": "8552b09c7f901878f6c7506e20782533db96124433ee29775271cb5c1a0d7c43",
+    "packages/engineering-template/src/Root.tsx": "d3c7dbf8e9e36e44ae9cf441b2151ee671b36f745f17a6c9a24bf5f779bd0583",
+    "packages/engineering-template/src/contracts.ts": "63d84c50ead47c8fdab06932af2c6451b4271fbdb4b637d25d047499730325e1",
+    "packages/engineering-template/src/creative-kit.ts": "e83581952b3ddf46257bbc32e331cf7e4122587397f050adc0bf1cc48a53a61a",
+    "packages/engineering-template/src/creative-types.ts": "98221528a2970da01276ee5227d849e048bfb30aeda8c683153db20876e75b00"
+  },
+  "coverage": "Typed free-subject planning, source/material bindings, measured custom motion, held results, generic Three activation, recovery/export and dedicated review gates. Protocol tests use explicit fakes; no arbitrary host source execution."
+}

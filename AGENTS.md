@@ -60,3 +60,11 @@ dispatcher and fixed bounded scene data; it accepts no source/path arguments. Th
 never permits user/model code or native-provider host execution. Record results in
 goals/2026-11-23-spatial-storytelling.md as well as the main execution goal. Keep 30fps,
 estimated draft timing and absent native/TTS/deployment certification explicit.
+
+Content-driven creation: read docs/design/content-driven-creation.md. New engineering plans
+require Scene.creation; historical plans may omit it. SVG/Canvas/Three source artwork is
+authored in the ordinary isolated project, never executed by the application or Studio.
+Protect creative-kit.ts/creative-types.ts. Preserve custom causal timing/held results, coverage,
+source/image binding, creative manifests and dedicated review. Existing components are optional
+vocabulary, never the creative ceiling or a topic keyword router. Fixed helper tests do not
+establish real native creativity. Record goals/2026-11-23-creative-production.md and the main goal.

@@ -141,3 +141,14 @@ continuous previews, three actually consumed original stills, distinct state fra
 final source hashes. Exported editable project. See goals/2026-11-23-spatial-storytelling.md
 and docs/verification-spatial-scenes.json. The sample is silent/estimated, not actual native,
 image/TTS inference, Docker/gVisor deployment or human complete playback/listening certification.
+
+## Content-driven creation · 2026-11-23
+
+Following the clarification that creativity belongs to the engineering Agent, implemented
+per-scene free creative contracts, source artwork bindings/manifests, custom measured causal
+events and review, general Three activation and Studio design inspection. New native planning
+requires the contract; historical plans remain loadable. Final checks: 288 backend tests,
+15 browser flows, pure render/timing contracts, TypeScript/build/format passed. The actual
+new-topic deployment preflight is blocked by missing Docker/provider configuration/credentials;
+no native creative generation or new generated-code render is claimed. See
+goals/2026-11-23-creative-production.md and docs/verification-creative-production.json.

@@ -71,6 +71,28 @@ export function ProductionInspector({
     <div className="production-inspector">
       <h3>镜头与音画时间轴</h3>
       <p className="subtle">只展示实际产物。修改后请另存版本；共享组件变化仍需全片复审。</p>
+      {scene.creation && (
+        <section aria-label="画面创作设计">
+          <h4>画面、素材与动作</h4>
+          <p>{scene.creation.visual_goal}</p>
+          <p>{scene.creation.composition}</p>
+          {scene.creation.elements.map((element) => (
+            <p key={element.id}>{element.description}</p>
+          ))}
+          {scene.creation.events.map((event) => (
+            <p key={event.id}>
+              {event.before} → {event.change} → {event.after}
+            </p>
+          ))}
+          <p className="subtle">
+            {scene.compiled_creative_events?.length
+              ? scene.compiled_creative_events.every((e) => e.timing_source === 'measured_words')
+                ? '动作已按实际旁白时间编排'
+                : '动作时间为草稿估计'
+              : '自定义画面由工程渲染后预览'}
+          </p>
+        </section>
+      )}
       {scene.semantic_scene && (
         <div aria-label="语义场景时间轴">
           <h4>信息、状态与可见结果</h4>
@@ -320,7 +342,9 @@ export function ProductionInspector({
         视觉表达
         <select
           aria-label="视觉表达"
-          disabled={disabled || Boolean(scene.visual_scene || scene.semantic_scene)}
+          disabled={
+            disabled || Boolean(scene.visual_scene || scene.semantic_scene || scene.creation)
+          }
           value={scene.visual_scene ? 'objects' : scene.motion?.pattern || ''}
           onChange={(e) => {
             if (!e.target.value) return;

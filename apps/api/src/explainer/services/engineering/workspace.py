@@ -33,6 +33,8 @@ def source_path(value):
             "mechanism-kit.tsx",
             "spatial-kit.tsx",
             "spatial-state.ts",
+            "creative-kit.ts",
+            "creative-types.ts",
             "presentation.tsx",
             "scene-objects.tsx",
             "semantic-kit.tsx",
@@ -136,6 +138,9 @@ class Workspace:
         atomic_json(self.state_path, self.state)
 
     def export(self, destination, plan):
+        from ..creative import source_manifest
+
+        manifest = source_manifest(self)
         with zipfile.ZipFile(destination, "w", zipfile.ZIP_DEFLATED) as archive:
             for path in sorted(self.project.rglob("*")):
                 if path.is_file() and "node_modules" not in path.parts:
@@ -152,6 +157,7 @@ class Workspace:
                 ),
             )
             archive.writestr("production-plan.json", json.dumps(plan, ensure_ascii=False, indent=2))
+            archive.writestr("creative-manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
             archive.writestr(
                 "authoring-journal.json", json.dumps(self.state["journal"], ensure_ascii=False, indent=2)
             )

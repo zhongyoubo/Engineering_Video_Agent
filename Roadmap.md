@@ -1,5 +1,16 @@
 # Roadmap
 
+## Content-driven creative production · 2026-11-23
+
+New native plans require per-shot visual goals, free composition/palette, recognizable elements,
+source/image bindings and independent narration-bound custom motions. Authored SVG/Canvas/Three
+materials are checked, versioned, reviewed and exported with a creative manifest. General Three
+activation replaces the built-in-city-only assumption. Custom causal results enter continuous
+coverage and dedicated subject/composition/motion review. Kits remain optional vocabulary;
+legacy layout limits are scoped. Actual tests and provider preflight are recorded separately
+in goals/2026-11-23-creative-production.md. New-topic native/image/voice/isolation quality remains
+deployment acceptance; the earlier fixed sample does not establish that creative quality.
+
 ## Spatial storytelling · 2026-11-23
 
 Implemented platform-owned SpatialCity/QuantityMatrix/NodeNetwork, deterministic 3D geometry

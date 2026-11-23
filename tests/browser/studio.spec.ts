@@ -671,3 +671,64 @@ test('spatial network parameters move actual nodes and persist across revisions'
   ).toBe(0.8);
   await expect(page.getByLabel('机制参数：strength')).toHaveValue('0.8', { timeout: 30000 });
 });
+
+test('creative scene design stays visible and persists without executing authored source in Studio', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  const submitted = page.waitForResponse(
+    (r) => r.url().endsWith('/api/v1/videos') && r.request().method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const created = await (await submitted).json();
+  await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
+  const original = await (
+    await context.request.get('/api/v1/revisions/' + created.revision_id)
+  ).json();
+  const scene = original.storyboard.scenes[0];
+  scene.creation = {
+    visual_goal: '通过翻开书本、抽出纸页说明资料如何被取用',
+    composition: '书本在左侧展开，右侧留出纸页移动和文字空间',
+    palette: ['#efb85d', '#305a67'],
+    techniques: ['svg'],
+    scene_source: 'src/scenes/Library.tsx',
+    elements: [
+      {
+        id: 'book',
+        role: 'subject',
+        description: '有书脊和分层纸页的立体书本素材',
+        implementation: 'source',
+        source_file: 'src/assets/Book.tsx',
+      },
+    ],
+    events: [],
+  };
+  const response = await context.request.post('/api/v1/revisions/' + original.id + '/fork', {
+    data: {
+      expected_version: original.version,
+      storyboard: original.storyboard,
+      auto_render: false,
+    },
+  });
+  expect(response.status()).toBe(202);
+  await page.reload();
+  await page.getByRole('button', { name: '视频与版本' }).click();
+  await page.locator('.video-card').first().click();
+  await page.getByRole('button', { name: '音画时间轴', exact: true }).click();
+  const design = page.getByRole('region', { name: '画面创作设计' });
+  await expect(design).toContainText('通过翻开书本');
+  await expect(design).toContainText('有书脊和分层纸页');
+  await expect(page.getByLabel('视觉表达')).toBeDisabled();
+  const saved = page.waitForRequest((r) => r.url().endsWith('/fork') && r.method() === 'POST');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  expect((await saved).postDataJSON().storyboard.scenes[0].creation.scene_source).toBe(
+    'src/scenes/Library.tsx',
+  );
+});

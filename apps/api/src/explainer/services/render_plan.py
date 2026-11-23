@@ -42,6 +42,7 @@ def build_render_plan(props, public):
                     if e.get("bind_to")
                 ],
                 expectations=[scene["id"] + ":" + e["id"] for e in semantics.get("expectations", [])],
+                creation=scene.get("creation"),
             )
         )
     return dict(

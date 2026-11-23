@@ -1,0 +1,71 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "subject",
+        "environment",
+        "prop",
+        "annotation",
+        "camera"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "description": {
+      "maxLength": 800,
+      "minLength": 10,
+      "title": "Description",
+      "type": "string"
+    },
+    "implementation": {
+      "enum": [
+        "source",
+        "asset",
+        "capture",
+        "kit"
+      ],
+      "title": "Implementation",
+      "type": "string"
+    },
+    "source_file": {
+      "anyOf": [
+        {
+          "maxLength": 240,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source File"
+    },
+    "asset_key": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Asset Key"
+    }
+  },
+  "required": [
+    "id",
+    "role",
+    "description",
+    "implementation"
+  ],
+  "title": "CreativeElement",
+  "type": "object"
+}

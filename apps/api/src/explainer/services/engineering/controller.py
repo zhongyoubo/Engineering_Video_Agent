@@ -111,6 +111,9 @@ class EngineeringController:
 
             w.record("asset.inspected", public_receipt(receipt))
         elif action.action == "build":
+            from ..creative import source_manifest
+
+            creation_manifest = source_manifest(w)
             props = json.loads((w.project / "props.json").read_text())
             from ..assets.usage import asset_usage
 
@@ -143,6 +146,7 @@ class EngineeringController:
             w.state["frames"], w.state["review"] = [], None
             w.state["clips"], w.state["motion_frames"] = [], []
             result = self.tools.execute(w, "build")
+            result["creation_manifest"] = creation_manifest
             w.state["build_hash"] = fingerprint if result.get("ok") else None
             w.state["preview_hash"], w.state["review_hash"] = None, None
             w.record("build", result)
@@ -189,6 +193,16 @@ class EngineeringController:
             from ..assets.usage import asset_usage
 
             required_assets = asset_usage(props)
+            from ...creative_scene import creative_expectations
+
+            required_creation = creative_expectations(props)
+            if required_creation and (
+                set(review["creation_expectations"]) != required_creation
+                or min(review["subject_fidelity"], review["scene_composition"], review["creative_motion"]) < 4
+            ):
+                raise EngineeringError(
+                    "Review every created subject and motion from actual frames/continuous previews"
+                )
             if required_assets and (
                 set(review["asset_expectations"]) != set(required_assets) or review["asset_visibility"] < 4
             ):

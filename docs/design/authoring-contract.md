@@ -102,3 +102,22 @@ external image URLs or reference-video frames. Use one immersive entity with sho
 in its own shot, or retain normal semantic-panel bounds. Preserve spatial-kit.tsx/spatial-state.ts
 and their capture-readiness gates. No independent animation clock, arbitrary renderer paths or
 host fallback. See spatial-storytelling.md for limits.
+
+## Content-driven creation
+
+Implement each current props.scenes[].creation: visual goal, composition/palette, concrete
+subjects, source/image bindings and before/change/after motion. Write original reusable
+SVG/Canvas/Three assets under src/assets and scene code under src/scenes. Do not reduce all
+subjects to existing kit types. Kits and their wrappers are optional explanatory vocabulary.
+Declare technique three for authored Three scenes; the renderer enables software WebGL.
+Use creativeProgress(scene,eventId,frame) from ./creative-kit and compiled_creative_events
+for custom causal motion, not independent animation clocks or R3F useFrame. All planned
+sources must be authored tracked files. Registered image keys need normal request_assets
+receipts and per-binding review. Root owns captions/audio; creation opening/closing source
+owns its visual composition without another default bookend overlay.
+
+Review every scene:element:id and scene:event:id in creation_expectations. subject_fidelity,
+scene_composition and creative_motion must each reach 4/5 from actual frames and motion sheets.
+Check recognizable geometry, coherent materials/lighting/perspective and explicit visible
+changes, not decorative pixel differences alone. Never call a fixed component fixture native
+creativity verification. See content-driven-creation.md for source manifests and real acceptance.

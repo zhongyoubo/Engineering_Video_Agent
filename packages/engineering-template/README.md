@@ -1,5 +1,11 @@
 # Editable Remotion project
 
+Content-driven creation uses Scene.creation and compiled_creative_events. Native-authored
+SVG/Canvas/Three materials live in src/assets and scenes in src/scenes; existing kits are
+optional. Use protected creativeProgress for measured causal changes. creative-manifest.json
+records actual source material hashes and bindings. Technique three enables software WebGL
+for any authored subject. Model-authored code still runs only under isolation.
+
 Generated source lives in src/Video.tsx and optional src/scenes or src/components. Trusted Root.tsx supplies required CJK font, audio, captions and composition dimensions. props.json supplies actual compiled scene frames and authorized public media.
 
 Install Node 20.19+, FFmpeg and a compatible Chrome. Run npm ci, npm run check, npm run preview, npm run render. Set CHROME_EXECUTABLE if needed. Use an isolated environment for model-generated source; never render untrusted projects on a workstation with credentials. The application runs this project in an isolated, no-network tool container.

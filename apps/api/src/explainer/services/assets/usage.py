@@ -1,11 +1,14 @@
 """Structural asset consumption checks, supplemented by actual native frame review."""
 
 from ...spatial_scene import spatial_asset_keys
+from ...creative_scene import creative_asset_keys
 
 
 def asset_usage(props):
     uses = {}
     for scene in props.get("scenes", []):
+        for key in creative_asset_keys(scene):
+            uses[scene["id"] + ":" + key] = dict(scene_id=scene["id"], asset_key=key, kind="creative")
         data = scene.get("semantic_scene") or {}
         background = data.get("background_asset_key")
         if background:

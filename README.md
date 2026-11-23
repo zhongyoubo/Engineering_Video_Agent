@@ -6,6 +6,15 @@
 
 ## 从这里开始
 
+工程创作能力：新工程策划要求逐镜头给出具体对象、素材来源、自由构图、配色及动作的前后结果。
+原生 Agent 可按主题编写 `src/assets` 中的 SVG/Canvas/Three 源码素材与 `src/scenes` 镜头，
+结合已配置的生图服务、项目图片或真实页面；内置积木按表达需要选用。自定义动效进入实测旁白
+编排、连续预览和逐项审查；源码素材的哈希与绑定随 `creative-manifest.json` 导出。
+自定义三维场景可启用软件 WebGL。详见[按内容创作素材、场景和动效](docs/design/content-driven-creation.md)。
+
+新主题真实创作验收：`scripts/verify_engineering_deployment.py --provider codex --creative --topic '<主题>'`。
+需要原生模型凭据与隔离渲染环境；本环境缺少这些配置，未宣称完成该项实测。
+
 2026-11-23 新增空间与数量表达：`SpatialCity` 提供真实三维城市和镜头环绕，
 `QuantityMatrix` 把注册图片变成可计数矩阵，`NodeNetwork` 保留节点身份并沿连接传播影响。
 三者复用共享参数、旁白锚点、素材回执、审查和工程导出链路，支持新增的 `neon_horizon`
