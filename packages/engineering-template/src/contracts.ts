@@ -220,7 +220,7 @@ export type Storyboard = {
   fps: 30;
   width: 1920 | 3840;
   height: 1080 | 2160;
-  design_pack?: 'editorial_warm' | 'workspace_tech';
+  design_pack?: 'editorial_warm' | 'workspace_tech' | 'neon_horizon';
   motion_review_required?: boolean;
   total_frames: number;
   notices: string[];

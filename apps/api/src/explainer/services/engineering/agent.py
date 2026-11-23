@@ -1,6 +1,7 @@
 """Native planning and engineering actions. No template or model fallback."""
 
 from ...semantic_scene import semantic_guidance
+from ...spatial_scene import spatial_asset_keys
 from pydantic import ValidationError
 from ...adapters.native_agent import native_plan, NativeOutputError
 from ...adapters.native_contract import validate_design
@@ -122,6 +123,7 @@ class NativeEngineeringAgent:
         for scene in board.scenes:
             if scene.semantic_scene:
                 references = {e.asset_key for e in scene.semantic_scene.entities if e.asset_key}
+                references.update(key for e in scene.semantic_scene.entities for key in spatial_asset_keys(e))
                 if scene.semantic_scene.background_asset_key:
                     references.add(scene.semantic_scene.background_asset_key)
                 if references - declared:
@@ -180,7 +182,7 @@ class NativeEngineeringAgent:
                 "contract": instructions,
                 "production_plan": plan,
                 "current_hash": workspace.fingerprint(),
-                "semantic_contract": "Compose semantic_scene with SceneRenderer from ./semantic-kit in authored source. It uses software concepts and bound device surfaces; Root owns audio/captions. State changes require measured events and explicit expectations. Use request_assets for original SVG documents; inspect_asset validates its bytes and metadata. Reference the request ID in AssetImage.asset_key; props.generated_assets is platform-owned. Use only advertised asset_capabilities. Request image_service for recognizable illustrations and transparent cutouts; use project_image only with catalog IDs. No provider substitution. Compose background_asset_key and unframed AssetImage artwork plus measured transform events; retain provenance in reports without unsolicited in-film demo notices. Review every scene_id:expectation_id and score semantic_accuracy >=4 against actual before/during/after frames, not decorative pixels.",
+                "semantic_contract": "Compose semantic_scene with SceneRenderer from ./semantic-kit in authored source. It uses software concepts and bound device surfaces; Root owns audio/captions. State changes require measured events and explicit expectations. SpatialCity uses frame-driven 3D camera/instances; QuantityMatrix consumes registered spatial.asset_keys; NodeNetwork preserves node identities/edges and propagates by graph hops using spatial.effect_parameter_id. Use bounded spatial data and shared parameter_id; an immersive spatial shot has one entity, show_heading=false and no physical object stage. Choose by explanatory need, never keyword routing. Declare every spatial.asset_keys key in asset_requirements and review every scene:key binding. Use request_assets for original SVG documents; inspect_asset validates its bytes and metadata. Reference the request ID in AssetImage.asset_key; props.generated_assets is platform-owned. Use only advertised asset_capabilities. Request image_service for recognizable illustrations and transparent cutouts; use project_image only with catalog IDs. No provider substitution. Compose background_asset_key and unframed AssetImage artwork plus measured transform events; retain provenance in reports without unsolicited in-film demo notices. Review every scene_id:expectation_id and score semantic_accuracy >=4 against actual before/during/after frames, not decorative pixels.",
                 "asset_capabilities": self.asset_capabilities(),
                 "project_image_catalog": self.image_catalog,
                 "asset_review_contract": "Review every scene_id:asset_key background/element binding visible in actual frames. Score asset_visibility >=4, name all asset_expectations; generated receipts alone are not consumption. Use globally unique asset IDs; repeated IDs require identical requests.",

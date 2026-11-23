@@ -1,6 +1,38 @@
 /** Trusted, data-only AI visual vocabulary. Custom authoring still uses isolation. */
-import React from 'react';
-import { AbsoluteFill, Img, staticFile, useCurrentFrame } from 'remotion';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+type SpatialPanelProps = React.ComponentProps<typeof import('./spatial-kit').default>;
+function SpatialPanel(props: SpatialPanelProps) {
+  const [loaded, setLoaded] = useState<{
+    Component: typeof import('./spatial-kit').default;
+  } | null>(null);
+  const [handle] = useState(() => delayRender('protected spatial renderer mounted'));
+  useEffect(() => {
+    let active = true;
+    import('./spatial-kit')
+      .then((module) => {
+        if (active) setLoaded({ Component: module.default });
+      })
+      .catch(cancelRender);
+    return () => {
+      active = false;
+      continueRender(handle);
+    };
+  }, [handle]);
+  // Resolving the import alone does not guarantee React has committed its visual subtree.
+  useLayoutEffect(() => {
+    if (loaded) continueRender(handle);
+  }, [loaded, handle]);
+  return loaded ? <loaded.Component {...props} /> : null;
+}
+import {
+  AbsoluteFill,
+  Img,
+  staticFile,
+  useCurrentFrame,
+  delayRender,
+  continueRender,
+  cancelRender,
+} from 'remotion';
 import { MechanismPanel } from './mechanism-kit';
 import { ObjectScene } from './scene-objects';
 import type { Scene } from './contracts';
@@ -86,6 +118,18 @@ export function SemanticPanel({
     ['PromptInput', 'ToolCall', 'TaskState', 'ApprovalGate', 'CodeWorkspace'].includes(
       e.component,
     ) || e.state !== 'pending';
+  if (['SpatialCity', 'QuantityMatrix', 'NodeNetwork'].includes(e.component)) {
+    return (
+      <SpatialPanel
+        scene={scene}
+        entity={e}
+        frame={frame}
+        width={width}
+        height={height}
+        assets={assets}
+      />
+    );
+  }
   if (['Dial', 'BranchTree', 'MetricBar', 'FlowReservoir', 'QueueFlow'].includes(e.component)) {
     return <MechanismPanel scene={scene} entity={e} frame={frame} />;
   }
@@ -499,7 +543,15 @@ function SceneContent({
           </div>
         </>
       ) : null}
-      <div style={{ position: 'absolute', left: 100, top: 220, width: 1720, height: 650 }}>
+      <div
+        style={{
+          position: 'absolute',
+          left: entities.some((e) => e.immersive) ? 0 : 100,
+          top: entities.some((e) => e.immersive) ? 0 : 220,
+          width: entities.some((e) => e.immersive) ? 1920 : 1720,
+          height: entities.some((e) => e.immersive) ? 1080 : 650,
+        }}
+      >
         {entities
           .filter((e) => !e.bind_to)
           .map((entity) => {

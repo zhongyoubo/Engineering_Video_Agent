@@ -1,5 +1,17 @@
 # Roadmap
 
+## Spatial storytelling · 2026-11-23
+
+Implemented platform-owned SpatialCity/QuantityMatrix/NodeNetwork, deterministic 3D geometry
+and camera, registered-image repetition, stable graph identities and shortest-hop propagation.
+Added neon_horizon, bounded backend/TS contracts, protected modules/dependencies, native
+guidance/material declarations, source/asset hash integration and Studio parameter editing.
+Fixed asynchronous module capture readiness and selected software WebGL for city rendering.
+Verification and fixed 28-second sample: goals/2026-11-23-spatial-storytelling.md and
+docs/verification-spatial-scenes.json. The sample remains silent/estimated/30fps. General
+3D subjects, 60fps migration, real native unseen-topic generation, Docker deployment and
+professional voice/human playback acceptance remain separate work.
+
 The product is an engineering video Agent, with Codex/Claude Code as replaceable native reasoning engines. Status distinguishes code implementation, fixture verification and real infrastructure acceptance.
 
 | Milestone | Deliverables | Status |

@@ -1,0 +1,77 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "seed": {
+      "default": 17,
+      "maximum": 2147483647,
+      "minimum": 0,
+      "title": "Seed",
+      "type": "integer"
+    },
+    "count": {
+      "default": 240,
+      "maximum": 768,
+      "minimum": 12,
+      "title": "Count",
+      "type": "integer"
+    },
+    "columns": {
+      "default": 20,
+      "maximum": 32,
+      "minimum": 4,
+      "title": "Columns",
+      "type": "integer"
+    },
+    "camera_radius": {
+      "default": 34,
+      "maximum": 90,
+      "minimum": 12,
+      "title": "Camera Radius",
+      "type": "number"
+    },
+    "camera_height": {
+      "default": 18,
+      "maximum": 50,
+      "minimum": 5,
+      "title": "Camera Height",
+      "type": "number"
+    },
+    "orbit_degrees": {
+      "default": 36,
+      "maximum": 90,
+      "minimum": -90,
+      "title": "Orbit Degrees",
+      "type": "number"
+    },
+    "source_node": {
+      "default": 0,
+      "maximum": 63,
+      "minimum": 0,
+      "title": "Source Node",
+      "type": "integer"
+    },
+    "effect_parameter_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]{1,60}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Effect Parameter Id"
+    },
+    "asset_keys": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Asset Keys",
+      "type": "array"
+    }
+  },
+  "title": "SpatialSpec",
+  "type": "object"
+}

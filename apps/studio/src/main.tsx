@@ -852,6 +852,7 @@ function App() {
                   onChange={(e) => setDesignPack(e.target.value)}
                 >
                   <option value="workspace_tech">工作台技术风格</option>
+                  <option value="neon_horizon">霓虹空间风格</option>
                   <option value="editorial_warm">暖色图解风格</option>
                 </select>
                 {videoMode === 'engineering' && (

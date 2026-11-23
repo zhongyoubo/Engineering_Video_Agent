@@ -14,6 +14,10 @@ const props = JSON.parse(readFileSync(resolve(project, 'props.json'), 'utf8'));
 if (!Number.isInteger(props.total_frames) || props.total_frames < 1 || props.total_frames > 27000)
   throw Error('Invalid frame budget');
 if (!existsSync(resolve(project, 'public/noto.otf'))) throw Error('Required Chinese font missing');
+const hasSpatialCity = props.scenes.some((s) =>
+  s.semantic_scene?.entities?.some((e) => e.component === 'SpatialCity'),
+);
+const chromiumOptions = hasSpatialCity ? { gl: 'swangle' } : {};
 let browser;
 try {
   execFileSync(
@@ -38,13 +42,14 @@ try {
     );
   } else {
     const browserExecutable = process.env.CHROME_EXECUTABLE || undefined;
-    browser = await openBrowser('chrome', { browserExecutable });
+    browser = await openBrowser('chrome', { browserExecutable, chromiumOptions });
     const composition = await selectComposition({
       serveUrl,
       id: 'EngineeringVideo',
       inputProps: props,
       puppeteerInstance: browser,
       browserExecutable,
+      chromiumOptions,
     });
     if (action === 'preview') {
       const frames = [];
@@ -78,6 +83,7 @@ try {
           inputProps: props,
           puppeteerInstance: browser,
           browserExecutable,
+          chromiumOptions,
           frame,
           output: resolve(output, name),
           imageFormat: 'png',
@@ -91,6 +97,7 @@ try {
         inputProps: props,
         puppeteerInstance: browser,
         browserExecutable,
+        chromiumOptions,
       });
       await renderStill({
         serveUrl,
@@ -98,6 +105,7 @@ try {
         inputProps: props,
         puppeteerInstance: browser,
         browserExecutable,
+        chromiumOptions,
         frame: 0,
         output: resolve(output, 'cover.png'),
         imageFormat: 'png',
@@ -116,6 +124,7 @@ try {
               inputProps: props,
               puppeteerInstance: browser,
               browserExecutable,
+              chromiumOptions,
               codec: 'h264',
               crf: 28,
               pixelFormat: 'yuv420p',
@@ -165,6 +174,7 @@ try {
         inputProps: props,
         puppeteerInstance: browser,
         browserExecutable,
+        chromiumOptions,
         codec: 'h264',
         crf: 18,
         pixelFormat: 'yuv420p',

@@ -89,3 +89,16 @@ line. motion.code_focus binds element IDs to source line/end_line; use narration
 compiled events for synchronized scanning, focus and issue cards. Plan sufficient reading time.
 Trusted Root owns shared theme/captions. Do not overwrite theme.tsx, code-view.tsx or
 mechanism-kit.tsx. Custom visual components still compile/render only under isolation.
+
+## Spatial scenes
+
+Use SpatialCity, QuantityMatrix and NodeNetwork when camera perspective, quantities or
+relationships explain the subject. Bind parameter_id to declared bounded parameters; supply
+the bounded spatial configuration advertised by semantic_scene_toolkit. Network influence
+uses effect_parameter_id and follows graph hops. Node identity and edges persist through
+layout changes. Declare every QuantityMatrix spatial.asset_keys entry as a project-wide
+asset requirement and review every scene:key binding from rendered frames. Do not substitute
+external image URLs or reference-video frames. Use one immersive entity with show_heading=false
+in its own shot, or retain normal semantic-panel bounds. Preserve spatial-kit.tsx/spatial-state.ts
+and their capture-readiness gates. No independent animation clock, arbitrary renderer paths or
+host fallback. See spatial-storytelling.md for limits.

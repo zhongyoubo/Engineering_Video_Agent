@@ -403,6 +403,32 @@
       "rights": "沿用项目源码使用条款。",
       "readiness": "implemented",
       "verification": "纯函数与真实固定渲染检查；不代表实际供应商或人工视听认证。"
+    },
+    {
+      "id": "visual.spatial_storytelling",
+      "version": "1.0",
+      "name": "城市空间、数量矩阵与节点传播",
+      "kind": "visual",
+      "purpose": "用可重复的三维城市相机、注册画面矩阵和保持身份的节点网络解释空间、数量及影响传播。",
+      "source": "packages/engineering-template/src/spatial-kit.tsx",
+      "symbol": "SpatialPanel",
+      "provenance": "项目原创确定性 Three/React/SVG；城市静帧由同一三维场景渲染，不复用参考视频。",
+      "rights": "沿用项目源码使用条款；依赖遵循各自许可证。",
+      "readiness": "implemented",
+      "verification": "纯状态、结构、界面与固定渲染分别记录；不代表原生模型、通用场景生成或人工视听认证。"
+    },
+    {
+      "id": "design.neon_horizon",
+      "version": "1.0",
+      "name": "霓虹空间风格",
+      "kind": "design",
+      "purpose": "以深夜蓝紫、青色连接与暖色高亮组织城市、数量和空间关系。",
+      "source": "packages/engineering-template/src/theme.tsx",
+      "symbol": "designPacks.neon_horizon",
+      "provenance": "项目原创共享主题代码；不复用参考视频素材。",
+      "rights": "沿用项目源码使用条款。",
+      "readiness": "implemented",
+      "verification": "固定空间样片、类型和界面参数检查；不代表完整人工视听认证。"
     }
   ]
 }

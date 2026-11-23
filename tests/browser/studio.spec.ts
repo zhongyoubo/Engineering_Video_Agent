@@ -597,3 +597,77 @@ test('shared mechanism parameters update the rendered SVG and persist across ver
   ).toBe(0.8);
   await expect(page.getByLabel('机制参数：strength')).toHaveValue('0.8', { timeout: 30000 });
 });
+
+test('spatial network parameters move actual nodes and persist across revisions', async ({
+  page,
+  context,
+}) => {
+  await context.request.post('/api/session', {
+    data: { token: 'e2e-only-not-a-production-key-123456' },
+  });
+  await page.goto('/');
+  await page.getByLabel('制作方式').selectOption('template');
+  await page.locator('.example-row').getByRole('button', { name: '解释一个概念' }).click();
+  await page.getByLabel('设计体系').selectOption('neon_horizon');
+  await page.getByLabel('生成方式').selectOption('storyboard');
+  const submitted = page.waitForResponse(
+    (r) => r.url().endsWith('/api/v1/videos') && r.request().method() === 'POST',
+  );
+  await page.getByRole('button', { name: '开始创作' }).click();
+  const created = await (await submitted).json();
+  await expect(page.getByLabel('讲解旁白')).toBeVisible({ timeout: 30000 });
+  const original = await (
+    await context.request.get('/api/v1/revisions/' + created.revision_id)
+  ).json();
+  expect(original.storyboard.design_pack).toBe('neon_horizon');
+  const scene = original.storyboard.scenes[0];
+  scene.diagram = null;
+  scene.motion = null;
+  scene.visual_scene = null;
+  scene.semantic_scene = {
+    viewer_question: '位置改变后联系是否保留？',
+    show_heading: false,
+    parameters: [{ id: 'strength', minimum: 0, maximum: 1, initial: 0.2, unit: '' }],
+    entities: [
+      {
+        id: 'network',
+        component: 'NodeNetwork',
+        title: '强度',
+        parameter_id: 'strength',
+        width: 1920,
+        height: 1080,
+        immersive: true,
+        spatial: { seed: 17, count: 48, columns: 8 },
+      },
+    ],
+    events: [],
+    expectations: [],
+  };
+  const response = await context.request.post('/api/v1/revisions/' + original.id + '/fork', {
+    data: {
+      expected_version: original.version,
+      storyboard: original.storyboard,
+      auto_render: false,
+    },
+  });
+  expect(response.status()).toBe(202);
+  await page.reload();
+  await page.getByRole('button', { name: '视频与版本' }).click();
+  await page.locator('.video-card').first().click();
+  const dial = page.locator('[data-spatial-component="NodeNetwork"]');
+  await expect(dial).toHaveAttribute('data-spatial-progress', '0.2000', { timeout: 30000 });
+  await page.getByRole('button', { name: '音画时间轴', exact: true }).click();
+  const firstNode = dial.locator('[data-network-node="node-0"] circle').first();
+  const before = await firstNode.getAttribute('cx');
+  await page.getByLabel('机制参数：strength').fill('0.8');
+  await expect(firstNode).not.toHaveAttribute('cx', before!);
+  await expect(dial.locator('[data-network-node]')).toHaveCount(48);
+  await expect(dial.locator('[data-network-edge]')).toHaveCount(96);
+  await expect(dial).toHaveAttribute('data-spatial-progress', '0.8000');
+  const saved = page.waitForRequest((r) => r.url().endsWith('/fork') && r.method() === 'POST');
+  await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
+  expect(
+    (await saved).postDataJSON().storyboard.scenes[0].semantic_scene.parameters[0].initial,
+  ).toBe(0.8);
+  await expect(page.getByLabel('机制参数：strength')).toHaveValue('0.8', { timeout: 30000 });
+});

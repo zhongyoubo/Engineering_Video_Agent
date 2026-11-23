@@ -53,7 +53,7 @@ class Brief(StrictModel):
     quality_profile: Literal["professional", "draft"] = "professional"
     render_profile: RenderProfile = Field(default_factory=RenderProfile)
     voice_spec: VoiceSpec = Field(default_factory=VoiceSpec)
-    design_pack: Literal["editorial_warm", "workspace_tech"] = "workspace_tech"
+    design_pack: Literal["editorial_warm", "workspace_tech", "neon_horizon"] = "workspace_tech"
     presentation_profile: PresentationProfile = "creator"
     editorial: EditorialBrief = Field(default_factory=EditorialBrief)
     creator_brand: str = Field(default="", max_length=80)
@@ -192,6 +192,8 @@ class Scene(StrictModel):
 
             if self.motion or self.diagram:
                 raise ValueError("Semantic scene cannot use legacy diagram/motion simultaneously")
+            if self.visual_scene and any(e.immersive for e in self.semantic_scene.entities):
+                raise ValueError("Immersive spatial scenes require a separate shot from physical objects")
             objects = {o.id: o for o in self.visual_scene.objects} if self.visual_scene else {}
             for e in self.semantic_scene.entities:
                 if e.bind_to and (
@@ -243,7 +245,7 @@ class StoryboardIR(StrictModel):
     fps: Literal[30] = 30
     width: Literal[1920, 3840] = 1920
     height: Literal[1080, 2160] = 1080
-    design_pack: Literal["editorial_warm", "workspace_tech"] = "workspace_tech"
+    design_pack: Literal["editorial_warm", "workspace_tech", "neon_horizon"] = "workspace_tech"
     presentation_profile: PresentationProfile = "creator"
     creator_brand: str = Field(default="", max_length=80)
     cover: CoverSpec | None = None

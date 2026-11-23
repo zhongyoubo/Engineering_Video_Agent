@@ -57,7 +57,11 @@ export function ProductionInspector({
   }, [revision.id, revision.outputs?.audio_analysis, revision.outputs?.motion_previews]);
   const activeTheme =
     designPacks[
-      revision?.brief?.design_pack === 'editorial_warm' ? 'editorial_warm' : 'workspace_tech'
+      revision?.brief?.design_pack === 'neon_horizon'
+        ? 'neon_horizon'
+        : revision?.brief?.design_pack === 'editorial_warm'
+          ? 'editorial_warm'
+          : 'workspace_tech'
     ];
   const sceneClips = clips.filter((c) => c.scene_id === scene.id);
   const update = (motion: NonNullable<Scene['motion']>) => onEdit({ motion, compiled_events: [] });

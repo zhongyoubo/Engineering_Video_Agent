@@ -1239,7 +1239,8 @@
             "type": "string",
             "enum": [
               "editorial_warm",
-              "workspace_tech"
+              "workspace_tech",
+              "neon_horizon"
             ],
             "title": "Design Pack",
             "default": "workspace_tech"
@@ -2448,7 +2449,8 @@
             "type": "string",
             "enum": [
               "editorial_warm",
-              "workspace_tech"
+              "workspace_tech",
+              "neon_horizon"
             ],
             "title": "Design Pack",
             "default": "workspace_tech"
@@ -3398,7 +3400,10 @@
               "BranchTree",
               "MetricBar",
               "FlowReservoir",
-              "QueueFlow"
+              "QueueFlow",
+              "SpatialCity",
+              "QuantityMatrix",
+              "NodeNetwork"
             ],
             "title": "Component"
           },
@@ -3452,14 +3457,14 @@
           },
           "width": {
             "type": "number",
-            "maximum": 1720.0,
+            "maximum": 1920.0,
             "minimum": 180.0,
             "title": "Width",
             "default": 520
           },
           "height": {
             "type": "number",
-            "maximum": 650.0,
+            "maximum": 1080.0,
             "minimum": 120.0,
             "title": "Height",
             "default": 400
@@ -3569,6 +3574,21 @@
             "exclusiveMinimum": 0.0,
             "title": "Capacity",
             "default": 100
+          },
+          "spatial": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SpatialSpec"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "immersive": {
+            "type": "boolean",
+            "title": "Immersive",
+            "default": false
           },
           "provenance": {
             "type": "string",
@@ -3995,6 +4015,82 @@
         ],
         "title": "SemanticScene"
       },
+      "SpatialSpec": {
+        "properties": {
+          "seed": {
+            "type": "integer",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "title": "Seed",
+            "default": 17
+          },
+          "count": {
+            "type": "integer",
+            "maximum": 768.0,
+            "minimum": 12.0,
+            "title": "Count",
+            "default": 240
+          },
+          "columns": {
+            "type": "integer",
+            "maximum": 32.0,
+            "minimum": 4.0,
+            "title": "Columns",
+            "default": 20
+          },
+          "camera_radius": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": 12.0,
+            "title": "Camera Radius",
+            "default": 34
+          },
+          "camera_height": {
+            "type": "number",
+            "maximum": 50.0,
+            "minimum": 5.0,
+            "title": "Camera Height",
+            "default": 18
+          },
+          "orbit_degrees": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Orbit Degrees",
+            "default": 36
+          },
+          "source_node": {
+            "type": "integer",
+            "maximum": 63.0,
+            "minimum": 0.0,
+            "title": "Source Node",
+            "default": 0
+          },
+          "effect_parameter_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]{1,60}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effect Parameter Id"
+          },
+          "asset_keys": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 12,
+            "title": "Asset Keys"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SpatialSpec"
+      },
       "StoryboardIR": {
         "properties": {
           "schema_version": {
@@ -4067,7 +4163,8 @@
             "type": "string",
             "enum": [
               "editorial_warm",
-              "workspace_tech"
+              "workspace_tech",
+              "neon_horizon"
             ],
             "title": "Design Pack",
             "default": "workspace_tech"

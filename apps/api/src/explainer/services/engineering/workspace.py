@@ -31,6 +31,8 @@ def source_path(value):
             "theme.tsx",
             "code-view.tsx",
             "mechanism-kit.tsx",
+            "spatial-kit.tsx",
+            "spatial-state.ts",
             "presentation.tsx",
             "scene-objects.tsx",
             "semantic-kit.tsx",

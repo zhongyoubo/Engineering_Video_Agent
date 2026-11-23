@@ -129,3 +129,15 @@ at 1080p with silent estimated timing and real theme comparison. Asset/global id
 full code pages, measured tail budgets and binding review integrate the prior semantic/image
 work toward main. Actual native/image providers and Docker/gVisor remain deployment work.
 See goals/2026-11-18-reference-optimization.md and docs/verification-reference-corrections.json.
+
+## Spatial storytelling · 2026-11-23
+
+Implemented protected Three city/camera, registered-image matrices, stable network layouts
+and shortest-hop propagation, neon_horizon and complete API/TS/catalog/editor integration.
+Final scripts/check.py passed: 268 backend tests, pure visual/spatial contracts, TypeScript
+and Studio build; 14 configured browser tests and format/diff checks passed. Fixed reviewed
+platform dispatcher rendered and decode-checked 840 frames/28 seconds at 1080p30, with four
+continuous previews, three actually consumed original stills, distinct state frames and matching
+final source hashes. Exported editable project. See goals/2026-11-23-spatial-storytelling.md
+and docs/verification-spatial-scenes.json. The sample is silent/estimated, not actual native,
+image/TTS inference, Docker/gVisor deployment or human complete playback/listening certification.

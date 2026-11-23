@@ -3,6 +3,7 @@
 from typing import Literal
 from pydantic import Field, model_validator
 from .specs import Spec, CueAnchor
+from .spatial_scene import SPATIAL_COMPONENTS, SpatialSpec
 
 Component = Literal[
     "PromptInput",
@@ -23,6 +24,9 @@ Component = Literal[
     "MetricBar",
     "FlowReservoir",
     "QueueFlow",
+    "SpatialCity",
+    "QuantityMatrix",
+    "NodeNetwork",
 ]
 State = Literal["pending", "running", "succeeded", "failed", "awaiting_confirmation", "rejected", "cancelled"]
 
@@ -33,7 +37,7 @@ class SemanticItem(Spec):
     active: bool = False
 
 
-MECHANISMS = {"Dial", "BranchTree", "MetricBar", "FlowReservoir", "QueueFlow"}
+MECHANISMS = {"Dial", "BranchTree", "MetricBar", "FlowReservoir", "QueueFlow"} | SPATIAL_COMPONENTS
 
 
 class SemanticParameter(Spec):
@@ -59,8 +63,8 @@ class SemanticEntity(Spec):
     state: State = "pending"
     x: float = Field(default=0, ge=0, le=1520)
     y: float = Field(default=0, ge=0, le=530)
-    width: float = Field(default=520, ge=180, le=1720)
-    height: float = Field(default=400, ge=120, le=650)
+    width: float = Field(default=520, ge=180, le=1920)
+    height: float = Field(default=400, ge=120, le=1080)
     bind_to: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
     asset_key: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
     image_style: Literal["panel", "artwork"] = "panel"
@@ -72,6 +76,8 @@ class SemanticEntity(Spec):
     inflow_id: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
     outflow_id: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
     capacity: float = Field(default=100, gt=0, le=1000)
+    spatial: SpatialSpec | None = None
+    immersive: bool = False
     provenance: Literal["illustrative", "observed"] = "illustrative"
     evidence_ids: list[str] = Field(default_factory=list, max_length=12)
 
@@ -84,7 +90,23 @@ class SemanticEntity(Spec):
                 raise ValueError("Flow mechanisms require inflow and outflow rate parameters")
         elif self.inflow_id or self.outflow_id:
             raise ValueError("Only flow mechanisms consume rate bindings")
-        if self.x + self.width > 1720 or self.y + self.height > 650:
+        if (self.component in SPATIAL_COMPONENTS) != (self.spatial is not None):
+            raise ValueError("Spatial components require bounded spatial settings only")
+        if self.immersive and (self.component not in SPATIAL_COMPONENTS or self.bind_to):
+            raise ValueError("Immersive spatial stages cannot bind a device screen")
+        if self.spatial:
+            if self.component == "NodeNetwork" and (
+                self.spatial.count > 64 or self.spatial.source_node >= self.spatial.count
+            ):
+                raise ValueError("Network needs at most 64 nodes and a valid source")
+            if self.component == "QuantityMatrix" and not self.spatial.asset_keys:
+                raise ValueError("Quantity matrix requires registered image assets")
+            if self.component != "QuantityMatrix" and self.spatial.asset_keys:
+                raise ValueError("Only quantity matrices consume spatial image assets")
+            if self.component != "NodeNetwork" and self.spatial.effect_parameter_id:
+                raise ValueError("Only networks use a propagation parameter")
+        bound_w, bound_h = (1920, 1080) if self.immersive else (1720, 650)
+        if self.x + self.width > bound_w or self.y + self.height > bound_h:
             raise ValueError("Semantic entity is outside its stage")
         if self.component == "AssetImage" and not self.asset_key:
             raise ValueError("AssetImage requires a registered asset key")
@@ -171,7 +193,12 @@ class SemanticScene(Spec):
         if len(parameters) != len(self.parameters) or ids & parameters.keys():
             raise ValueError("Parameter and entity IDs must be globally distinct within a scene")
         for entity in self.entities:
-            for key in [entity.parameter_id, entity.inflow_id, entity.outflow_id]:
+            for key in [
+                entity.parameter_id,
+                entity.inflow_id,
+                entity.outflow_id,
+                entity.spatial.effect_parameter_id if entity.spatial else None,
+            ]:
                 if key and key not in parameters:
                     raise ValueError("Mechanism references a missing parameter")
             if entity.component in {"FlowReservoir", "QueueFlow"}:
@@ -179,6 +206,8 @@ class SemanticScene(Spec):
                     raise ValueError("Initial flow stock exceeds capacity")
                 if any(parameters[k].minimum < 0 for k in [entity.inflow_id, entity.outflow_id]):
                     raise ValueError("Flow rates must remain nonnegative")
+        if any(e.immersive for e in self.entities) and (len(self.entities) != 1 or self.show_heading):
+            raise ValueError("Immersive scene needs one entity and show_heading=false")
         events = {e.id: e for e in self.events}
         bound = [e.bind_to for e in self.entities if e.bind_to]
         if len(ids) != len(self.entities) or len(events) != len(self.events) or len(bound) != len(set(bound)):
@@ -270,5 +299,12 @@ def semantic_guidance():
     return dict(
         components=list(Component.__args__),
         states=list(State.__args__),
+        spatial=dict(
+            components=sorted(SPATIAL_COMPONENTS),
+            fps=30,
+            parameters="SpatialCity camera; QuantityMatrix normalized reveal; NodeNetwork layout plus optional propagation parameter",
+            rendering="protected Three.js city and deterministic SVG/Canvas layouts; immutable registered image keys",
+            limits="count<=768; networks<=64; immersive is one unbound entity with show_heading=false",
+        ),
         instruction="Choose software concepts and UI by explanatory purpose, not noun keywords or hardware metaphors. semantic_scene composes with visual_scene through bind_to device screen surfaces. Events are measured narration anchors with explicit visible-result expectations. Illustrative data is not actual tool execution. Generated assets require mediated request_assets; inspect their real receipt. Use only advertised asset providers. image_service requires an administrator-configured gateway; project_image requires an ID from this project catalog. Image prompts describe recognizable objects, setting, palette, composition, empty text regions and cutouts. Use background_asset_key for full-frame illustration, AssetImage.image_style=artwork for independent unframed elements, and transform events for measured movement/reveal. Use shared numeric parameters and parameter events for Dial, BranchTree and MetricBar linkage. FlowReservoir and QueueFlow integrate declared nonnegative inflow/outflow rates over actual frame time, holding initial stock in parameter_id and bounded by capacity; these are illustrative mechanisms unless evidence establishes observed values. No universal topic template or automatic demo disclaimer. Custom SVG/TSX remains available under existing isolation.",
     )

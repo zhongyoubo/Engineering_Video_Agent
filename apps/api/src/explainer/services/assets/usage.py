@@ -1,5 +1,7 @@
 """Structural asset consumption checks, supplemented by actual native frame review."""
 
+from ...spatial_scene import spatial_asset_keys
+
 
 def asset_usage(props):
     uses = {}
@@ -11,8 +13,8 @@ def asset_usage(props):
                 scene_id=scene["id"], asset_key=background, kind="background"
             )
         for entity in data.get("entities", []):
-            key = entity.get("asset_key")
-            if not key:
+            keys = ([entity["asset_key"]] if entity.get("asset_key") else []) + spatial_asset_keys(entity)
+            if not keys:
                 continue
             changes = [
                 e
@@ -24,9 +26,10 @@ def asset_usage(props):
             ]
             if entity.get("opacity", 1) <= 0 and not changes:
                 raise ValueError("Registered artwork is never visible in its declared scene")
-            uses[scene["id"] + ":" + key] = dict(
-                scene_id=scene["id"], asset_key=key, kind="element", entity_id=entity["id"]
-            )
+            for key in keys:
+                uses[scene["id"] + ":" + key] = dict(
+                    scene_id=scene["id"], asset_key=key, kind="element", entity_id=entity["id"]
+                )
     return uses
 
 

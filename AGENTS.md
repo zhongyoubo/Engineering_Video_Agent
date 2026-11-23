@@ -51,3 +51,12 @@ review and numeric flow conservation. theme.tsx, code-view.tsx and mechanism-kit
 protected. verify_reference_mechanisms.py and verify_visual_contracts.cjs execute ONLY fixed
 reviewed repository data/modules; never accept user/model source/path arguments or enable a
 host fallback. Record execution in goals/2026-11-18-reference-optimization.md.
+
+Spatial storytelling: read docs/design/spatial-storytelling.md. spatial-kit.tsx and
+spatial-state.ts are protected platform modules. Preserve frame-driven 3D readiness, stable
+node/edge identity, bounded shared parameters and registered matrix-asset binding review.
+verify_spatial_scenes.py may host-render only the existing fixed reviewed repository
+dispatcher and fixed bounded scene data; it accepts no source/path arguments. This exception
+never permits user/model code or native-provider host execution. Record results in
+goals/2026-11-23-spatial-storytelling.md as well as the main execution goal. Keep 30fps,
+estimated draft timing and absent native/TTS/deployment certification explicit.

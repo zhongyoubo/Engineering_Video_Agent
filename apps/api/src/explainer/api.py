@@ -226,7 +226,7 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
             "engineering_endpoint": "/api/v3/videos",
             "legacy_endpoint": "/api/v1/videos",
             "resolutions": ["1080p", "4k"],
-            "design_packs": ["editorial_warm", "workspace_tech"],
+            "design_packs": ["editorial_warm", "workspace_tech", "neon_horizon"],
             "motion_patterns": ["overview", "code_scan", "compare", "graph", "capacity", "queue", "depth"],
         },
         "scheduler": settings.scheduler,

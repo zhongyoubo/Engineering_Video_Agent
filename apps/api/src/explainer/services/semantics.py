@@ -40,9 +40,10 @@ def compile_semantics(scene, words, fps, allow_estimated=False):
             entity = entities[e.target]
             if entity.bind_to and any(v is not None for v in [e.x, e.y, e.scale, e.rotation]):
                 raise TimelineConflict("Screen-bound transforms must change opacity only")
-            if (e.x if e.x is not None else entity.x) + entity.width > 1720 or (
+            stage_w, stage_h = (1920, 1080) if entity.immersive else (1720, 650)
+            if (e.x if e.x is not None else entity.x) + entity.width > stage_w or (
                 e.y if e.y is not None else entity.y
-            ) + entity.height > 650:
+            ) + entity.height > stage_h:
                 raise TimelineConflict("Transform destination exceeds semantic stage")
         if e.action == "transition":
             if states[e.target] != e.from_state or e.to_state not in ALLOWED[e.from_state]:

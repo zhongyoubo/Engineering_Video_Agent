@@ -16,7 +16,10 @@ export type SemanticComponent =
   | 'BranchTree'
   | 'MetricBar'
   | 'FlowReservoir'
-  | 'QueueFlow';
+  | 'QueueFlow'
+  | 'SpatialCity'
+  | 'QuantityMatrix'
+  | 'NodeNetwork';
 export type SemanticState =
   | 'pending'
   | 'running'
@@ -26,6 +29,17 @@ export type SemanticState =
   | 'rejected'
   | 'cancelled';
 export type SemanticItem = { text: string; detail: string; active: boolean };
+export type SpatialSpec = {
+  seed: number;
+  count: number;
+  columns: number;
+  camera_radius: number;
+  camera_height: number;
+  orbit_degrees: number;
+  source_node: number;
+  effect_parameter_id?: string | null;
+  asset_keys: string[];
+};
 export type SemanticEntity = {
   id: string;
   component: SemanticComponent;
@@ -48,6 +62,8 @@ export type SemanticEntity = {
   inflow_id?: string | null;
   outflow_id?: string | null;
   capacity?: number;
+  spatial?: SpatialSpec | null;
+  immersive?: boolean;
   provenance: 'illustrative' | 'observed';
   evidence_ids: string[];
 };

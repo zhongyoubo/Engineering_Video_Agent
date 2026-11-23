@@ -1,0 +1,276 @@
+{
+  "authorship": "fixed platform data; original procedural city; no native/image/voice inference",
+  "scenes": [
+    {
+      "id": "city",
+      "type": "cards",
+      "title": "看见空间，才能理解整体",
+      "narration": "沿着城市的街道，看见空间如何展开。镜头换一个角度，楼群的关系依然清楚。",
+      "frames": 210,
+      "cues": [
+        {
+          "start": 0,
+          "end": 7,
+          "text": "沿着城市的街道，看见空间如何展开。镜头换一个角度，楼群的关系依然清楚。"
+        }
+      ],
+      "semantic_scene": {
+        "viewer_question": "看见空间，才能理解整体？",
+        "show_heading": false,
+        "parameters": [
+          {
+            "id": "progress",
+            "minimum": 0,
+            "maximum": 1,
+            "initial": 0
+          }
+        ],
+        "entities": [
+          {
+            "id": "subject",
+            "component": "SpatialCity",
+            "title": "看见空间，才能理解整体",
+            "text": "同一座城市 · 不同视角",
+            "parameter_id": "progress",
+            "immersive": true,
+            "width": 1920,
+            "height": 1080,
+            "spatial": {
+              "seed": 17,
+              "count": 320,
+              "columns": 24,
+              "camera_radius": 43,
+              "camera_height": 24,
+              "orbit_degrees": 48
+            }
+          }
+        ],
+        "events": [
+          {
+            "id": "change",
+            "target": "progress",
+            "action": "parameter",
+            "value": 1,
+            "anchor": {
+              "phrase": "沿着城市的街道",
+              "offset_ms": 200,
+              "edge": "start"
+            },
+            "duration_ms": 4000
+          }
+        ],
+        "expectations": [
+          {
+            "id": "visible-change",
+            "event_id": "change",
+            "visible_result": "相机换角度时楼群空间布局和遮挡保持一致"
+          }
+        ]
+      }
+    },
+    {
+      "id": "quantity",
+      "type": "cards",
+      "title": "把散落的画面，整理成清晰的信息",
+      "narration": "把散落的画面，整理成一目了然的信息。数量变化，直接看得见。",
+      "frames": 210,
+      "cues": [
+        {
+          "start": 0,
+          "end": 7,
+          "text": "把散落的画面，整理成一目了然的信息。数量变化，直接看得见。"
+        }
+      ],
+      "semantic_scene": {
+        "viewer_question": "把散落的画面，整理成清晰的信息？",
+        "show_heading": false,
+        "parameters": [
+          {
+            "id": "progress",
+            "minimum": 0,
+            "maximum": 1,
+            "initial": 0
+          }
+        ],
+        "entities": [
+          {
+            "id": "subject",
+            "component": "QuantityMatrix",
+            "title": "把散落的画面，整理成清晰的信息",
+            "text": "从单个画面，到可以比较的整体",
+            "parameter_id": "progress",
+            "immersive": true,
+            "width": 1920,
+            "height": 1080,
+            "spatial": {
+              "seed": 17,
+              "count": 240,
+              "columns": 20,
+              "asset_keys": [
+                "city-view-1",
+                "city-view-2",
+                "city-view-3"
+              ]
+            }
+          }
+        ],
+        "events": [
+          {
+            "id": "change",
+            "target": "progress",
+            "action": "parameter",
+            "value": 1,
+            "anchor": {
+              "phrase": "把散落的画面",
+              "offset_ms": 200,
+              "edge": "start"
+            },
+            "duration_ms": 4000
+          }
+        ],
+        "expectations": [
+          {
+            "id": "visible-change",
+            "event_id": "change",
+            "visible_result": "实际城市画面逐步排成240格，计数和画面一致"
+          }
+        ]
+      }
+    },
+    {
+      "id": "network",
+      "type": "cards",
+      "title": "位置改变，联系依然保留",
+      "narration": "连接不是一张静态图。即使分散在不同位置，联系也始终保留。",
+      "frames": 210,
+      "cues": [
+        {
+          "start": 0,
+          "end": 7,
+          "text": "连接不是一张静态图。即使分散在不同位置，联系也始终保留。"
+        }
+      ],
+      "semantic_scene": {
+        "viewer_question": "位置改变，联系依然保留？",
+        "show_heading": false,
+        "parameters": [
+          {
+            "id": "progress",
+            "minimum": 0,
+            "maximum": 1,
+            "initial": 0
+          }
+        ],
+        "entities": [
+          {
+            "id": "subject",
+            "component": "NodeNetwork",
+            "title": "位置改变，联系依然保留",
+            "text": "从集中协作，到分散连接",
+            "parameter_id": "progress",
+            "immersive": true,
+            "width": 1920,
+            "height": 1080,
+            "spatial": {
+              "seed": 17,
+              "count": 48,
+              "columns": 8
+            }
+          }
+        ],
+        "events": [
+          {
+            "id": "change",
+            "target": "progress",
+            "action": "parameter",
+            "value": 1,
+            "anchor": {
+              "phrase": "连接不是一张静态图",
+              "offset_ms": 200,
+              "edge": "start"
+            },
+            "duration_ms": 4000
+          }
+        ],
+        "expectations": [
+          {
+            "id": "visible-change",
+            "event_id": "change",
+            "visible_result": "48个相同节点分散，原有连接跟随节点保留"
+          }
+        ]
+      }
+    },
+    {
+      "id": "propagation",
+      "type": "cards",
+      "title": "一个变化，怎样影响整个系统",
+      "narration": "一个节点发生变化，影响沿着连接向外传递。把复杂的关系，讲得清楚。",
+      "frames": 210,
+      "cues": [
+        {
+          "start": 0,
+          "end": 7,
+          "text": "一个节点发生变化，影响沿着连接向外传递。把复杂的关系，讲得清楚。"
+        }
+      ],
+      "semantic_scene": {
+        "viewer_question": "一个变化，怎样影响整个系统？",
+        "show_heading": false,
+        "parameters": [
+          {
+            "id": "progress",
+            "minimum": 0,
+            "maximum": 1,
+            "initial": 1
+          },
+          {
+            "id": "effect",
+            "minimum": 0,
+            "maximum": 1,
+            "initial": 0
+          }
+        ],
+        "entities": [
+          {
+            "id": "subject",
+            "component": "NodeNetwork",
+            "title": "一个变化，怎样影响整个系统",
+            "text": "影响沿真实连接，逐步向外传递",
+            "parameter_id": "progress",
+            "immersive": true,
+            "width": 1920,
+            "height": 1080,
+            "spatial": {
+              "seed": 17,
+              "count": 48,
+              "columns": 8,
+              "effect_parameter_id": "effect"
+            }
+          }
+        ],
+        "events": [
+          {
+            "id": "change",
+            "target": "effect",
+            "action": "parameter",
+            "value": 1,
+            "anchor": {
+              "phrase": "一个节点发生变化",
+              "offset_ms": 200,
+              "edge": "start"
+            },
+            "duration_ms": 4000
+          }
+        ],
+        "expectations": [
+          {
+            "id": "visible-change",
+            "event_id": "change",
+            "visible_result": "影响按连接的最短跳数从源点扩散，并保留最终结果"
+          }
+        ]
+      }
+    }
+  ]
+}

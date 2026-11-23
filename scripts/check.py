@@ -10,6 +10,7 @@ commands=[
     [sys.executable,'-m','ruff','check','apps/api/src','apps/api/tests'],
     [sys.executable,'-m','pytest','apps/api/tests','-q'],
     ['npm.cmd' if os.name=='nt' else 'npm','run','test:visual'],
+    ['node','scripts/verify_spatial_contracts.cjs'],
     ['npm.cmd' if os.name=='nt' else 'npm','run','typecheck'],
     ['npm.cmd' if os.name=='nt' else 'npm','run','build'],
 ]
