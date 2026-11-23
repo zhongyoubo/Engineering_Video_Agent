@@ -4,6 +4,7 @@ export type CreativeElement = {
   role: 'subject' | 'environment' | 'prop' | 'annotation' | 'camera';
   description: string;
   implementation: 'source' | 'asset' | 'capture' | 'kit';
+  library_ref?: string | null;
   source_file?: string | null;
   asset_key?: string | null;
 };

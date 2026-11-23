@@ -1,3 +1,4 @@
+import { MaterialBrowser } from './MaterialBrowser';
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Player } from '@remotion/player';
@@ -99,7 +100,7 @@ function App() {
   const [projects, setProjects] = useState<Project[]>([]),
     [jobs, setJobs] = useState<Job[]>([]),
     [caps, setCaps] = useState<any>(null);
-  const [view, setView] = useState<'create' | 'library' | 'settings'>('create'),
+  const [view, setView] = useState<'create' | 'library' | 'materials' | 'settings'>('create'),
     [inputMode, setInputMode] = useState<'prompt' | 'source' | 'git'>('prompt');
   const [title, setTitle] = useState(''),
     [prompt, setPrompt] = useState(''),
@@ -537,6 +538,13 @@ function App() {
             视频与版本<span>{jobs.length}</span>
           </button>
           <button
+            className={view === 'materials' ? 'active' : ''}
+            onClick={() => setView('materials')}
+          >
+            <BookOpen size={18} />
+            素材库
+          </button>
+          <button
             className={view === 'settings' ? 'active' : ''}
             onClick={() => setView('settings')}
           >
@@ -588,9 +596,11 @@ function App() {
             <b>
               {view === 'library'
                 ? '视频与版本'
-                : view === 'settings'
-                  ? '环境与能力'
-                  : '创作工作台'}
+                : view === 'materials'
+                  ? '素材库'
+                  : view === 'settings'
+                    ? '环境与能力'
+                    : '创作工作台'}
             </b>
           </div>
           <span className="connected">
@@ -1538,6 +1548,7 @@ function App() {
             </div>
           </div>
         )}
+        {view === 'materials' && <MaterialBrowser />}
         {view === 'library' && (
           <div className="library-page">
             <div className="page-title">

@@ -30,9 +30,14 @@ class CreativeElement(Spec):
     implementation: Literal["source", "asset", "capture", "kit"]
     source_file: str | None = Field(default=None, max_length=240)
     asset_key: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
+    library_ref: str | None = Field(
+        default=None, pattern=r"^library:pack\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$", max_length=120
+    )
 
     @model_validator(mode="after")
     def binding(self):
+        if self.library_ref and self.implementation != "kit":
+            raise ValueError("Component library references belong to kit elements")
         if (self.implementation == "source") != bool(self.source_file):
             raise ValueError("Source elements require their authored source file only")
         if (self.implementation == "asset") != bool(self.asset_key):

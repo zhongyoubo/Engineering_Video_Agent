@@ -110,3 +110,16 @@ Studio build and format passed. Fixed 16-second/480-frame silent 1080p render, b
 previews and source export passed; line 24 is visible and focused. Native/image/Docker
 integration and full human viewing/listening remain unverified. See the task goal and
 verification-reference-corrections.json for exact evidence and limits.
+
+## Curated material packs · 2026-11-23
+
+Implemented4 pinned packs/14 new materials, Studio/native discovery with real previews,
+selective protected source staging, PNG/embedded-GLB receipts, capture readiness, full
+hash invalidation/recovery and licensed source export. Fixed still capture before async
+models drew; added object-region assertions. See goals/2026-11-23-material-packs.md,
+docs/design/material-packs.md and verification-material-packs.json.
+
+Verification:306 backend tests,16 UI flows, pure contracts, TypeScript/build, format and
+fixed16s/480-frame1080p30 compile/preview/render/export regression. Silent fixed fixture;
+native unseen-topic selection/creation, Docker/gVisor and professional listening remain
+separate deployment acceptance. No arbitrary generated-source host execution added.

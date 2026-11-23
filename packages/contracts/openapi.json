@@ -152,12 +152,100 @@
       "get": {
         "summary": "Get Material Library",
         "operationId": "get_material_library_api_v1_material_library_get",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Query"
+            }
+          },
+          {
+            "name": "style",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Style"
+            }
+          },
+          {
+            "name": "asset_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Asset Type"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/material-library/{material_id}/preview": {
+      "get": {
+        "summary": "Material Preview",
+        "operationId": "material_preview_api_v1_material_library__material_id__preview_get",
+        "parameters": [
+          {
+            "name": "material_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Material Id"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -2091,6 +2179,19 @@
               }
             ],
             "title": "Asset Key"
+          },
+          "library_ref": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "pattern": "^library:pack\\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Library Ref"
           }
         },
         "additionalProperties": false,

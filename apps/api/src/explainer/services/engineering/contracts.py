@@ -1,11 +1,17 @@
 """Provider-neutral engineering contracts. All edits are mediated source files."""
 
-from typing import Literal
+from typing import Annotated, Literal
 from pydantic import Field, model_validator
 from ...domain import StrictModel
 from ...adapters.native_contract import AgentDesign
 from ...editorial import EditorialPlan
 from ...semantic_scene import VisualIntent, AssetRequirement
+
+
+class MaterialQuery(StrictModel):
+    query: str = Field(default="", max_length=160)
+    style: str = Field(default="", max_length=60)
+    asset_type: Literal["", "component", "image", "model"] = ""
 
 
 class MotionShot(StrictModel):
@@ -78,16 +84,34 @@ class VisualReview(StrictModel):
 
 class EngineeringAction(StrictModel):
     action: Literal[
-        "write_files", "build", "render_preview", "review", "finish", "request_assets", "inspect_asset"
+        "write_files",
+        "build",
+        "render_preview",
+        "review",
+        "finish",
+        "request_assets",
+        "inspect_asset",
+        "search_materials",
+        "select_materials",
     ]
     summary: str = Field(min_length=1, max_length=300)
     files: list[SourceEdit] = Field(max_length=30)
     review: VisualReview | None
     asset_requests: list[AssetRequirement] = Field(default_factory=list, max_length=8)
     asset_id: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,60}$")
+    material_query: MaterialQuery | None = None
+    material_refs: list[
+        Annotated[str, Field(pattern=r"^library:pack\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$", max_length=120)]
+    ] = Field(default_factory=list, max_length=64)
 
     @model_validator(mode="after")
     def coherent_action(self):
+        if (self.action == "search_materials") != (self.material_query is not None):
+            raise ValueError("Material queries belong only to search_materials")
+        if self.action != "select_materials" and self.material_refs:
+            raise ValueError("Material references belong only to select_materials")
+        if len(set(self.material_refs)) != len(self.material_refs):
+            raise ValueError("Material references must be unique")
         if (self.action == "request_assets") != bool(self.asset_requests):
             raise ValueError("Asset requests belong only to request_assets actions")
         if len({r.id for r in self.asset_requests}) != len(self.asset_requests):

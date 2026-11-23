@@ -37,10 +37,40 @@ class NativeEngineeringAgent:
             self.image_catalog.append({**item, "image_index": len(self.catalog_frames)})
             self.catalog_frames.append(path)
 
+    def material_previews(self, library):
+        """A bounded actual-image sheet, not names alone; no source imports/evaluation."""
+        from PIL import Image, ImageDraw
+        from ...material_packs import resolve_material
+
+        entries = [m for m in library["items"] if m.get("pack_id") and m.get("preview")][:64]
+        if not entries:
+            return [], []
+        sheet = Image.new("RGB", (1200, 220 * ((len(entries) + 3) // 4)), "#edf1f1")
+        draw = ImageDraw.Draw(sheet)
+        metadata = []
+        for i, item in enumerate(entries):
+            pack, entry, files, stamp = resolve_material(f"library:{item['id']}@{item['version']}")
+            im = Image.open(files[entry.preview]).convert("RGBA")
+            im.thumbnail((250, 170))
+            x, y = (i % 4) * 300, (i // 4) * 220
+            sheet.paste(im, (x + (300 - im.width) // 2, y + 6), im)
+            draw.text((x + 6, y + 184), item["id"], fill="#18364b")
+            metadata.append(
+                dict(id=item["id"], version=item["version"], sheet_index=len(self.catalog_frames), cell=i)
+            )
+        path = self.directory / "material-catalog.png"
+        sheet.save(path)
+        return metadata, [path]
+
     def asset_capabilities(self):
         from ..assets.image_service import configured
 
-        return dict(component_svg=True, project_image=True, image_service=configured(self.settings))
+        return dict(
+            component_svg=True,
+            project_image=True,
+            image_service=configured(self.settings),
+            library_asset=True,
+        )
 
     def call(self, model, payload, files=None, frames=None, validate=None):
         def validate_response(value):
@@ -76,6 +106,7 @@ class NativeEngineeringAgent:
 
     def plan(self):
         library = material_library()
+        preview_metadata, pack_frames = self.material_previews(library)
         plan, report = self.call(
             ProductionPlan,
             {
@@ -87,7 +118,8 @@ class NativeEngineeringAgent:
                 "asset_capabilities": self.asset_capabilities(),
                 "project_image_catalog": self.image_catalog,
                 "material_library": library,
-                "material_usage": "Choose materials by explanatory purpose; record selected entries as library:<id>@<version> in shot.assets. Custom TSX remains allowed. Unverified assets need actual rendering/review. Reference footage is not reusable material.",
+                "material_preview_index": preview_metadata,
+                "material_usage": "Inspect actual preview sheet and choose by purpose, style, recognizable subject and affordance. Record exact library:<id>@<version> in shot.assets. Components: creation kit element.library_ref, select_materials, import advertised module/symbol. Images/models: library_asset requirement with library_ref, then asset element.asset_key. GLB requires technique three and LibraryModel. PNG remains 2D. Search filters are discovery, not a topic router. Custom source remains allowed. No network or npm install; only curated offline packs. Preview/license metadata is not consumption or quality acceptance.",
                 "visual_constraints": {
                     "scope": "Only the explicitly selected legacy motion/diagram spec; custom creative source is not restricted to these layouts or subject types",
                     "legacy_max_elements": PATTERN_ELEMENT_LIMITS,
@@ -98,7 +130,7 @@ class NativeEngineeringAgent:
                 "instruction": EDITORIAL_INSTRUCTION
                 + " Create full fluent narration, art direction and per-scene visual/motion treatment. Prefer recognizable objects and causal actions when explaining concrete devices, mechanisms or situations. Use visual_scene for supported objects; custom SVG/TSX remains available for unsupported subjects. Define initial state, action, visible result, real ports and distinct video/audio/control signals, not boxes containing object names. Choose varied treatments by explanatory need. Anchor events to narration phrases. Use supplied real UI captures. All source assertions require supplied evidence IDs.",
             },
-            frames=self.catalog_frames,
+            frames=[*self.catalog_frames, *pack_frames],
             validate=lambda candidate: self.prepare_plan(candidate, library, require_creation=True),
         )
         report = {**report, "material_library_revision": library["revision"]}
@@ -145,6 +177,15 @@ class NativeEngineeringAgent:
                     raise NativeOutputError(
                         "Declare every creative image in the project-wide asset requirements."
                     )
+                allowed = {f"library:{m['id']}@{m['version']}": m for m in library["items"]}
+                for element in scene.creation.elements:
+                    if element.library_ref and (
+                        element.library_ref not in allowed
+                        or allowed[element.library_ref].get("asset_type") != "component"
+                    ):
+                        raise NativeOutputError(
+                            "Kit elements require an advertised source component library version"
+                        )
             if scene.semantic_scene:
                 references = {e.asset_key for e in scene.semantic_scene.entities if e.asset_key}
                 references.update(key for e in scene.semantic_scene.entities for key in spatial_asset_keys(e))
@@ -157,6 +198,17 @@ class NativeEngineeringAgent:
         allowed_images = {item["id"] for item in self.image_catalog}
         for shot in plan.shots:
             for req in shot.asset_requirements:
+                if req.provider == "library_asset":
+                    from ...material_packs import resolve_material
+
+                    try:
+                        pack, item, files, stamp = resolve_material(req.library_ref)
+                    except ValueError as exc:
+                        raise NativeOutputError("Choose the exact supplied library material version") from exc
+                    if item.asset_type == "component":
+                        raise NativeOutputError(
+                            "Source components use library selection, not binary asset requests"
+                        )
                 if req.provider == "image_service" and not self.asset_capabilities()["image_service"]:
                     raise NativeOutputError(
                         "Image service is not configured; choose an available representation or stop with a concrete missing-service diagnostic."
@@ -183,9 +235,12 @@ class NativeEngineeringAgent:
         import json
 
         current_props = json.loads((workspace.project / "props.json").read_text())
+        library = material_library()
+        preview_metadata, pack_frames = self.material_previews(library)
         instructions = (ROOT / "docs/design/authoring-contract.md").read_text()
         frames = [
             *self.catalog_frames,
+            *pack_frames,
             *[
                 workspace.root / f["name"]
                 for f in workspace.state["frames"] + workspace.state.get("motion_frames", [])
@@ -206,6 +261,9 @@ class NativeEngineeringAgent:
             EngineeringAction,
             {
                 "phase": "engineering-loop",
+                "material_library": library,
+                "material_preview_index": preview_metadata,
+                "material_selection": workspace.state.get("material_selection", {}),
                 "creative_production": creative_guidance(),
                 "current_scene_creation": {
                     s["id"]: s["creation"] for s in current_props.get("scenes", []) if s.get("creation")
@@ -218,7 +276,12 @@ class NativeEngineeringAgent:
                 "project_image_catalog": self.image_catalog,
                 "asset_review_contract": "Review every scene_id:asset_key background/element binding visible in actual frames. Score asset_visibility >=4, name all asset_expectations; generated receipts alone are not consumption. Use globally unique asset IDs; repeated IDs require identical requests.",
                 "generated_assets": {
-                    k: {f: v for f, v in r.items() if f not in {"svg", "image_png", "request", "preview_png"}}
+                    k: {
+                        f: v
+                        for f, v in r.items()
+                        if f
+                        not in {"svg", "image_png", "request", "preview_png", "file_data", "license_text"}
+                    }
                     for k, r in workspace.state.get("generated_assets", {}).items()
                 },
                 "status": {

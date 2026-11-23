@@ -9,7 +9,7 @@ from . import image_service
 from .factory import create_svg, create_preview, requirement_key, FACTORY_VERSION
 
 
-PRIVATE_FIELDS = {"svg", "image_png", "preview_png"}
+PRIVATE_FIELDS = {"svg", "image_png", "preview_png", "file_data", "license_text"}
 
 
 def public_receipt(receipt, include_request=False):
@@ -19,6 +19,10 @@ def public_receipt(receipt, include_request=False):
 
 
 def _key(req, identity=None):
+    if req.provider == "library_asset":
+        from .library import library_key
+
+        return library_key(req)
     if req.provider == "component_svg":
         return requirement_key(req)
     return hashlib.sha256(
@@ -29,12 +33,21 @@ def _key(req, identity=None):
 
 
 def _data(receipt):
+    if "file_data" in receipt:
+        if len(receipt["file_data"]) > MAX_IMAGE_BYTES * 4 // 3 + 4:
+            raise ValueError("Cached library file exceeds budget")
+        return base64.b64decode(receipt["file_data"], validate=True)
     return (
         receipt["svg"].encode() if "svg" in receipt else base64.b64decode(receipt["image_png"], validate=True)
     )
 
 
 def _new_receipt(req, settings=None, resolve_image=None, scope="", guard=lambda: None):
+    if req.provider == "library_asset":
+        from .library import library_receipt
+
+        guard()
+        return library_receipt(req)
     if req.provider != "component_svg":
         ident = image_service.identity(settings) if req.provider == "image_service" else {}
         key = _key(req, ident)
@@ -88,6 +101,13 @@ def _write_assets(workspace, receipts):
 
 def _cached_receipt(req, old):
     """Validate retained raster bytes without another inference or untrusted path writes."""
+    if req.provider == "library_asset":
+        from .library import library_receipt
+
+        expected = library_receipt(req)
+        if old != expected:
+            raise ValueError("Cached library material receipt is inconsistent")
+        return expected
     if req.provider != "component_svg":
         if len(old.get("image_png", "")) > MAX_IMAGE_BYTES * 4 // 3 + 4:
             raise ValueError("Cached raster exceeds budget")

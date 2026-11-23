@@ -21,6 +21,7 @@ def source_path(value):
         or path.is_absolute()
         or not path.parts
         or path.parts[0] != "src"
+        or (len(path.parts) > 1 and path.parts[1] == "vendor")
         or path.name
         in {
             "index.tsx",
@@ -35,6 +36,7 @@ def source_path(value):
             "spatial-state.ts",
             "creative-kit.ts",
             "creative-types.ts",
+            "library-model.tsx",
             "presentation.tsx",
             "scene-objects.tsx",
             "semantic-kit.tsx",
@@ -97,6 +99,10 @@ class Workspace:
             target = self.project / source_path(name)
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(text)
+        if "material_selection" in self.state:
+            from ..material_staging import stage_materials
+
+            stage_materials(self, self.state["material_selection"]["references"])
 
     def fingerprint(self):
         h = hashlib.sha256()
@@ -140,6 +146,9 @@ class Workspace:
     def export(self, destination, plan):
         from ..creative import source_manifest
 
+        from ..material_staging import verify_staged_materials
+
+        verify_staged_materials(self)
         manifest = source_manifest(self)
         with zipfile.ZipFile(destination, "w", zipfile.ZIP_DEFLATED) as archive:
             for path in sorted(self.project.rglob("*")):
@@ -149,7 +158,11 @@ class Workspace:
                 "generated-assets.json",
                 json.dumps(
                     {
-                        k: {f: v for f, v in r.items() if f not in {"svg", "image_png", "preview_png"}}
+                        k: {
+                            f: v
+                            for f, v in r.items()
+                            if f not in {"svg", "image_png", "preview_png", "file_data"}
+                        }
                         for k, r in self.state.get("generated_assets", {}).items()
                     },
                     ensure_ascii=False,
@@ -158,6 +171,13 @@ class Workspace:
             )
             archive.writestr("production-plan.json", json.dumps(plan, ensure_ascii=False, indent=2))
             archive.writestr("creative-manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
+            archive.writestr(
+                "material-manifest.json",
+                json.dumps(self.state.get("material_selection", {}), ensure_ascii=False, indent=2),
+            )
+            for key, rec in self.state.get("generated_assets", {}).items():
+                if rec.get("license_text"):
+                    archive.writestr(f"licenses/{key}.txt", rec["license_text"])
             archive.writestr(
                 "authoring-journal.json", json.dumps(self.state["journal"], ensure_ascii=False, indent=2)
             )

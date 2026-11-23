@@ -1,0 +1,315 @@
+{
+  "id": "phosphor",
+  "version": "1.0",
+  "origin": "https://github.com/phosphor-icons/core",
+  "revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+  "license": "MIT",
+  "license_file": "LICENSE.txt",
+  "files": [
+    {
+      "path": "ADAPTATIONS.md",
+      "sha256": "b5bf2bb7c30247338f9a9ec487e472a94b51dbb311ab0a83b0a5747e6216f74f",
+      "role": "provenance"
+    },
+    {
+      "path": "Icons.tsx",
+      "sha256": "76cad567194d74188fabf2f295beb322412c525d9189789e1c5ccd6eecd86d7d",
+      "role": "code"
+    },
+    {
+      "path": "LICENSE.txt",
+      "sha256": "b5b1f1da112d18ea2147decfd48ddc1bf2b5aeb6c265381579340e95b15a2bb2",
+      "role": "license"
+    },
+    {
+      "path": "previews/book-open.png",
+      "sha256": "c93bf6a35bef39051ccf2d4817ae459492887b0bdb57b88627548b01688fa29a",
+      "role": "preview"
+    },
+    {
+      "path": "previews/brain.png",
+      "sha256": "5b3962ee924238d2af41b2a1bd11905641de9fa3654030f52865652f3a81aeda",
+      "role": "preview"
+    },
+    {
+      "path": "previews/folder.png",
+      "sha256": "90ff7ddfc4ad54d691ccb513d646be808c2c501f00da194d62ad30c9be97905b",
+      "role": "preview"
+    },
+    {
+      "path": "previews/gear.png",
+      "sha256": "acb894f3d7ec1beb9d4bb0876d405dd5ec010e58c34ef2ab798f10efe31e343a",
+      "role": "preview"
+    },
+    {
+      "path": "previews/magnifying-glass.png",
+      "sha256": "f5988c2e19ff5aa5eb6a67091d98fa09ab0b19e82cb735c7145caf4d37b9eb1d",
+      "role": "preview"
+    },
+    {
+      "path": "previews/monitor.png",
+      "sha256": "f978e8155d20731cdf042070c807741d7058e25ca0248fddca80225e804ba10f",
+      "role": "preview"
+    },
+    {
+      "path": "previews/robot.png",
+      "sha256": "984653abd568da90edd334d372073274ad31f30eac02dfdfd8454d9ad55da322",
+      "role": "preview"
+    },
+    {
+      "path": "previews/terminal.png",
+      "sha256": "90ee2712e30dea437c459114d7d6a394fe7365384cd042095ba546a6bbc564d3",
+      "role": "preview"
+    }
+  ],
+  "items": [
+    {
+      "id": "pack.phosphor.book-open",
+      "name": "双色矢量·书本",
+      "purpose": "可辨认的书本矢量对象，可变色/缩放，适合知识讲解和软件操作；具体含义由镜头决定。",
+      "asset_type": "component",
+      "entry": "Icons.tsx",
+      "symbol": "PackBookOpen",
+      "preview": "previews/book-open.png",
+      "styles": [
+        "duotone",
+        "flat",
+        "双色",
+        "扁平"
+      ],
+      "subjects": [
+        "书本",
+        "知识",
+        "学习"
+      ],
+      "affordances": [
+        "变色",
+        "缩放",
+        "高亮",
+        "路径矢量"
+      ],
+      "parameters": {
+        "size": "像素尺寸，默认128",
+        "color": "CSS颜色",
+        "opacity": "0..1透明度"
+      }
+    },
+    {
+      "id": "pack.phosphor.brain",
+      "name": "双色矢量·大脑",
+      "purpose": "可辨认的大脑矢量对象，可变色/缩放，适合知识讲解和软件操作；具体含义由镜头决定。",
+      "asset_type": "component",
+      "entry": "Icons.tsx",
+      "symbol": "PackBrain",
+      "preview": "previews/brain.png",
+      "styles": [
+        "duotone",
+        "flat",
+        "双色",
+        "扁平"
+      ],
+      "subjects": [
+        "大脑",
+        "模型",
+        "思考"
+      ],
+      "affordances": [
+        "变色",
+        "缩放",
+        "高亮",
+        "路径矢量"
+      ],
+      "parameters": {
+        "size": "像素尺寸，默认128",
+        "color": "CSS颜色",
+        "opacity": "0..1透明度"
+      }
+    },
+    {
+      "id": "pack.phosphor.robot",
+      "name": "双色矢量·机器人",
+      "purpose": "可辨认的机器人矢量对象，可变色/缩放，适合知识讲解和软件操作；具体含义由镜头决定。",
+      "asset_type": "component",
+      "entry": "Icons.tsx",
+      "symbol": "PackRobot",
+      "preview": "previews/robot.png",
+      "styles": [
+        "duotone",
+        "flat",
+        "双色",
+        "扁平"
+      ],
+      "subjects": [
+        "机器人",
+        "AI",
+        "Agent"
+      ],
+      "affordances": [
+        "变色",
+        "缩放",
+        "高亮",
+        "路径矢量"
+      ],
+      "parameters": {
+        "size": "像素尺寸，默认128",
+        "color": "CSS颜色",
+        "opacity": "0..1透明度"
+      }
+    },
+    {
+      "id": "pack.phosphor.terminal",
+      "name": "双色矢量·终端",
+      "purpose": "可辨认的终端矢量对象，可变色/缩放，适合知识讲解和软件操作；具体含义由镜头决定。",
+      "asset_type": "component",
+      "entry": "Icons.tsx",
+      "symbol": "PackTerminal",
+      "preview": "previews/terminal.png",
+      "styles": [
+        "duotone",
+        "flat",
+        "双色",
+        "扁平"
+      ],
+      "subjects": [
+        "终端",
+        "命令行",
+        "操作"
+      ],
+      "affordances": [
+        "变色",
+        "缩放",
+        "高亮",
+        "路径矢量"
+      ],
+      "parameters": {
+        "size": "像素尺寸，默认128",
+        "color": "CSS颜色",
+        "opacity": "0..1透明度"
+      }
+    },
+    {
+      "id": "pack.phosphor.folder",
+      "name": "双色矢量·文件夹",
+      "purpose": "可辨认的文件夹矢量对象，可变色/缩放，适合知识讲解和软件操作；具体含义由镜头决定。",
+      "asset_type": "component",
+      "entry": "Icons.tsx",
+      "symbol": "PackFolder",
+      "preview": "previews/folder.png",
+      "styles": [
+        "duotone",
+        "flat",
+        "双色",
+        "扁平"
+      ],
+      "subjects": [
+        "文件夹",
+        "文档",
+        "记忆"
+      ],
+      "affordances": [
+        "变色",
+        "缩放",
+        "高亮",
+        "路径矢量"
+      ],
+      "parameters": {
+        "size": "像素尺寸，默认128",
+        "color": "CSS颜色",
+        "opacity": "0..1透明度"
+      }
+    },
+    {
+      "id": "pack.phosphor.magnifying-glass",
+      "name": "双色矢量·放大镜",
+      "purpose": "可辨认的放大镜矢量对象，可变色/缩放，适合知识讲解和软件操作；具体含义由镜头决定。",
+      "asset_type": "component",
+      "entry": "Icons.tsx",
+      "symbol": "PackMagnifyingGlass",
+      "preview": "previews/magnifying-glass.png",
+      "styles": [
+        "duotone",
+        "flat",
+        "双色",
+        "扁平"
+      ],
+      "subjects": [
+        "检索",
+        "搜索",
+        "RAG"
+      ],
+      "affordances": [
+        "变色",
+        "缩放",
+        "高亮",
+        "路径矢量"
+      ],
+      "parameters": {
+        "size": "像素尺寸，默认128",
+        "color": "CSS颜色",
+        "opacity": "0..1透明度"
+      }
+    },
+    {
+      "id": "pack.phosphor.gear",
+      "name": "双色矢量·齿轮",
+      "purpose": "可辨认的齿轮矢量对象，可变色/缩放，适合知识讲解和软件操作；具体含义由镜头决定。",
+      "asset_type": "component",
+      "entry": "Icons.tsx",
+      "symbol": "PackGear",
+      "preview": "previews/gear.png",
+      "styles": [
+        "duotone",
+        "flat",
+        "双色",
+        "扁平"
+      ],
+      "subjects": [
+        "设置",
+        "工具",
+        "流程"
+      ],
+      "affordances": [
+        "变色",
+        "缩放",
+        "高亮",
+        "路径矢量"
+      ],
+      "parameters": {
+        "size": "像素尺寸，默认128",
+        "color": "CSS颜色",
+        "opacity": "0..1透明度"
+      }
+    },
+    {
+      "id": "pack.phosphor.monitor",
+      "name": "双色矢量·显示器",
+      "purpose": "可辨认的显示器矢量对象，可变色/缩放，适合知识讲解和软件操作；具体含义由镜头决定。",
+      "asset_type": "component",
+      "entry": "Icons.tsx",
+      "symbol": "PackMonitor",
+      "preview": "previews/monitor.png",
+      "styles": [
+        "duotone",
+        "flat",
+        "双色",
+        "扁平"
+      ],
+      "subjects": [
+        "显示器",
+        "设备",
+        "电脑"
+      ],
+      "affordances": [
+        "变色",
+        "缩放",
+        "高亮",
+        "路径矢量"
+      ],
+      "parameters": {
+        "size": "像素尺寸，默认128",
+        "color": "CSS颜色",
+        "opacity": "0..1透明度"
+      }
+    }
+  ]
+}

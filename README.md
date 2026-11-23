@@ -4,6 +4,21 @@
 
 本版在 V3 工程闭环上增加 V4 及后续视觉制作能力：1080p/4K 输出规格、三套设计体系、七类图解积木、十一类可组合对象、接口与信号/状态动效、空间/数量/网络组件、旁白短语驱动的动效事件、连续镜头预览、实际波形、版本差异和可选 MCP。Agent 仍可自由编写镜头与组件，不受这些积木限制。旧模板方式作为显式兼容入口保留。
 
+## 素材与动效接入 · 2026-11-23
+
+工作台新增“素材库”：可按对象、风格和素材类型检索，查看真实预览、参数、来源与适用尺寸。
+首批接入4个精选包/14项：8个Phosphor双色矢量对象、3张3dicons透明立体插画、
+2个适配的Remotion文字动效、1个可旋转的牛油果GLB。加上原有34项，共48项目录条目。
+
+原生Agent能看到素材预览拼图，并通过 `search_materials` / `select_materials` 按需装载源码；
+PNG/GLB通过 `library_asset` 回执导入。选中依赖、授权、预览与来源随工程导出，
+素材变动会重新要求构建和审查。具体接入方式、版本和验证边界见
+[素材包设计与维护](docs/design/material-packs.md)。素材是创作词汇，Agent仍可按场景编写新素材。
+
+首批只是精选子集；PNG不会自动成为三维模型，也未实现任意对象文生三维。
+配置 `CHROME_EXECUTABLE` 后可运行 `.venv/bin/python scripts/verify_material_packs.py`，
+完成固定无声16秒样片的编译、预览、渲染和导出回归。
+
 ## 从这里开始
 
 工程创作能力：新工程策划要求逐镜头给出具体对象、素材来源、自由构图、配色及动作的前后结果。
@@ -97,7 +112,7 @@ API 可增加 `render_profile: {"resolution":"4k","fps":30}`、`design_pack: "ed
 
 ## 自有素材库、独立封面与 Ming 配音
 
-`assets/library/catalog.json` 提供 30 项带版本、来源和校验指纹的代码/字体素材，`GET /api/v1/material-library` 和工作台“环境与能力”可查看；原生策划可选用并记录 `library:<id>@<version>`。详见 `docs/design/material-library-and-speech-cn.md`。
+`assets/library/catalog.json` 提供 34 项带版本、来源和校验指纹的代码/字体素材，`GET /api/v1/material-library` 和工作台“环境与能力”可查看；原生策划可选用并记录 `library:<id>@<version>`。详见 `docs/design/material-library-and-speech-cn.md`。
 
 `scripts/verify_project_bookends.py` 为已有自测片补独立 3 秒封面和 4 秒结束页，校验正文指纹后复用，实际生成 71.23 秒 4K 影片，并保留原正文与合成工程。它不重新配音，仍是 Edge 云希。Ming 的新参考音色与种子参数仅完成协议验证；真实服务、音质和对齐仍需验收。
 

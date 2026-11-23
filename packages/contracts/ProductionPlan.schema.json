@@ -56,7 +56,8 @@
           "enum": [
             "component_svg",
             "image_service",
-            "project_image"
+            "project_image",
+            "library_asset"
           ],
           "title": "Provider",
           "type": "string"
@@ -116,6 +117,20 @@
           ],
           "default": null,
           "title": "Project Asset Id"
+        },
+        "library_ref": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "pattern": "^library:pack\\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Library Ref"
         }
       },
       "required": [
@@ -127,7 +142,8 @@
         "image_prompt",
         "size",
         "transparent",
-        "project_asset_id"
+        "project_asset_id",
+        "library_ref"
       ],
       "title": "AssetRequirement",
       "type": "object"
@@ -378,6 +394,20 @@
           ],
           "default": null,
           "title": "Asset Key"
+        },
+        "library_ref": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "pattern": "^library:pack\\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Library Ref"
         }
       },
       "required": [
@@ -386,7 +416,8 @@
         "description",
         "implementation",
         "source_file",
-        "asset_key"
+        "asset_key",
+        "library_ref"
       ],
       "title": "CreativeElement",
       "type": "object"

@@ -204,6 +204,7 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
         "semantic_scene_toolkit": semantic_guidance(),
         "creative_production": creative_guidance(),
         "asset_factory": {
+            "library_asset": True,
             "component_svg": True,
             "project_image": True,
             "image_service": image_service_configured(settings),
@@ -237,8 +238,25 @@ def capabilities(tenant_id=Depends(tenant), deps=Depends(dependencies)):
 
 
 @app.get("/api/v1/material-library")
-def get_material_library(tenant_id=Depends(tenant)):
-    return material_library()
+def get_material_library(query: str = "", style: str = "", asset_type: str = "", tenant_id=Depends(tenant)):
+    from .services.materials import search_materials
+
+    if len(query) > 160 or len(style) > 60 or asset_type not in {"", "component", "image", "model"}:
+        raise HTTPException(422, "Invalid material filters")
+    return search_materials(query, style, asset_type)
+
+
+@app.get("/api/v1/material-library/{material_id}/preview")
+def material_preview(material_id: str, version: str, tenant_id=Depends(tenant)):
+    from .material_packs import resolve_material
+
+    try:
+        pack, item, files, stamp = resolve_material(f"library:{material_id}@{version}")
+        if not item.preview:
+            raise ValueError("No preview")
+    except ValueError as exc:
+        raise HTTPException(404, "Material preview not found") from exc
+    return FileResponse(files[item.preview], media_type="image/png")
 
 
 @app.get("/api/v1/content-taxonomy")

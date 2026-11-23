@@ -121,3 +121,17 @@ Remaining: real native/image/voice isolated deployment, broad unseen-topic quali
 layer/morph/camera graphs, richer calendar/chart/metaphor primitives, independent occlusion/OCR
 review and human full playback/listening. Strict impossible timing and invalid state/dependency
 plans are explicitly rejected; unrestricted pre-authoring replanning is not claimed.
+
+## Curated material packs · 2026-11-23
+
+Implemented 4 pinned licensed packs / 14 entries alongside the existing 34. Added actual
+preview discovery, style/subject/affordance/parameter metadata, Studio browsing, native preview
+sheets and search/select actions, protected selective source staging, canonical PNG/embedded
+GLB receipts, frame-driven LibraryModel, recovery, recursive dependency hashing and licensed
+standalone export. See docs/design/material-packs.md. Actual checks are recorded in the material
+pack execution goal and verification-material-packs.json after execution.
+
+Remaining: broader curated object/character/scene collections, actual unseen-topic native
+selection/creation on configured isolated infrastructure, Lottie/video/adaptive 3D generation
+adapters, richer human quality acceptance. First collection does not imply full upstream
+libraries, arbitrary-topic generation or new image/native/TTS inference.

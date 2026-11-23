@@ -567,6 +567,20 @@
           ],
           "default": null,
           "title": "Asset Key"
+        },
+        "library_ref": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "pattern": "^library:pack\\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Library Ref"
         }
       },
       "required": [

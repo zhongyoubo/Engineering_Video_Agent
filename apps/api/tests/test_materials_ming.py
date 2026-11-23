@@ -24,7 +24,7 @@ def test_material_catalogue_is_authenticated_and_reports_provenance(client, head
     r = client.get("/api/v1/material-library", headers=headers)
     assert r.status_code == 200
     library = r.json()
-    assert len(library["items"]) == 34 and len(library["revision"]) == 64
+    assert len(library["items"]) == 48 and len(library["revision"]) == 64
     by_id = {x["id"]: x for x in library["items"]}
     assert by_id["capability.authored_scenes"]["symbol"] == "creativeProgress"
     assert by_id["design.neon_horizon"]["symbol"] == "designPacks.neon_horizon"

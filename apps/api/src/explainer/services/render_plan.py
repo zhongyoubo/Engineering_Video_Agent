@@ -5,14 +5,25 @@ import json
 from ..config import ROOT
 
 
-def build_render_plan(props, public):
+def build_render_plan(props, public, project=None):
     digest = hashlib.sha256()
     template = ROOT / "packages/engineering-template"
-    for file in sorted([*template.joinpath("src").glob("*"), *template.glob("*.mjs")]):
-        if file.name == "Video.tsx":
+    for file in sorted(
+        [*[p for p in template.joinpath("src").rglob("*") if p.is_file()], *template.glob("*.mjs")]
+    ):
+        if file == template / "src/Video.tsx":
             continue
-        digest.update(file.name.encode())
+        digest.update(str(file.relative_to(template)).encode())
         digest.update(file.read_bytes())
+    vendor = (project or public.parent) / "src/vendor"
+    if vendor.is_symlink():
+        raise ValueError("Material dependencies cannot be symlinks")
+    for file in sorted(vendor.rglob("*")) if vendor.exists() else []:
+        if file.is_symlink():
+            raise ValueError("Material dependencies cannot be symlinks")
+        if file.is_file():
+            digest.update(str(file.relative_to(vendor)).encode())
+            digest.update(file.read_bytes())
     assets = {
         str(f.relative_to(public)): hashlib.sha256(f.read_bytes()).hexdigest()
         for f in sorted(public.rglob("*"))

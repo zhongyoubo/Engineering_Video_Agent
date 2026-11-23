@@ -35,6 +35,8 @@ def material_source(relative):
 
 
 def material_library():
+    from ..material_packs import material_pack_entries
+
     raw = (ROOT / "assets/library/catalog.json").read_bytes()
     value = json.loads(raw)
     materials = [Material.model_validate(item) for item in value["items"]]
@@ -45,12 +47,37 @@ def material_library():
         digest = hashlib.sha256(material_source(item.source).read_bytes()).hexdigest()
         revision.update((item.id + digest).encode())
         entries.append({**item.model_dump(), "source_sha256": digest})
+    for entry in material_pack_entries():
+        if (entry["id"], entry["version"]) in {(m["id"], m["version"]) for m in entries}:
+            raise ValueError("Pack and legacy material IDs conflict")
+        revision.update((entry["id"] + entry["pack_sha256"]).encode())
+        entries.append(entry)
     return {
-        "schema_version": "1.0",
+        "schema_version": "2.0",
         "revision": revision.hexdigest(),
         "policy": value["policy"],
         "items": entries,
     }
+
+
+def search_materials(query="", style="", asset_type=""):
+    """Literal catalog filtering for discovery, never topic-to-template intent routing."""
+    library = material_library()
+    tokens = query.casefold().split()
+    library["items"] = [
+        m
+        for m in library["items"]
+        if (not style or style in m.get("styles", []))
+        and (not asset_type or asset_type == m.get("asset_type"))
+        and all(
+            t
+            in " ".join(
+                [m["id"], m["name"], m["purpose"], *m.get("subjects", []), *m.get("affordances", [])]
+            ).casefold()
+            for t in tokens
+        )
+    ]
+    return library
 
 
 def validate_material_references(plan, library):

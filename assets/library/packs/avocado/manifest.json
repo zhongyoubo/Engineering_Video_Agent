@@ -1,0 +1,57 @@
+{
+  "id": "avocado",
+  "version": "1.0",
+  "origin": "https://github.com/KhronosGroup/glTF-Sample-Assets",
+  "revision": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+  "license": "CC0-1.0 (model); CC-BY-4.0 (license metadata)",
+  "license_file": "LICENSE.txt",
+  "files": [
+    {
+      "path": "ADAPTATIONS.md",
+      "sha256": "97d1b73606e302035e3d77c5854ce02a0cf5f19104dd24a42b8736877850ccb2",
+      "role": "provenance"
+    },
+    {
+      "path": "LICENSE.txt",
+      "sha256": "56357fc8277990d763480c4207551cd1f4d58451c6ea5f16d9fdb7d2fa7eb00c",
+      "role": "license"
+    },
+    {
+      "path": "models/Avocado.glb",
+      "sha256": "9f121ceb82721d92f9be1e1963b4d94318ac81fa2a1841da404c092b564c4753",
+      "role": "model"
+    },
+    {
+      "path": "previews/avocado.png",
+      "sha256": "9ce5b71c351155450f51fd2509ddfecd282c6e9359383cdb20237b03e453121e",
+      "role": "preview"
+    }
+  ],
+  "items": [
+    {
+      "id": "pack.avocado.model",
+      "name": "牛油果三维模型",
+      "purpose": "Microsoft 牛油果实物 GLB；保留网格，将嵌入纹理降采样至512px。可旋转/环绕，用于说明物体观察和多模态输入，不是任意对象生成器。",
+      "asset_type": "model",
+      "entry": "models/Avocado.glb",
+      "preview": "previews/avocado.png",
+      "styles": [
+        "textured3d",
+        "实物三维"
+      ],
+      "subjects": [
+        "牛油果",
+        "物体观察",
+        "多模态"
+      ],
+      "affordances": [
+        "三维旋转",
+        "镜头环绕",
+        "材质光照"
+      ],
+      "parameters": {
+        "renderer": "受保护的 LibraryModel，读取 generated_assets 中的模型回执"
+      }
+    }
+  ]
+}

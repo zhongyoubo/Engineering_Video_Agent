@@ -1,0 +1,108 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-z0-9_.-]{1,80}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "purpose": {
+      "maxLength": 500,
+      "minLength": 5,
+      "title": "Purpose",
+      "type": "string"
+    },
+    "asset_type": {
+      "enum": [
+        "component",
+        "image",
+        "model"
+      ],
+      "title": "Asset Type",
+      "type": "string"
+    },
+    "entry": {
+      "maxLength": 240,
+      "minLength": 1,
+      "title": "Entry",
+      "type": "string"
+    },
+    "symbol": {
+      "default": "",
+      "maxLength": 100,
+      "title": "Symbol",
+      "type": "string"
+    },
+    "preview": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Preview"
+    },
+    "styles": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Styles",
+      "type": "array"
+    },
+    "subjects": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Subjects",
+      "type": "array"
+    },
+    "affordances": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Affordances",
+      "type": "array"
+    },
+    "parameters": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "maxProperties": 16,
+      "title": "Parameters",
+      "type": "object"
+    },
+    "dependencies": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Dependencies",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "purpose",
+    "asset_type",
+    "entry",
+    "styles",
+    "subjects"
+  ],
+  "title": "PackItem",
+  "type": "object"
+}

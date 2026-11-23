@@ -1,7 +1,7 @@
 """Versioned data-only software concepts, state changes and screen bindings."""
 
 from typing import Literal
-from pydantic import Field, model_validator
+from pydantic import Field, model_validator, model_serializer
 from .specs import Spec, CueAnchor
 from .spatial_scene import SPATIAL_COMPONENTS, SpatialSpec
 
@@ -274,16 +274,28 @@ class VisualIntent(Spec):
 class AssetRequirement(Spec):
     id: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,60}$")
     purpose: str = Field(min_length=5, max_length=400)
-    provider: Literal["component_svg", "image_service", "project_image"] = "component_svg"
+    provider: Literal["component_svg", "image_service", "project_image", "library_asset"] = "component_svg"
     title: str = Field(min_length=1, max_length=60)
     items: list[SemanticItem] = Field(default_factory=list, max_length=8)
     image_prompt: str | None = Field(default=None, min_length=20, max_length=2500)
     size: Literal["landscape", "portrait", "square"] = "landscape"
     transparent: bool = False
     project_asset_id: str | None = Field(default=None, pattern=r"^mat_[a-f0-9]{32}$")
+    library_ref: str | None = Field(
+        default=None, pattern=r"^library:pack\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$", max_length=120
+    )
+
+    @model_serializer(mode="wrap")
+    def compatible_payload(self, handler):
+        data = handler(self)
+        if self.library_ref is None:
+            data.pop("library_ref", None)  # Preserve existing v2 SVG/raster receipt and request hashes.
+        return data
 
     @model_validator(mode="after")
     def provider_payload(self):
+        if (self.provider == "library_asset") != (self.library_ref is not None):
+            raise ValueError("Only library_asset requires a pinned library reference")
         if self.provider == "component_svg" and not self.items:
             raise ValueError("SVG document requires visible rows")
         if (self.provider == "image_service") != (self.image_prompt is not None):

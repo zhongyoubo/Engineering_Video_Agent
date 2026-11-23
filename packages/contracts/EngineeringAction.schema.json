@@ -19,7 +19,8 @@
           "enum": [
             "component_svg",
             "image_service",
-            "project_image"
+            "project_image",
+            "library_asset"
           ],
           "title": "Provider",
           "type": "string"
@@ -79,6 +80,20 @@
           ],
           "default": null,
           "title": "Project Asset Id"
+        },
+        "library_ref": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "pattern": "^library:pack\\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Library Ref"
         }
       },
       "required": [
@@ -90,10 +105,46 @@
         "image_prompt",
         "size",
         "transparent",
-        "project_asset_id"
+        "project_asset_id",
+        "library_ref"
       ],
       "title": "AssetRequirement",
       "type": "object"
+    },
+    "MaterialQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "default": "",
+          "maxLength": 160,
+          "title": "Query",
+          "type": "string"
+        },
+        "style": {
+          "default": "",
+          "maxLength": 60,
+          "title": "Style",
+          "type": "string"
+        },
+        "asset_type": {
+          "default": "",
+          "enum": [
+            "",
+            "component",
+            "image",
+            "model"
+          ],
+          "title": "Asset Type",
+          "type": "string"
+        }
+      },
+      "title": "MaterialQuery",
+      "type": "object",
+      "required": [
+        "query",
+        "style",
+        "asset_type"
+      ]
     },
     "SemanticItem": {
       "additionalProperties": false,
@@ -351,7 +402,9 @@
         "review",
         "finish",
         "request_assets",
-        "inspect_asset"
+        "inspect_asset",
+        "search_materials",
+        "select_materials"
       ],
       "title": "Action",
       "type": "string"
@@ -400,6 +453,27 @@
       ],
       "default": null,
       "title": "Asset Id"
+    },
+    "material_query": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MaterialQuery"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "material_refs": {
+      "items": {
+        "maxLength": 120,
+        "pattern": "^library:pack\\.[a-z0-9_.-]+@[a-zA-Z0-9_.-]{1,20}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Material Refs",
+      "type": "array"
     }
   },
   "required": [
@@ -408,7 +482,9 @@
     "files",
     "review",
     "asset_requests",
-    "asset_id"
+    "asset_id",
+    "material_query",
+    "material_refs"
   ],
   "title": "EngineeringAction",
   "type": "object"

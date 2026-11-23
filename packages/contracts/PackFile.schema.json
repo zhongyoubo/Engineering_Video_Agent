@@ -1,0 +1,35 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "maxLength": 240,
+      "minLength": 1,
+      "title": "Path",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "code",
+        "image",
+        "model",
+        "preview",
+        "license",
+        "provenance"
+      ],
+      "title": "Role",
+      "type": "string"
+    }
+  },
+  "required": [
+    "path",
+    "sha256",
+    "role"
+  ],
+  "title": "PackFile",
+  "type": "object"
+}

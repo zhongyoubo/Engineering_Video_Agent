@@ -26,6 +26,12 @@ class EngineeringController:
                     raise EngineeringError("Conflicting project-wide asset requirements")
                 self.planned_assets[req.id] = req
         w = self.workspace
+        from ..material_staging import stage_materials, plan_material_refs
+
+        props = json.loads((w.project / "props.json").read_text())
+        refs = plan_material_refs(plan, props)
+        if refs or w.state.get("material_selection"):
+            stage_materials(w, refs, self.guard)
         if w.state.get("finished") and all(
             w.state.get(k) == w.fingerprint() for k in ["build_hash", "preview_hash", "review_hash"]
         ):
@@ -74,7 +80,15 @@ class EngineeringController:
             "engineering.action",
             {"action": action.action, "step": w.state["iteration"], "summary": action.summary},
         )
-        if action.action == "write_files":
+        if action.action == "search_materials":
+            from ..materials import search_materials
+
+            w.record("materials.found", search_materials(**action.material_query.model_dump()))
+        elif action.action == "select_materials":
+            from ..material_staging import stage_materials
+
+            w.record("materials.selected", stage_materials(w, action.material_refs, self.guard))
+        elif action.action == "write_files":
             w.edit(action.files)
             w.record("files.written", {"paths": [e.path for e in action.files], "hash": w.fingerprint()})
         elif action.action == "request_assets":
@@ -112,9 +126,16 @@ class EngineeringController:
             w.record("asset.inspected", public_receipt(receipt))
         elif action.action == "build":
             from ..creative import source_manifest
+            from ..material_staging import verify_staged_materials
+
+            selected = verify_staged_materials(w)
 
             creation_manifest = source_manifest(w)
             props = json.loads((w.project / "props.json").read_text())
+            for scene in props.get("scenes", []):
+                for element in (scene.get("creation") or {}).get("elements", []):
+                    if element.get("library_ref") not in {None, *selected.get("references", [])}:
+                        raise EngineeringError("Select the declared component library version before build")
             from ..assets.usage import asset_usage
 
             usage = asset_usage(props)
@@ -125,6 +146,12 @@ class EngineeringController:
                 receipt = w.state.get("generated_assets", {}).get(key)
                 if not receipt:
                     raise EngineeringError("Request the declared material before build")
+                if receipt.get("format") == "glb" and any(
+                    u["asset_key"] == key and "three" not in (s.get("creation") or {}).get("techniques", [])
+                    for s in props.get("scenes", [])
+                    for u in asset_usage({"scenes": [s]}).values()
+                ):
+                    raise EngineeringError("GLB materials require an authored Three scene")
                 if (
                     key in self.planned_assets
                     and AssetRequirement.model_validate(receipt["request"]) != self.planned_assets[key]

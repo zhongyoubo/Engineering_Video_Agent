@@ -19,3 +19,19 @@ immersive spatial entity uses show_heading=false and cannot cover a physical obj
 neon_horizon is the third shared design pack. City rendering uses software WebGL (swangle),
 Three 0.181.1, R3F 9.4.0 and matching Remotion 4.0.538. Preserve frame readiness and stable
 geometry/identities. This vocabulary is not a general automatic 3D asset service.
+
+## Versioned material packs
+
+Read the advertised material_library metadata and actual material_preview_index sheet. Use
+search_materials with material_query (query/style/asset_type), then select_materials with the
+COMPLETE desired material_refs list; [] clears selection. Component modules/symbols are
+advertised by the catalog, staged at src/vendor/<pack>/<entry>, and cannot be edited. Declare
+component references in shot.assets and creation kit elements.library_ref. Do not call borrowed
+component paths authored source assets. Register PNG/GLB with provider=library_asset and exact
+library_ref; bind asset_key to creation elements. props.generated_assets[key] is a local filename,
+not a receipt object. Img/staticFile handles PNG; LibraryModel from ./library-model accepts
+asset={props.generated_assets[key]}, finite width/height and frame-derived angle in radians.
+Declare technique three for GLB. PNG is 2D; honor original pixel sizes. No npm install or remote
+asset downloads. Preserve measured causal timing and inspect actual scene bindings; selecting
+an entry does not prove visible consumption. Complete licenses stay in reports/source export,
+not unsolicited in-film producer badges. See docs/design/material-packs.md in the source repo.

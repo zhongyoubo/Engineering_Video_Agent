@@ -23,3 +23,9 @@ playwright-report/
 .tools/
 .speech-venv/
 .verify-*/
+
+# Reproducibly downloaded raw GLB; optimized self-contained version is committed.
+assets/library/packs/avocado/upstream/Models/Avocado/glTF-Binary/
+.verify-material-packs/
+
+.verify-material-packs-*.log

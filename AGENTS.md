@@ -68,3 +68,11 @@ Protect creative-kit.ts/creative-types.ts. Preserve custom causal timing/held re
 source/image binding, creative manifests and dedicated review. Existing components are optional
 vocabulary, never the creative ceiling or a topic keyword router. Fixed helper tests do not
 establish real native creativity. Record goals/2026-11-23-creative-production.md and the main goal.
+
+Curated material packs: read docs/design/material-packs.md. Pack selection resolves only
+reviewed hash-pinned offline manifests, protects src/vendor and library-model.tsx, retains
+licenses and invalidates all source/preview/review gates on changes. Binary PNG/GLB requests
+use canonical receipts; GLB is embedded, not a remote loader or 3D generation service.
+verify_material_packs.py may host-render ONLY its fixed reviewed examples/material-packs/Video.tsx
+and curated repository media. It accepts no arguments; never use it for uploaded/model source.
+Record results in goals/2026-11-23-material-packs.md and the main execution goal.
