@@ -1657,3 +1657,58 @@ nav button span {
   margin-top: 8px;
   font-size: 11px;
 }
+.local-material-picker {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--border, #d8dfd9);
+  border-radius: 12px;
+}
+.local-material-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.local-material-pages {
+  gap: 8px;
+  margin-top: 8px;
+}
+.local-material-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  max-height: 270px;
+  overflow: auto;
+}
+.local-material-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #d8dfd9;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.local-material-option img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  background: #f5f5f0;
+  border-radius: 5px;
+}
+.local-material-option span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.local-material-option b {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.local-material-option small {
+  color: #6a7871;
+  font-size: 10px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}

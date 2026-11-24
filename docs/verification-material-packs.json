@@ -1,7 +1,7 @@
 {
   "materials": 14,
   "packs": 4,
-  "source_hash": "8d1209a4ba2cb5a78b57b806d809fb8d2ae758861c4951dc6c6ebee9737862d1",
+  "source_hash": "9157d104703e7c3521764af1ea694589dbdeef109ee005bae5e754936754c04c",
   "selection": {
     "references": [
       "library:pack.avocado.model@1.0",
@@ -211,9 +211,9 @@
     }
   },
   "assets": [
+    "pack-1:notebook",
     "pack-1:bubble",
     "pack-1:heart",
-    "pack-1:notebook",
     "pack-3:avocado"
   ],
   "media": {
@@ -226,12 +226,12 @@
   },
   "seconds": 16,
   "frames": 480,
-  "video_sha256": "2a36e513bbf9e427c5dbede8f4142daa95d543c0c09e5e40906b9f9b02815126",
+  "video_sha256": "332433099f0ab451121f071463fd8b8a82314d8583363dd0b1ac6ccd72ddc6d4",
   "pixel_changes": {
-    "pack-0": 23.249819596443228,
-    "pack-1": 14.43341997264022,
-    "pack-2": 10.078773939808482,
-    "pack-3": 35.155247093023256
+    "pack-0": 23.812129787961695,
+    "pack-1": 14.361797195622435,
+    "pack-2": 10.33546597127223,
+    "pack-3": 35.317995896032826
   },
   "native_inference": false,
   "image_model_inference": false,

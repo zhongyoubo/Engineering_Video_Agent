@@ -1,0 +1,12 @@
+:root {
+  --wi-bg: #f7f2e8;
+  --wi-ink: #17383a;
+  --wi-accent: #be6654;
+  --wi-board: #f3d9c2;
+  --wi-paper: #fffdf7;
+  --wi-mint-paper: #e8efe8;
+  --wi-icon-green: #32776d;
+  --wi-secondary: #785c5d;
+  --wi-font: 'Noto Sans CJK SC', sans-serif;
+  --wi-card-radius: 30px;
+}

@@ -1,0 +1,5 @@
+# Keep checked-in source and manifests identical on Windows and Linux.
+* text=auto eol=lf
+
+# Curated pack manifests pin exact bytes, including text and upstream files.
+assets/library/packs/** -text

@@ -81,6 +81,16 @@ const examples = [
   },
 ];
 
+type LocalMaterial = {
+  id: string;
+  title: string;
+  origin: string;
+  rights: string;
+  sha256: string;
+};
+
+const LOCAL_MATERIAL_PAGE_SIZE = 12;
+
 function Logo() {
   return (
     <div className="brand">
@@ -136,11 +146,17 @@ function Studio({
     [entry, setEntry] = useState(''),
     [real, setReal] = useState(false);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [localMaterials, setLocalMaterials] = useState<LocalMaterial[]>([]);
+  const [localMaterialConfigured, setLocalMaterialConfigured] = useState(false);
+  const [selectedLocalMaterials, setSelectedLocalMaterials] = useState<LocalMaterial[]>([]);
+  const [localMaterialPage, setLocalMaterialPage] = useState(0);
+  const [localMaterialLoading, setLocalMaterialLoading] = useState(false);
+  const [localMaterialError, setLocalMaterialError] = useState('');
   const [file, setFile] = useState<File | null>(null),
     [busy, setBusy] = useState(false),
     [active, setActive] = useState<string | null>(null);
   const [revision, setRevision] = useState<any>(null),
-    [board, setBoard] = useState<Storyboard | null>(null),
+    [draft, setDraft] = useState<{ revisionId: string; board: Storyboard } | null>(null),
     [sceneIndex, setSceneIndex] = useState(0);
   const [instruction, setInstruction] = useState('');
   const [panel, setPanel] = useState<'script' | 'evidence' | 'quality' | 'timeline'>('script'),
@@ -150,6 +166,17 @@ function Studio({
   const importRef = useRef<HTMLInputElement>(null),
     updateRef = useRef<HTMLInputElement>(null);
   const activeJob = jobs.find((j) => j.id === active);
+  const board: Storyboard | null =
+    draft && draft.revisionId === activeJob?.revision_id
+      ? draft.board
+      : revision?.id === activeJob?.revision_id
+        ? (revision?.storyboard ?? null)
+        : null;
+  const localMaterialPageCount = Math.ceil(localMaterials.length / LOCAL_MATERIAL_PAGE_SIZE);
+  const visibleLocalMaterials = localMaterials.slice(
+    localMaterialPage * LOCAL_MATERIAL_PAGE_SIZE,
+    (localMaterialPage + 1) * LOCAL_MATERIAL_PAGE_SIZE,
+  );
   const refresh = async () => {
     const [p, j, c] = await Promise.all([
       request('/v1/projects'),
@@ -160,6 +187,29 @@ function Studio({
     setJobs(j.items);
     setCaps(c);
   };
+
+  const loadLocalMaterials = () => {
+    setLocalMaterialLoading(true);
+    return request<{ configured: boolean; items: LocalMaterial[] }>('/v3/local-materials')
+      .then((data) => {
+        setLocalMaterialConfigured(data.configured);
+        setLocalMaterials(data.items);
+        setLocalMaterialPage(0);
+        setSelectedLocalMaterials((current) =>
+          current.filter((selected) =>
+            data.items.some((item) => item.id === selected.id && item.sha256 === selected.sha256),
+          ),
+        );
+        setLocalMaterialError('');
+      })
+      .catch((e) => {
+        setLocalMaterialError(e.message);
+      })
+      .finally(() => setLocalMaterialLoading(false));
+  };
+  useEffect(() => {
+    loadLocalMaterials();
+  }, [session.tenant]);
 
   useEffect(() => {
     if (!session) return;
@@ -190,24 +240,26 @@ function Studio({
   }, [session]);
   useEffect(() => {
     if (!activeJob) return;
-    let live = true;
-    const load = () =>
-      request('/v1/revisions/' + activeJob.revision_id).then((r) => {
-        if (!live) return;
-        setRevision(r);
-        if (r.storyboard)
-          setBoard((old) =>
-            old && r.id === revision?.id && !['RUNNING', 'QUEUED'].includes(activeJob.state)
-              ? old
-              : r.storyboard,
-          );
-      });
-    load().catch((e) => setError(e.message));
-    const timer = setInterval(() => {
-      if (!finalStates.includes(activeJob.state)) load().catch(() => {});
-    }, 2500);
+    const controller = new AbortController();
+    let polling = false;
+    const load = async (showError = false) => {
+      if (polling) return;
+      polling = true;
+      try {
+        const result = await request('/v1/revisions/' + activeJob.revision_id, {
+          signal: controller.signal,
+        });
+        if (!controller.signal.aborted) setRevision(result);
+      } catch (e: any) {
+        if (showError && !controller.signal.aborted) setError(e.message);
+      } finally {
+        polling = false;
+      }
+    };
+    void load(true);
+    const timer = finalStates.includes(activeJob.state) ? undefined : setInterval(load, 2500);
     return () => {
-      live = false;
+      controller.abort();
       clearInterval(timer);
     };
   }, [activeJob?.id, activeJob?.state]);
@@ -252,7 +304,7 @@ function Studio({
   function reset() {
     setActive(null);
     setRevision(null);
-    setBoard(null);
+    setDraft(null);
     setView('create');
     setError('');
     setSceneIndex(0);
@@ -272,7 +324,8 @@ function Studio({
     }
     if (
       videoMode === 'engineering' &&
-      (imageFiles.length > 24 || imageFiles.some((f) => f.size > 12 * 1024 * 1024))
+      (imageFiles.length + selectedLocalMaterials.length > 24 ||
+        imageFiles.some((f) => f.size > 12 * 1024 * 1024))
     ) {
       setError('图片最多 24 张，每张不得超过 12 MB');
       return;
@@ -284,6 +337,14 @@ function Studio({
       if (!Array.isArray(actions)) throw new Error('演示动作必须是 JSON 数组');
       const project = await post('/v1/projects', { name: title });
       if (videoMode === 'engineering') {
+        for (const selected of selectedLocalMaterials) {
+          await request(
+            `/v3/projects/${project.id}/local-materials/${selected.id}/import?source_sha256=${selected.sha256}`,
+            {
+              method: 'POST',
+            },
+          );
+        }
         for (const image of imageFiles) {
           const material = new FormData();
           material.append('file', image);
@@ -345,7 +406,7 @@ function Studio({
       await refresh();
       setActive(result.job_id);
       setRevision(null);
-      setBoard(null);
+      setDraft(null);
       setView('create');
     } catch (e: any) {
       setError(e.message);
@@ -362,7 +423,7 @@ function Studio({
       form.append('file', file);
       const r = await request('/v1/projects/' + p.id + '/import', { method: 'POST', body: form });
       await refresh();
-      setBoard(null);
+      setDraft(null);
       setRevision(null);
       setActive(r.job_id);
       setView('create');
@@ -384,7 +445,7 @@ function Studio({
         body: form,
       });
       await refresh();
-      setBoard(null);
+      setDraft(null);
       setRevision(null);
       setActive(r.job_id);
       setToast('源码新版本已导入；重新分析证据并复用未变化的旁白');
@@ -395,11 +456,12 @@ function Studio({
     }
   }
   async function selectJob(job: Job) {
-    setBoard(null);
+    setView('create');
+    if (job.id === active) return;
+    setDraft(null);
     setRevision(null);
     setSceneIndex(0);
     setActive(job.id);
-    setView('create');
   }
   async function fork(render: boolean) {
     if (!revision || !board) return;
@@ -417,7 +479,7 @@ function Studio({
       });
       await refresh();
       setRevision(null);
-      setBoard(null);
+      setDraft(null);
       setActive(result.job_id);
       setToast(render ? '已创建新版本，保留原工程' : '已创建分镜版本');
     } catch (e: any) {
@@ -438,7 +500,7 @@ function Studio({
       });
       await refresh();
       setRevision(null);
-      setBoard(null);
+      setDraft(null);
       setActive(result.job_id);
       setInstruction('');
       setToast('修改已另存为分镜版本');
@@ -448,12 +510,19 @@ function Studio({
       setBusy(false);
     }
   }
+  function editBoard(update: (current: Storyboard) => Storyboard) {
+    const revisionId = activeJob?.revision_id;
+    if (!revisionId || !board) return;
+    setDraft((current) => ({
+      revisionId,
+      board: update(current?.revisionId === revisionId ? current.board : board),
+    }));
+  }
   function editScene(patch: Partial<Scene>) {
-    setBoard((old) =>
-      old
-        ? { ...old, scenes: old.scenes.map((s, i) => (i === sceneIndex ? { ...s, ...patch } : s)) }
-        : old,
-    );
+    editBoard((current) => ({
+      ...current,
+      scenes: current.scenes.map((s, i) => (i === sceneIndex ? { ...s, ...patch } : s)),
+    }));
   }
   function preview() {
     if (!board) return null;
@@ -690,6 +759,80 @@ function Studio({
                       PNG，每张最多 12 MB，最多 24 张；使用透明图可单独编排元素动作。
                     </p>
                     {imageFiles.length > 0 && <p>{imageFiles.map((f) => f.name).join('、')}</p>}
+                    {localMaterialConfigured && (
+                      <div className="local-material-picker">
+                        <div className="local-material-heading">
+                          <b>本地素材库</b>
+                          <button
+                            type="button"
+                            className="secondary"
+                            disabled={busy || localMaterialLoading}
+                            onClick={loadLocalMaterials}
+                          >
+                            刷新
+                          </button>
+                        </div>
+                        <p className="subtle">选中的图片会先复制到当前项目，再交给 Agent 使用。</p>
+                        <div className="local-material-list">
+                          {visibleLocalMaterials.map((item) => (
+                            <label key={item.id} className="local-material-option">
+                              <input
+                                type="checkbox"
+                                checked={selectedLocalMaterials.some(
+                                  (selected) => selected.id === item.id,
+                                )}
+                                disabled={busy}
+                                onChange={(e) => {
+                                  const checked = e.currentTarget.checked;
+                                  setSelectedLocalMaterials((current) =>
+                                    checked
+                                      ? [...current, item]
+                                      : current.filter((selected) => selected.id !== item.id),
+                                  );
+                                }}
+                              />
+                              <img
+                                src={`/api/v3/local-materials/${item.id}/preview?source_sha256=${item.sha256}`}
+                                alt=""
+                                loading="lazy"
+                              />
+                              <span>
+                                <b>{item.title}</b>
+                                <small>
+                                  {item.origin} · {item.rights}
+                                </small>
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                        {localMaterialPageCount > 1 && (
+                          <div className="local-material-heading local-material-pages">
+                            <button
+                              type="button"
+                              className="secondary"
+                              disabled={localMaterialPage === 0}
+                              onClick={() => setLocalMaterialPage(localMaterialPage - 1)}
+                            >
+                              上一页
+                            </button>
+                            <span>
+                              {localMaterialPage + 1} / {localMaterialPageCount} 页 · 已选{' '}
+                              {selectedLocalMaterials.length} 张
+                            </span>
+                            <button
+                              type="button"
+                              className="secondary"
+                              disabled={localMaterialPage + 1 === localMaterialPageCount}
+                              onClick={() => setLocalMaterialPage(localMaterialPage + 1)}
+                            >
+                              下一页
+                            </button>
+                          </div>
+                        )}
+                        {localMaterials.length === 0 && <p className="subtle">本地库暂无图片。</p>}
+                      </div>
+                    )}
+                    {localMaterialError && <p role="alert">本地素材库：{localMaterialError}</p>}
                   </div>
                 )}
                 <label>
@@ -1220,7 +1363,9 @@ function Studio({
                           revision?.brief.editorial ||
                           defaultEditorialRequest
                         }
-                        onChange={(value) => setBoard({ ...board, editorial_request: value })}
+                        onChange={(value) =>
+                          editBoard((current) => ({ ...current, editorial_request: value }))
+                        }
                         taxonomy={caps?.content_taxonomy}
                         prefix="版本"
                       />
@@ -1231,18 +1376,28 @@ function Studio({
                       aria-label="封面标题"
                       maxLength={100}
                       value={board.cover.headline}
-                      onChange={(e) =>
-                        setBoard({ ...board, cover: { ...board.cover!, headline: e.target.value } })
-                      }
+                      onChange={(e) => {
+                        const headline = e.currentTarget.value;
+                        editBoard((current) =>
+                          current.cover
+                            ? { ...current, cover: { ...current.cover, headline } }
+                            : current,
+                        );
+                      }}
                     />
                     <label>封面辅助文案</label>
                     <input
                       aria-label="封面辅助文案"
                       maxLength={160}
                       value={board.cover.subtitle}
-                      onChange={(e) =>
-                        setBoard({ ...board, cover: { ...board.cover!, subtitle: e.target.value } })
-                      }
+                      onChange={(e) => {
+                        const subtitle = e.currentTarget.value;
+                        editBoard((current) =>
+                          current.cover
+                            ? { ...current, cover: { ...current.cover, subtitle } }
+                            : current,
+                        );
+                      }}
                     />
                     {board.editorial && (
                       <>

@@ -7,6 +7,7 @@ from ...semantic_scene import AssetRequirement
 from .raster import raster_receipt, RASTER_VERSION, MAX_IMAGE_BYTES
 from . import image_service
 from .factory import create_svg, create_preview, requirement_key, FACTORY_VERSION
+from .project_images import LocalImageSource, ResolvedProjectImage
 
 
 PRIVATE_FIELDS = {"svg", "image_png", "preview_png", "file_data", "license_text"}
@@ -50,15 +51,21 @@ def _new_receipt(req, settings=None, resolve_image=None, scope="", guard=lambda:
         return library_receipt(req)
     if req.provider != "component_svg":
         ident = image_service.identity(settings) if req.provider == "image_service" else {}
-        key = _key(req, ident)
         if req.provider == "image_service":
-            data, request_id = image_service.generate(req, settings, key, scope, guard)
+            data, request_id = image_service.generate(req, settings, _key(req, ident), scope, guard)
         else:
             if resolve_image is None:
                 raise ValueError("Project image resolver is not available")
             guard()
-            data, request_id = resolve_image(req.project_asset_id), None
-        return raster_receipt(req, data, key, ident, request_id)
+            resolved = resolve_image(req.project_asset_id)
+            if isinstance(resolved, ResolvedProjectImage):
+                data = resolved.data
+                if resolved.local_source is not None:
+                    ident = {"local_material": resolved.local_source.model_dump()}
+            else:
+                data = resolved
+            request_id = None
+        return raster_receipt(req, data, _key(req, ident), ident, request_id)
 
     data, metadata = create_svg(req)
     digest = hashlib.sha256(data).hexdigest()
@@ -111,11 +118,16 @@ def _cached_receipt(req, old):
     if req.provider != "component_svg":
         if len(old.get("image_png", "")) > MAX_IMAGE_BYTES * 4 // 3 + 4:
             raise ValueError("Cached raster exceeds budget")
+        identity = old.get("provider_identity", {})
+        if req.provider == "project_image" and identity:
+            if not isinstance(identity, dict) or set(identity) != {"local_material"}:
+                raise ValueError("Invalid local project image identity")
+            LocalImageSource.model_validate(identity["local_material"])
         expected = raster_receipt(
             req,
             _data(old),
-            _key(req, old.get("provider_identity")),
-            old.get("provider_identity", {}),
+            _key(req, identity),
+            identity,
             old.get("provider_request_id"),
         )
         if old != expected:
@@ -147,8 +159,13 @@ def request_assets(workspace, requirements, guard, settings=None, resolve_image=
     staged = {}
     for req in requests:
         guard()
-        ident = image_service.identity(settings) if req.provider == "image_service" else {}
         old = existing.get(req.id)
+        if req.provider == "image_service":
+            ident = image_service.identity(settings)
+        elif req.provider == "project_image" and old:
+            ident = old.get("provider_identity", {})
+        else:
+            ident = {}
         staged[req.id] = (
             _cached_receipt(req, old)
             if old and old["request_hash"] == _key(req, ident)

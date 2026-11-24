@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <symbol id="goal" viewBox="0 0 100 100"><circle cx="50" cy="50" r="31"/><circle cx="50" cy="50" r="16"/><circle cx="50" cy="50" r="3"/></symbol>
+    <symbol id="model" viewBox="0 0 100 100"><path d="M24 38c-11-15 8-29 19-20 8-10 29-5 30 9 15 4 17 23 5 31 7 16-9 29-23 22-12 10-30 2-29-12-14-5-15-22-2-30Z"/><path d="M42 31c-7 8-7 16 1 23m17-26c9 8 10 18 2 27M37 68c8-8 18-8 27 0"/></symbol>
+    <symbol id="memory" viewBox="0 0 100 100"><rect x="20" y="17" width="60" height="66" rx="8"/><path d="M31 35h38M31 49h38M31 63h24"/></symbol>
+    <symbol id="tool" viewBox="0 0 100 100"><rect x="14" y="34" width="72" height="49" rx="8"/><path d="M35 34V22h30v12M14 56c20 16 52 16 72 0"/></symbol>
+    <symbol id="observe" viewBox="0 0 100 100"><circle cx="43" cy="43" r="24"/><path d="m61 61 23 23M33 43h20m-10-10v20"/></symbol>
+    <symbol id="result" viewBox="0 0 100 100"><path d="M21 18h58v64H21zM32 50l11 11 25-27"/><path d="M33 72h35"/></symbol>
+  </defs>
+  <g fill="none" stroke="#E9A56D" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><use href="#goal"/></g>
+</svg>

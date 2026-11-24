@@ -69,6 +69,6 @@ def build_render_plan(props, public, project=None):
 
 def refresh_plan(project):
     path = project / "props.json"
-    props = json.loads(path.read_text())
+    props = json.loads(path.read_text(encoding="utf-8"))
     props["render_plan"] = build_render_plan(props, project / "public")
-    path.write_text(json.dumps(props, ensure_ascii=False, indent=2))
+    path.write_text(json.dumps(props, ensure_ascii=False, indent=2), encoding="utf-8")

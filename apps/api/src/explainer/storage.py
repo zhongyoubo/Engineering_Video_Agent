@@ -49,11 +49,19 @@ class Storage:
             )
         if not path.exists():
             temporary = path.with_name(digest + "." + uid("tmp"))
-            with temporary.open("xb") as f:
-                f.write(content)
-                f.flush()
-                os.fsync(f.fileno())
-            os.replace(temporary, path)
+            try:
+                with temporary.open("xb") as f:
+                    f.write(content)
+                    f.flush()
+                    os.fsync(f.fileno())
+                try:
+                    os.replace(temporary, path)
+                except PermissionError:
+                    # Windows can refuse replacement while another writer's published object is open.
+                    if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+                        raise
+            finally:
+                temporary.unlink(missing_ok=True)
         with self.db.transaction() as c:
             c.execute(
                 "INSERT INTO assets VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(tenant,hash,kind,filename) DO NOTHING",
