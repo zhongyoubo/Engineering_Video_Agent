@@ -89,7 +89,7 @@ async def request_policy(request: Request, call_next):
     response.headers["X-Request-ID"] = request.state.request_id
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "same-origin"
-    response.headers["Cache-Control"] = "no-store"
+    response.headers.setdefault("Cache-Control", "no-store")
     return response
 
 

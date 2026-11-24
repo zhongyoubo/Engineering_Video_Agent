@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="brain" viewBox="0 0 100 100"><circle cx="50" cy="50" r="17"/><path d="M50 9v15m0 52v15M9 50h15m52 0h15M21 21l11 11m36 36 11 11M79 21 68 32M32 68 21 79"/></symbol>
+  <symbol id="file" viewBox="0 0 100 100"><path d="M23 10h38l17 18v60H23zM61 10v19h17M34 46h32M34 59h32M34 72h22"/></symbol>
+  <symbol id="tool" viewBox="0 0 100 100"><rect x="12" y="32" width="76" height="53" rx="10"/><path d="M34 32V20h32v12M12 55c22 19 54 19 76 0"/></symbol>
+  <symbol id="calendar" viewBox="0 0 100 100"><rect x="15" y="22" width="70" height="65" rx="9"/><path d="M15 42h70M33 12v20M67 12v20M33 58h10M56 58h10M33 73h10"/></symbol>
+  <symbol id="search" viewBox="0 0 100 100"><circle cx="44" cy="43" r="25"/><path d="m63 63 24 24"/></symbol>
+  <symbol id="shield" viewBox="0 0 100 100"><path d="M50 10 81 23v24c0 21-12 34-31 44-19-10-31-23-31-44V23z"/><path d="m36 50 10 10 20-23"/></symbol>
+</svg>

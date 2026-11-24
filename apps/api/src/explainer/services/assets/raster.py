@@ -11,7 +11,7 @@ MAX_IMAGE_BYTES = 12 * 1024 * 1024
 MAX_PIXELS = 4096 * 4096
 
 
-def canonical_png(data, transparent=False):
+def _decode_png(data, transparent=False):
     if not data or len(data) > MAX_IMAGE_BYTES:
         raise ValueError("Raster asset exceeds byte budget")
     try:
@@ -27,15 +27,7 @@ def canonical_png(data, transparent=False):
         alpha = image.getchannel("A").getextrema()
         if alpha[1] == 0 or (transparent and alpha[0] == 255):
             raise ValueError("Cutout needs actual transparency and visible pixels")
-        out = io.BytesIO()
-        image.save(out, format="PNG")  # Never retain service metadata or active content.
-        blob = out.getvalue()
-        if len(blob) > MAX_IMAGE_BYTES:
-            raise ValueError("Canonical raster exceeds byte budget")
-        image.thumbnail((640, 640))
-        preview = io.BytesIO()
-        image.save(preview, format="PNG")
-        return blob, preview.getvalue(), dict(width=w, height=h, has_alpha=alpha[0] < 255, format="png")
+        return image, dict(width=w, height=h, has_alpha=alpha[0] < 255, format="png")
     except (
         OSError,
         UnidentifiedImageError,
@@ -43,6 +35,28 @@ def canonical_png(data, transparent=False):
         Image.DecompressionBombWarning,
     ) as exc:
         raise ValueError("Invalid raster image") from exc
+
+
+def _encode_png(image):
+    out = io.BytesIO()
+    image.save(out, format="PNG", pnginfo=None)
+    return out.getvalue()
+
+
+def canonical_png(data, transparent=False):
+    image, meta = _decode_png(data, transparent)
+    blob = _encode_png(image)
+    if len(blob) > MAX_IMAGE_BYTES:
+        raise ValueError("Canonical raster exceeds byte budget")
+    image.thumbnail((640, 640))
+    return blob, _encode_png(image), meta
+
+
+def png_thumbnail(data, size=320):
+    image, _ = _decode_png(data)
+    image.info.clear()
+    image.thumbnail((size, size))
+    return _encode_png(image)
 
 
 def raster_receipt(req, data, key, identity, provider_request_id=None):

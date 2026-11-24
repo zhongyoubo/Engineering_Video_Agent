@@ -1,5 +1,17 @@
 # Roadmap
 
+## 当前工作区复查 · 2026-11-24
+
+已分离 Studio 草稿和轮询结果，修正 Windows 精选包签出及暂存路径。素材库加入大小写冲突校验、事务内去重、版本化缩略图和工程归档来源字段。视觉模板保留 HTML 预览，Remotion 渲染走隔离 Worker。实际 Windows 和浏览器检查见 [工程 Agent 执行记录](goals/2026-10-30-engineering-agent.md)。
+
+## 混合本地素材库 · 2026-11-24
+
+保留仓库内已审查的精选包，新增可配置的仓库外、按租户分隔的 PNG 素材目录。登记时规范化图片并记录来源/授权/哈希；创作页选中后复制进有所有权检查的项目图片目录，沿用素材回执、哈希失效和源码交付链路。当前仅支持外部 PNG；音视频和外部可执行组件尚未接入。见 `docs/design/hybrid-local-material-library.md`。
+
+## AI Agent 科普视觉模板 · 2026-11-24
+
+新增两套静态 HTML 设计手册：深青编辑与暖白插画。可切换六种表达场景、编辑示例文案、预览三种画幅及 30 fps / 150 帧动效顺序，并查看字幕、配色、版式和 SVG 素材。完整设计包可下载；实际视频仍需单独制作和验收。实现与限制见 `docs/design/agent-visual-template-html.md`。
+
 ## Content-driven creative production · 2026-11-23
 
 New native plans require per-shot visual goals, free composition/palette, recognizable elements,

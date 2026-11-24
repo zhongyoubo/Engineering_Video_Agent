@@ -115,7 +115,7 @@ def load_packs():
         return []
     if PACK_ROOT.is_symlink() or index.is_symlink() or index.stat().st_size > 32768:
         raise ValueError("Invalid curated pack index")
-    paths = json.loads(index.read_text())
+    paths = json.loads(index.read_text(encoding="utf-8"))
     if not isinstance(paths, list) or len(paths) > 32 or len(set(paths)) != len(paths):
         raise ValueError("Invalid curated pack index")
     packs, ids = [], set()
@@ -128,7 +128,7 @@ def load_packs():
             or path.stat().st_size > 128 * 1024
         ):
             raise ValueError("Invalid pack manifest")
-        pack = MaterialPack.model_validate_json(path.read_text())
+        pack = MaterialPack.model_validate_json(path.read_text(encoding="utf-8"))
         if (pack.id, pack.version) in ids:
             raise ValueError("Duplicate pack version")
         ids.add((pack.id, pack.version))

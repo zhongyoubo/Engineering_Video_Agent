@@ -63,3 +63,15 @@ pixel limits; the optimized model uses512px textures. Actual native-provider sel
 new-topic creation require the configured isolated Worker and credentials, absent here.
 No new image/native/TTS inference or professional voice/listening acceptance is claimed.
 The visual sample is fixed reviewed platform source, silent estimated draft timing.
+
+## Windows portability follow-up · 2026-11-24
+
+Git now preserves the pinned pack bytes. Staging, pruning and verification use canonical
+POSIX relative paths on Windows as well as Linux. On Windows the material and raster
+regression group had 51 passes and two failures at symbolic-link creation (`WinError 1314`).
+The pre-fix Windows staging and recovery failures passed after the path correction.
+The configured Chromium suite passed all 20 flows. See the main engineering goal for the
+complete checks and deployment limits.
+The reviewed fixed fixture also built, previewed and rendered 480 frames at 1080p30 using
+the locally installed full FFmpeg. All four scene groups showed measured pixel changes.
+Its source hash and media result are in docs/verification-material-packs.json.

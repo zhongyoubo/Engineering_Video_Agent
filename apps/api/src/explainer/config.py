@@ -63,6 +63,7 @@ class Settings(BaseSettings):
     image_service_model: str = ""
     image_service_revision: str = "1"
     image_service_timeout: int = Field(180, ge=5, le=600)
+    local_material_dir: Path | None = None
     tts_engine: str = "auto"
     tts_url: str = "http://127.0.0.1:7861"
     tts_key: str = ""
@@ -131,6 +132,12 @@ class Settings(BaseSettings):
             raise ValueError("alignment_engine must be estimated/stable-ts")
         if self.storage_backend == "s3" and not self.s3_bucket:
             raise ValueError("s3_bucket is required")
+        if self.local_material_dir is not None:
+            if not self.local_material_dir.is_absolute():
+                raise ValueError("EXPLAINER_LOCAL_MATERIAL_DIR must be an absolute directory outside the repository")
+            self.local_material_dir = self.local_material_dir.resolve()
+            if self.local_material_dir.is_relative_to(ROOT.resolve()):
+                raise ValueError("EXPLAINER_LOCAL_MATERIAL_DIR must be outside the repository")
         keys = json.loads(self.tenant_keys)
         if not isinstance(keys, dict) or any(
             k == "local"
@@ -142,6 +149,14 @@ class Settings(BaseSettings):
             raise ValueError("tenant_keys must map safe tenant IDs to long access keys")
         if len(set([self.api_token, *keys.values()])) != len(keys) + 1:
             raise ValueError("Access keys must be unique per tenant")
+        if self.local_material_dir is not None:
+            from .local_materials import validate_tenant
+
+            tenants = ["local", *keys]
+            for name in tenants:
+                validate_tenant(name)
+            if len({name.casefold() for name in tenants}) != len(tenants):
+                raise ValueError("Local material tenant directories must have distinct names")
         return self
 
     def keys(self):

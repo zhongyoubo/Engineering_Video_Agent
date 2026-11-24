@@ -188,7 +188,7 @@ def build_engineering_video(pipeline, board, content, manifest, props, public, p
     def emit(kind, payload):
         p.db.event(p.job, kind, payload)
 
-    from ..assets.project_images import resolve_image
+    from ..assets.project_images import resolve_image_with_source
 
     agent = NativeEngineeringAgent(p.settings, p.runner, content, p.brief, manifest, w.root / "agent", emit)
     agent.load_image_catalog(p.db, p.store, p.tenant, p.revision["project_id"])
@@ -201,7 +201,7 @@ def build_engineering_video(pipeline, board, content, manifest, props, public, p
         emit,
         p.guard,
         p.settings.engineering_max_steps,
-        resolve_image=lambda id: resolve_image(p.db, p.store, p.tenant, p.revision["project_id"], id),
+        resolve_image=lambda id: resolve_image_with_source(p.db, p.store, p.tenant, p.revision["project_id"], id),
         asset_scope=p.tenant + ":" + p.revision["id"],
     )
     result = controller.run(production_plan)

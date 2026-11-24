@@ -1,5 +1,4 @@
 import os
-import signal
 import subprocess
 import sys
 import time
@@ -9,15 +8,18 @@ ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 env = os.environ.copy()
 env["PYTHONPATH"] = str(ROOT / "apps/api/src")
+env.setdefault("PYTHONUTF8", "1")
 sys.path.insert(0, env["PYTHONPATH"])
 from explainer.config import get_settings
 settings = get_settings()
-print("\nExplainer Studio · http://127.0.0.1:5173", flush=True)
+studio_port = int(env.get("EXPLAINER_DEV_PORT", "5173"))
+api_port = int(env.get("EXPLAINER_DEV_API_PORT", "8000"))
+print(f"\nExplainer Studio · http://127.0.0.1:{studio_port}", flush=True)
 print("Local access key:", settings.api_token, flush=True)
 print("Do not expose this development server to the public internet.\n", flush=True)
-commands = [[sys.executable, "-m", "uvicorn", "explainer.api:app", "--host", "127.0.0.1", "--port", "8000"],
+commands = [[sys.executable, "-m", "uvicorn", "explainer.api:app", "--host", "127.0.0.1", "--port", str(api_port)],
             [sys.executable, "-m", "explainer.temporal_worker" if settings.scheduler == "temporal" else "explainer.worker"],
-            ["npm.cmd" if os.name == "nt" else "npm", "run", "dev"]]
+            ["node", "node_modules/vite/bin/vite.js", "--config", "apps/studio/vite.config.ts", "--strictPort"]]
 processes = []
 try:
     for command in commands:

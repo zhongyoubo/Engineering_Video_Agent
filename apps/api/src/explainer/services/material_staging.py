@@ -72,7 +72,7 @@ def stage_materials(workspace, refs, guard=lambda: None):
     for name in ["src/vendor", "public/library"]:
         root = checked_path(workspace, name)
         for path in root.rglob("*") if root.exists() else []:
-            checked_path(workspace, str(path.relative_to(workspace.project)))
+            checked_path(workspace, path.relative_to(workspace.project).as_posix())
             if path.is_file():
                 existing.append(path)
     before = workspace.fingerprint()
@@ -84,14 +84,14 @@ def stage_materials(workspace, refs, guard=lambda: None):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
         for path in existing:
-            if str(path.relative_to(workspace.project)) not in staged:
+            if path.relative_to(workspace.project).as_posix() not in staged:
                 path.unlink()
         workspace.state["material_selection"] = manifest
         props_path = workspace.project / "props.json"
         if props_path.is_file():
-            props = json.loads(props_path.read_text())
+            props = json.loads(props_path.read_text(encoding="utf-8"))
             props["material_packs"] = manifest
-            props_path.write_text(json.dumps(props, ensure_ascii=False, indent=2))
+            props_path.write_text(json.dumps(props, ensure_ascii=False, indent=2), encoding="utf-8")
             from .render_plan import refresh_plan
 
             refresh_plan(workspace.project)
@@ -129,7 +129,7 @@ def verify_staged_materials(workspace):
     staged, manifest = validated_selection(workspace.state.get("material_selection"))
     props_path = workspace.project / "props.json"
     if props_path.is_file():
-        props = json.loads(props_path.read_text())
+        props = json.loads(props_path.read_text(encoding="utf-8"))
         if props.get("material_packs", manifest) != manifest:
             raise ValueError("Props material selection differs from workspace")
     for name, data in staged.items():
@@ -140,7 +140,7 @@ def verify_staged_materials(workspace):
         root = checked_path(workspace, name)
         for path in root.rglob("*") if root.exists() else []:
             if path.is_symlink() or (
-                path.is_file() and str(path.relative_to(workspace.project)) not in staged
+                path.is_file() and path.relative_to(workspace.project).as_posix() not in staged
             ):
                 raise ValueError("Undeclared material dependency")
     return manifest

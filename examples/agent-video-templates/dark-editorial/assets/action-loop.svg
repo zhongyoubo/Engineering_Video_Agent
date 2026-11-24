@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560" role="img" aria-label="目标、计划、工具、观察、调整的行动循环">
+  <rect width="1000" height="560" rx="40" fill="#285054"/>
+  <path d="M160 280a340 180 0 1 1 680 0a340 180 0 1 1-680 0" fill="none" stroke="#A9CFC3" stroke-width="7"/>
+  <g font-family="Noto Sans CJK SC,sans-serif" font-size="28" text-anchor="middle">
+    <g fill="#17383A" stroke="#E9A56D" stroke-width="4"><rect x="390" y="50" width="220" height="92" rx="24"/><rect x="710" y="220" width="220" height="92" rx="24"/><rect x="390" y="418" width="220" height="92" rx="24"/><rect x="70" y="220" width="220" height="92" rx="24"/></g>
+    <g fill="#FFF8EA"><text x="500" y="109">理解目标</text><text x="820" y="279">规划与工具</text><text x="500" y="477">观察结果</text><text x="180" y="279">调整行动</text></g>
+    <text x="500" y="288" fill="#E9A56D" font-size="35">完成任务？</text>
+  </g>
+</svg>

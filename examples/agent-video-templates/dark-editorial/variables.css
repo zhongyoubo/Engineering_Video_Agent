@@ -1,0 +1,11 @@
+:root {
+  --de-bg: #17383a;
+  --de-panel: #285054;
+  --de-ink: #fff8ea;
+  --de-muted: #b9d7d6;
+  --de-accent: #e9a56d;
+  --de-line: #a9cfc3;
+  --de-shadow: #091d28;
+  --de-font: 'Noto Sans CJK SC', sans-serif;
+  --de-radius: 40px;
+}

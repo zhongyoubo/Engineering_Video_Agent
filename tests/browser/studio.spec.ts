@@ -348,6 +348,15 @@ test('creator intent and cover survive editing, and frame zero has no internal b
   expect(brief.presentation_profile).toBe('creator');
   expect(brief.editorial.intent).toBe('advice');
   expect(brief.editorial.core_message).toBe('先理解请求和响应');
+  const { job_id, revision_id } = await (await (await submitted).response())!.json();
+  await page.route('**/api/v1/jobs', async (route) => {
+    const response = await route.fetch();
+    const jobs = await response.json();
+    jobs.items = jobs.items.map((job: { id: string; state: string }) =>
+      job.id === job_id ? { ...job, state: 'RUNNING' } : job,
+    );
+    await route.fulfill({ response, json: jobs });
+  });
   await expect(page.getByLabel('封面标题', { exact: true })).toHaveValue('解释一个概念', {
     timeout: 30000,
   });
@@ -362,6 +371,15 @@ test('creator intent and cover survive editing, and frame zero has no internal b
   );
   await expect(page.locator('.preview-panel').getByText(/EXPLAINER STUDIO/)).toHaveCount(0);
   await page.getByLabel('封面标题', { exact: true }).fill('API 可以这样理解');
+  await page.waitForResponse((response) =>
+    response.url().endsWith('/api/v1/revisions/' + revision_id),
+  );
+  await page.evaluate(
+    () =>
+      new Promise<void>((done) => requestAnimationFrame(() => requestAnimationFrame(() => done()))),
+  );
+  await expect(page.getByLabel('封面标题', { exact: true })).toHaveValue('API 可以这样理解');
+  await page.unrouteAll({ behavior: 'wait' });
   await page.getByRole('button', { name: '仅保存脚本分镜' }).click();
   await expect(page.getByLabel('封面标题', { exact: true })).toHaveValue('API 可以这样理解', {
     timeout: 30000,
